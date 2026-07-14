@@ -9,7 +9,7 @@ const GOLD = "#D4AF37";
 const navLinks = [
   { label: "Home", href: "#home" },
   { label: "About", href: "#about" },
-  { label: "Services", href: "#services" },
+  { label: "PROGRAMS", href: "#" },
   { label: "Awards", href: "#awards" },
   { label: "Testimonials", href: "#testimonials" },
   { label: "Contact", href: "#contact" },

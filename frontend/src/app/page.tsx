@@ -15,15 +15,15 @@ export default function Home() {
     <main className="min-h-screen bg-[#050505] text-[#F5F0E8]">
       <Navbar />
       <Hero />
-      <CTA />
-      <Contact />
-      <Footer />
       <Stats />
       <About />
       <Services />
       <Awards />
       <Science />
       <Testimonials />
+      <CTA />
+      <Contact />
+      <Footer />
     </main>
   );
 }
