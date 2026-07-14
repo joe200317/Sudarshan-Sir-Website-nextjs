@@ -16,14 +16,14 @@ export default function Home() {
       <Navbar />
       <Hero />
       <CTA />
-      <Contact />
-      <Footer />
       <Stats />
       <About />
       <Services />
       <Awards />
       <Science />
       <Testimonials />
+      <Contact />
+      <Footer />
     </main>
   );
 }
