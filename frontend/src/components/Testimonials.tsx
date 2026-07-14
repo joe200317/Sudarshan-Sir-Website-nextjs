@@ -1,7 +1,6 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { Star, Quote } from "lucide-react";
 
 const GOLD = "#D4AF37";
 
@@ -25,16 +24,42 @@ const testimonials = [
     role: "Entrepreneur",
     initial: "M",
     quote:
-      "I came with burnout and left with a completely rewired mindset. The emotional resilience training gave me tools I use every single day to maintain peak state.",
-  },
-  {
-    name: "Dr. Emily Watson",
-    role: "Neuroscientist",
-    initial: "E",
-    quote:
-      "As a scientist, I was skeptical. But the methodology is grounded in real neuroscience. The results speak for themselves — measurable cognitive improvement in every session.",
+      "I came with burnout and left with a completely rewired mindset. The emotional resilience training gave me tools I use every day to maintain peak state.",
   },
 ];
+
+function GoldArcs({ side }: { side: "left" | "right" }) {
+  const isLeft = side === "left";
+  return (
+    <svg
+      className={`absolute top-1/2 h-[108%] w-[52px] pointer-events-none z-0 ${
+        isLeft ? "-left-3" : "-right-3"
+      }`}
+      viewBox="0 0 52 200"
+      fill="none"
+      aria-hidden
+      style={{
+        transform: isLeft
+          ? "translateY(-50%)"
+          : "translateY(-50%) scaleX(-1)",
+      }}
+    >
+      <path
+        d="M48 12C22 28 14 70 14 100C14 130 22 172 48 188"
+        stroke={GOLD}
+        strokeWidth="3.5"
+        strokeLinecap="round"
+      />
+      <path
+        d="M40 28C24 42 20 72 20 100C20 128 24 158 40 172"
+        stroke={GOLD}
+        strokeWidth="2"
+        strokeOpacity="0.55"
+        strokeLinecap="round"
+      />
+    </svg>
+  );
+}
 
 export default function Testimonials() {
   return (
@@ -42,8 +67,7 @@ export default function Testimonials() {
       id="testimonials"
       className="relative py-24 lg:py-32 bg-[#050505] overflow-hidden"
     >
-      <div className="absolute top-1/3 right-0 w-[400px] h-[400px] bg-[#D4AF37]/4 rounded-full blur-[140px]" />
-      <div className="absolute bottom-1/4 left-0 w-[350px] h-[350px] bg-[#00BFFF]/4 rounded-full blur-[120px]" />
+      <div className="absolute top-1/3 right-0 w-[400px] h-[400px] bg-[#D4AF37]/5 rounded-full blur-[140px]" />
 
       <div className="container relative z-10">
         <motion.div
@@ -51,74 +75,67 @@ export default function Testimonials() {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.6 }}
-          className="text-center mb-16"
+          className="text-center mb-20 lg:mb-24"
         >
-          <div className="flex items-center justify-center gap-3 mb-4">
-            <div className="w-10 h-px" style={{ background: GOLD }} />
-            <span
-              style={{ fontFamily: "var(--font-accent)" }}
-              className="text-[#00BFFF] text-xs tracking-[0.3em] uppercase"
-            >
-              Client Voices
-            </span>
-            <div className="w-10 h-px" style={{ background: GOLD }} />
-          </div>
-
-          <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-4">
-            <span className="text-[#F5F0E8]">Minds </span>
-            <span className="text-gradient-gold">Transformed</span>
+          <h2
+            className="text-4xl md:text-5xl lg:text-6xl font-bold mb-4 text-gradient-gold"
+            style={{ fontFamily: "var(--font-display)" }}
+          >
+            Success Stories
           </h2>
-
-          <p className="text-[#F5F0E8]/50 max-w-2xl mx-auto text-lg">
+          <p className="text-[#F5F0E8]/55 max-w-2xl mx-auto text-base md:text-lg">
             Real stories from those who dared to unlock their mental potential
           </p>
         </motion.div>
 
-        <div className="grid md:grid-cols-2 gap-6 lg:gap-8">
+        <div className="grid md:grid-cols-3 gap-x-8 gap-y-20 lg:gap-x-12 px-2 md:px-4">
           {testimonials.map((t, i) => (
             <motion.article
               key={t.name}
               initial={{ opacity: 0, y: 40 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
-              transition={{ duration: 0.5, delay: i * 0.1 }}
-              className="group relative rounded-xl border border-[#ffffff0a] bg-[#121212] p-7 lg:p-8 hover:border-[#D4AF37]/25 transition-colors duration-300"
+              transition={{ duration: 0.55, delay: i * 0.12 }}
+              className="relative pt-10"
             >
-              <div className="flex items-start justify-between mb-5">
-                <div className="flex gap-1">
-                  {Array.from({ length: 5 }).map((_, s) => (
-                    <Star
-                      key={s}
-                      className="w-4 h-4 fill-[#D4AF37] text-[#D4AF37]"
-                    />
-                  ))}
-                </div>
-                <Quote
-                  className="w-8 h-8 text-[#D4AF37]/40 group-hover:text-[#D4AF37]/60 transition-colors"
-                  strokeWidth={1.5}
-                />
-              </div>
+              {/* Soft circular depth behind card */}
+              <div className="absolute left-1/2 top-[42%] -translate-x-1/2 -translate-y-1/2 w-[88%] aspect-square rounded-full bg-[#1a1a1a]/80 blur-[2px] -z-10" />
 
-              <p className="text-[#F5F0E8]/50 leading-relaxed mb-8">
-                &ldquo;{t.quote}&rdquo;
-              </p>
+              <div className="relative">
+                <GoldArcs side="left" />
+                <GoldArcs side="right" />
 
-              <div className="flex items-center gap-3">
-                <div
-                  className="w-11 h-11 rounded-full flex items-center justify-center border border-[#D4AF37]/20 shrink-0"
-                  style={{
-                    background: `linear-gradient(135deg, ${GOLD}22, #00BFFF18)`,
-                  }}
-                >
-                  <span className="text-[#D4AF37] font-semibold text-lg">
-                    {t.initial}
-                  </span>
-                </div>
-                <div>
-                  <h4 className="text-[#F5F0E8] font-semibold text-base leading-tight">
+                <div className="relative z-10 w-full rounded-[2rem] border border-[#D4AF37]/45 bg-[#161616] pt-14 pb-8 px-6 md:px-7 text-center shadow-[0_0_40px_rgba(212,175,55,0.06)]">
+                  <div
+                    className="absolute -top-10 left-1/2 -translate-x-1/2 w-[84px] h-[84px] rounded-full flex items-center justify-center border-[3px] shrink-0 shadow-[0_0_24px_rgba(212,175,55,0.35)]"
+                    style={{
+                      borderColor: GOLD,
+                      background:
+                        "linear-gradient(145deg, #2a2418 0%, #121212 100%)",
+                    }}
+                  >
+                    <span
+                      className="text-[#D4AF37] font-bold text-3xl"
+                      style={{ fontFamily: "var(--font-display)" }}
+                    >
+                      {t.initial}
+                    </span>
+                  </div>
+
+                  <h4 className="text-[#F5F0E8] font-semibold text-lg md:text-xl mb-3 mt-1">
                     {t.name}
                   </h4>
-                  <p className="text-[#00BFFF] text-sm mt-0.5">{t.role}</p>
+
+                  <p className="text-[#F5F0E8]/65 text-sm md:text-[15px] leading-relaxed mb-6 min-h-[5.5rem]">
+                    &ldquo;{t.quote}&rdquo;
+                  </p>
+
+                  <p
+                    className="text-[#D4AF37] text-sm tracking-wide"
+                    style={{ fontFamily: "var(--font-display)" }}
+                  >
+                    {t.name}
+                  </p>
                 </div>
               </div>
             </motion.article>

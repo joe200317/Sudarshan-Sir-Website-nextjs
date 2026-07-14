@@ -12,9 +12,9 @@ const quickLinksLeft = [
 ];
 
 const quickLinksRight = [
+  { label: "Gallery", href: "/gallery" },
   { label: "Testimonials", href: "/testimonials" },
   { label: "Contact", href: "/contact" },
-  { label: "Home", href: "/" },
 ];
 
 export default function Footer() {
