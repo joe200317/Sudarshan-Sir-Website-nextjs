@@ -1,13 +1,12 @@
 "use client";
 
-import { useRef } from "react";
+import { useEffect, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { motion, useInView } from "framer-motion";
+import { AnimatePresence, motion } from "framer-motion";
 import { ArrowRight, BookOpen, Building2, Trophy, Users } from "lucide-react";
 
 const GOLD = "#D4AF37";
-const BLUE = "#00BFFF";
 
 const stats = [
   { icon: BookOpen, value: "24+", label: "Books Authored" },
@@ -21,39 +20,52 @@ const journey = [
     tag: "The Beginning",
     title: "A Trainer Is Made, Not Born",
     text: "Before building a movement, Sudarshan Sabat invested in learning from over a dozen master gurus — treating training itself as a discipline worth mastering, not just a skill to perform.",
+    image: "/images/sir2.jpg",
   },
   {
     tag: "The Words",
     title: "24+ Books, Multiple Languages",
     text: "From Mind Winner World Winner to Dare Your Mind, each book distills a working philosophy: the mind is trainable, and untrained minds work against the people who own them.",
+    image: "/images/sir3.jpg",
   },
   {
     tag: "The Companies",
     title: "11 Ventures, One Mission",
     text: "Trainers World Pvt. Ltd. became the base from which an ecosystem of companies grew — each built to carry mind-power training to a different room, industry, or audience.",
+    image: "/images/sir4.jpg",
   },
   {
     tag: "The Recognition",
     title: "50+ Awards, National & International",
     text: "Recognition followed results, not the other way around — award after award tracing back to workshops where people actually changed how they think and decide.",
+    image: "/images/sir5.jpg",
   },
   {
     tag: "The Impact",
     title: "50,000+ Lives, and Counting",
     text: "Workshops across Maharashtra, Gujarat, Odisha and beyond, with a standing goal to reach a million lives — one re-trained mind at a time.",
+    image: "/images/meditation.png",
   },
 ];
 
 export default function AboutPage() {
-  const timelineRef = useRef(null);
-  const inView = useInView(timelineRef, { once: true, margin: "-100px" });
+  const [active, setActive] = useState(0);
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setActive((prev) => (prev + 1) % journey.length);
+    }, 3000);
+    return () => clearInterval(timer);
+  }, [active]);
+
+  const step = journey[active];
 
   return (
     <main className="bg-[#050505] text-[#F5F0E8]">
-      {/* Hero — offset portrait, not a background image */}
+      {/* Hero */}
       <section className="relative pt-32 pb-24 lg:pt-40 lg:pb-32 overflow-hidden">
         <div className="absolute top-1/3 -left-20 w-96 h-96 bg-[#D4AF37]/10 rounded-full blur-[130px]" />
-        <div className="absolute bottom-0 right-0 w-80 h-80 bg-[#00BFFF]/5 rounded-full blur-[120px]" />
+        <div className="absolute bottom-0 right-0 w-80 h-80 bg-[#D4AF37]/5 rounded-full blur-[120px]" />
 
         <div className="container relative z-10 grid lg:grid-cols-[1.1fr_0.9fr] gap-14 items-center">
           <motion.div
@@ -65,7 +77,7 @@ export default function AboutPage() {
               <div className="w-8 h-px" style={{ background: GOLD }} />
               <span
                 style={{ fontFamily: "var(--font-accent)" }}
-                className="text-[#00BFFF] text-xs tracking-[0.3em] uppercase"
+                className="text-[#D4AF37] text-xs tracking-[0.3em] uppercase"
               >
                 About Sudarshan Sabat
               </span>
@@ -80,7 +92,7 @@ export default function AboutPage() {
             </h1>
 
             <p className="text-[#F5F0E8]/65 text-lg leading-relaxed mb-8 max-w-xl">
-              Renowned as one of India's most sought-after mind power trainers,
+              Renowned as one of India&apos;s most sought-after mind power trainers,
               Sudarshan Sabat has spent years helping people move past what
               blocks them — reprogramming the mind rather than simply advising it.
             </p>
@@ -118,7 +130,9 @@ export default function AboutPage() {
               >
                 50K+
               </div>
-              <div className="text-[#F5F0E8]/50 text-xs tracking-wide">Lives Transformed</div>
+              <div className="text-[#F5F0E8]/50 text-xs tracking-wide">
+                Lives Transformed
+              </div>
             </div>
           </motion.div>
         </div>
@@ -143,21 +157,23 @@ export default function AboutPage() {
               >
                 {s.value}
               </div>
-              <div className="text-[#F5F0E8]/45 text-xs mt-1 tracking-wide">{s.label}</div>
+              <div className="text-[#F5F0E8]/45 text-xs mt-1 tracking-wide">
+                {s.label}
+              </div>
             </motion.div>
           ))}
         </div>
       </section>
 
-      {/* Journey timeline — real chronological milestones, so numbering earns its place */}
+      {/* Journey — left image slider, right numbered content */}
       <section className="relative py-20 lg:py-28 bg-[#050505]">
         <div className="container">
-          <div className="max-w-2xl mb-16">
+          <div className="max-w-2xl mb-14">
             <div className="flex items-center gap-3 mb-4">
               <div className="w-8 h-px" style={{ background: GOLD }} />
               <span
                 style={{ fontFamily: "var(--font-accent)" }}
-                className="text-[#00BFFF] text-xs tracking-[0.3em] uppercase"
+                className="text-[#D4AF37] text-xs tracking-[0.3em] uppercase"
               >
                 The Journey
               </span>
@@ -168,46 +184,131 @@ export default function AboutPage() {
             </h2>
           </div>
 
-          <div ref={timelineRef} className="relative max-w-3xl mx-auto">
-            <div className="absolute left-[15px] top-2 bottom-2 w-px bg-[#D4AF37]/20" />
-
-            <div className="space-y-12">
-              {journey.map((step, i) => (
+          <div className="grid lg:grid-cols-2 gap-10 lg:gap-14 items-center">
+            {/* Left — image container slides 1→5 */}
+            <div className="relative w-full aspect-[4/5] max-h-[520px] rounded-2xl overflow-hidden border border-[#D4AF37]/25 bg-[#0a0a0a]">
+              <AnimatePresence mode="wait">
                 <motion.div
-                  key={step.title}
-                  initial={{ opacity: 0, x: -20 }}
-                  animate={inView ? { opacity: 1, x: 0 } : {}}
-                  transition={{ duration: 0.55, delay: i * 0.12 }}
-                  className="relative pl-12"
+                  key={step.image}
+                  initial={{ opacity: 0, scale: 1.04 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  exit={{ opacity: 0, scale: 0.98 }}
+                  transition={{ duration: 0.5 }}
+                  className="absolute inset-0"
                 >
-                  <div
-                    className="absolute left-0 top-1 w-8 h-8 rounded-full border flex items-center justify-center text-xs font-semibold"
-                    style={{ borderColor: GOLD, color: GOLD, background: "#0a0a0a" }}
-                  >
-                    {i + 1}
-                  </div>
+                  <Image
+                    src={step.image}
+                    alt={step.title}
+                    fill
+                    sizes="(max-width: 1024px) 100vw, 50vw"
+                    className="object-cover"
+                  />
+                </motion.div>
+              </AnimatePresence>
+
+              <div className="absolute inset-0 bg-gradient-to-t from-[#050505]/80 via-transparent to-transparent pointer-events-none" />
+
+              <div
+                className="absolute top-4 left-4 w-10 h-10 rounded-full border flex items-center justify-center text-sm font-semibold z-10"
+                style={{
+                  borderColor: GOLD,
+                  color: GOLD,
+                  background: "#0a0a0a",
+                }}
+              >
+                {active + 1}
+              </div>
+
+              <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-2 z-10">
+                {journey.map((item, i) => (
+                  <button
+                    key={item.tag}
+                    type="button"
+                    aria-label={`Go to ${item.title}`}
+                    onClick={() => setActive(i)}
+                    className="h-1.5 rounded-full transition-all duration-300"
+                    style={{
+                      width: i === active ? 24 : 8,
+                      background:
+                        i === active ? GOLD : "rgba(245,240,232,0.3)",
+                    }}
+                  />
+                ))}
+              </div>
+            </div>
+
+            {/* Right — numbered list + active detail */}
+            <div>
+              <ul className="space-y-2 mb-8">
+                {journey.map((item, i) => (
+                  <li key={item.tag}>
+                    <button
+                      type="button"
+                      onClick={() => setActive(i)}
+                      className={`w-full text-left flex items-start gap-3 py-2.5 px-3 rounded-lg transition-all duration-300 ${
+                        i === active
+                          ? "bg-[#D4AF37]/10 border border-[#D4AF37]/30"
+                          : "border border-transparent hover:bg-[#F5F0E8]/5"
+                      }`}
+                    >
+                      <span
+                        className="shrink-0 font-semibold"
+                        style={{
+                          fontFamily: "var(--font-accent)",
+                          color:
+                            i === active
+                              ? GOLD
+                              : "rgba(245,240,232,0.35)",
+                        }}
+                      >
+                        {i + 1})
+                      </span>
+                      <span
+                        className={`text-base md:text-lg leading-snug ${
+                          i === active
+                            ? "text-[#F5F0E8] font-semibold"
+                            : "text-[#F5F0E8]/45"
+                        }`}
+                      >
+                        {item.title}
+                      </span>
+                    </button>
+                  </li>
+                ))}
+              </ul>
+
+              <AnimatePresence mode="wait">
+                <motion.div
+                  key={step.tag}
+                  initial={{ opacity: 0, y: 12 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -8 }}
+                  transition={{ duration: 0.35 }}
+                  className="border-t border-[#D4AF37]/20 pt-6"
+                >
                   <span
-                    className="text-[#00BFFF] text-xs tracking-[0.2em] uppercase"
+                    className="text-[#D4AF37]/80 text-xs tracking-[0.2em] uppercase"
                     style={{ fontFamily: "var(--font-accent)" }}
                   >
                     {step.tag}
                   </span>
-                  <h3 className="text-xl font-semibold mt-2 mb-2">{step.title}</h3>
-                  <p className="text-[#F5F0E8]/55 leading-relaxed">{step.text}</p>
+                  <p className="text-[#F5F0E8]/55 text-base md:text-lg leading-relaxed mt-3">
+                    {step.text}
+                  </p>
                 </motion.div>
-              ))}
+              </AnimatePresence>
             </div>
           </div>
         </div>
       </section>
 
-      {/* Philosophy — alternating rows instead of a card grid */}
+      {/* Philosophy */}
       <section className="relative py-20 lg:py-28 bg-[#0a0a0a]">
         <div className="container space-y-16">
           <div className="grid lg:grid-cols-2 gap-10 items-center">
             <div>
               <span
-                className="text-[#00BFFF] text-xs tracking-[0.3em] uppercase"
+                className="text-[#D4AF37] text-xs tracking-[0.3em] uppercase"
                 style={{ fontFamily: "var(--font-accent)" }}
               >
                 Philosophy 01
@@ -217,35 +318,39 @@ export default function AboutPage() {
                 <span className="text-gradient-gold">not just advising it</span>
               </h3>
               <p className="text-[#F5F0E8]/60 leading-relaxed">
-                Mind training is distinct from consulting or counselling — it doesn't
-                tell you what to do, it reprograms how you decide. That distinction is
-                the foundation of every workshop.
+                Mind training is distinct from consulting or counselling — it
+                doesn&apos;t tell you what to do, it reprograms how you decide.
+                That distinction is the foundation of every workshop.
               </p>
             </div>
-            <div className="relative rounded-xl overflow-hidden border border-[#D4AF37]/20">
-              <Image
-                src="/images/workshop-1.jpg"
-                alt="Mind power workshop"
-                width={700}
-                height={460}
-                className="w-full h-64 object-cover"
-              />
+            <div className="relative rounded-xl overflow-hidden border border-[#D4AF37]/20 bg-[#050505]">
+              <div className="relative w-full aspect-[16/10]">
+                <Image
+                  src="/images/sir5.jpg"
+                  alt="Mind Winner World Winner"
+                  fill
+                  sizes="(max-width: 1024px) 100vw, 50vw"
+                  className="object-contain p-2"
+                />
+              </div>
             </div>
           </div>
 
           <div className="grid lg:grid-cols-2 gap-10 items-center">
-            <div className="relative rounded-xl overflow-hidden border border-[#D4AF37]/20 lg:order-1">
-              <Image
-                src="/images/workshop-2.jpg"
-                alt="Train the trainer session"
-                width={700}
-                height={460}
-                className="w-full h-64 object-cover"
-              />
+            <div className="relative rounded-xl overflow-hidden border border-[#D4AF37]/20 bg-[#050505] lg:order-1">
+              <div className="relative w-full aspect-[4/5] max-h-[480px] mx-auto">
+                <Image
+                  src="/images/sir3.jpg"
+                  alt="Sudarshan Sabat with award"
+                  fill
+                  sizes="(max-width: 1024px) 100vw, 50vw"
+                  className="object-cover object-top"
+                />
+              </div>
             </div>
             <div className="lg:order-2">
               <span
-                className="text-[#00BFFF] text-xs tracking-[0.3em] uppercase"
+                className="text-[#D4AF37] text-xs tracking-[0.3em] uppercase"
                 style={{ fontFamily: "var(--font-accent)" }}
               >
                 Philosophy 02
@@ -255,9 +360,9 @@ export default function AboutPage() {
                 <span className="text-gradient-gold">an expiry date</span>
               </h3>
               <p className="text-[#F5F0E8]/60 leading-relaxed">
-                Just as every medicine expires, so does every problem — if the mind is
-                trained to move through it instead of around it. That belief drives the
-                pace and intensity of every session.
+                Just as every medicine expires, so does every problem — if the
+                mind is trained to move through it instead of around it. That
+                belief drives the pace and intensity of every session.
               </p>
             </div>
           </div>
@@ -267,12 +372,15 @@ export default function AboutPage() {
       {/* Closing CTA */}
       <section className="py-20 text-center">
         <h3 className="text-2xl md:text-3xl font-bold mb-4">
-          Ready to <span className="text-gradient-gold">re-master your mind?</span>
+          Ready to{" "}
+          <span className="text-gradient-gold">re-master your mind?</span>
         </h3>
         <Link href="/contact">
           <button
             className="inline-flex items-center justify-center rounded-md text-[#0a0a0a] font-semibold group h-11 px-8"
-            style={{ background: `linear-gradient(to right, ${GOLD}, #B8960C)` }}
+            style={{
+              background: `linear-gradient(to right, ${GOLD}, #B8960C)`,
+            }}
           >
             Book a Session
             <ArrowRight className="ml-2 w-4 h-4 group-hover:translate-x-1 transition-transform" />

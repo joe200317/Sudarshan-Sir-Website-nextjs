@@ -19,7 +19,7 @@ export default function PageHero({
   return (
     <section className="relative pt-32 pb-16 lg:pt-40 lg:pb-20 overflow-hidden">
       <div className="absolute top-1/3 -left-20 w-96 h-96 bg-[#D4AF37]/10 rounded-full blur-[130px]" />
-      <div className="absolute bottom-0 right-0 w-80 h-80 bg-[#00BFFF]/5 rounded-full blur-[120px]" />
+      <div className="absolute bottom-0 right-0 w-80 h-80 bg-[#D4AF37]/5 rounded-full blur-[120px]" />
 
       <div className="container relative z-10 max-w-3xl">
         <motion.div
@@ -31,7 +31,7 @@ export default function PageHero({
             <div className="w-8 h-px" style={{ background: GOLD }} />
             <span
               style={{ fontFamily: "var(--font-accent)" }}
-              className="text-[#00BFFF] text-xs tracking-[0.3em] uppercase"
+              className="text-[#D4AF37] text-xs tracking-[0.3em] uppercase"
             >
               {eyebrow}
             </span>
