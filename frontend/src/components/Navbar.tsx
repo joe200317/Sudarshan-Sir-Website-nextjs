@@ -1,18 +1,19 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
 import { Brain } from "lucide-react";
 
 const GOLD = "#D4AF37";
 
 const navLinks = [
-  { label: "Home", href: "#home" },
-  { label: "About", href: "#about" },
-  { label: "Services", href: "#services" },
-  { label: "Awards", href: "#awards" },
-  { label: "Testimonials", href: "#testimonials" },
-  { label: "Contact", href: "#contact" },
+  { label: "Home", href: "/" },
+  { label: "About", href: "/about" },
+  { label: "Services", href: "/#services" },
+  { label: "Awards", href: "/#awards" },
+  { label: "Testimonials", href: "/#testimonials" },
+  { label: "Contact", href: "/#contact" },
 ];
 
 export default function Navbar() {
@@ -34,7 +35,7 @@ export default function Navbar() {
       }`}
     >
       <div className="container flex items-center justify-between">
-        <a href="#home" className="flex items-center gap-3">
+        <Link href="/" className="flex items-center gap-3">
           <div
             className="w-10 h-10 rounded-lg flex items-center justify-center"
             style={{
@@ -49,19 +50,19 @@ export default function Navbar() {
           >
             MIND TRAINER
           </span>
-        </a>
+        </Link>
 
         <div className="hidden lg:flex items-center gap-8">
           {navLinks.map((link) => (
-            <a
+            <Link
               key={link.label}
               href={link.href}
               className="text-[#F5F0E8]/70 hover:text-[#D4AF37] transition-colors duration-300 text-sm tracking-wide uppercase"
             >
               {link.label}
-            </a>
+            </Link>
           ))}
-          <a href="#contact">
+          <Link href="/#contact">
             <button
               className="inline-flex items-center justify-center rounded-md text-[#0a0a0a] font-semibold hover:shadow-[0_0_20px_rgba(212,175,55,0.4)] transition-all duration-300 px-6 h-9 text-sm"
               style={{
@@ -70,7 +71,7 @@ export default function Navbar() {
             >
               Book Session
             </button>
-          </a>
+          </Link>
         </div>
 
         <button
@@ -104,16 +105,16 @@ export default function Navbar() {
           >
             <div className="container py-6 flex flex-col gap-4">
               {navLinks.map((link) => (
-                <a
+                <Link
                   key={link.label}
                   href={link.href}
                   onClick={() => setOpen(false)}
                   className="text-[#F5F0E8]/70 hover:text-[#D4AF37] transition-colors text-sm tracking-wide uppercase py-2"
                 >
                   {link.label}
-                </a>
+                </Link>
               ))}
-              <a href="#contact" onClick={() => setOpen(false)}>
+              <Link href="/#contact" onClick={() => setOpen(false)}>
                 <button
                   className="w-full inline-flex items-center justify-center rounded-md text-[#0a0a0a] font-semibold h-10 px-4"
                   style={{
@@ -122,7 +123,7 @@ export default function Navbar() {
                 >
                   Book Session
                 </button>
-              </a>
+              </Link>
             </div>
           </motion.div>
         )}

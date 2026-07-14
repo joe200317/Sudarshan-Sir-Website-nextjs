@@ -5,7 +5,7 @@ import { Brain } from "lucide-react";
 const GOLD = "#D4AF37";
 
 const quickLinksLeft = [
-  { label: "About", href: "#about" },
+  { label: "About", href: "/about" },
   { label: "Awards", href: "#awards" },
   { label: "Contact", href: "#contact" },
 ];
@@ -23,7 +23,7 @@ export default function Footer() {
         <div className="grid md:grid-cols-3 gap-12 md:gap-8 mb-14">
           {/* Brand */}
           <div>
-            <a href="#home" className="inline-flex items-center gap-3 mb-4">
+            <a href="/" className="inline-flex items-center gap-3 mb-4">
               <div
                 className="w-9 h-9 rounded-md flex items-center justify-center"
                 style={{
