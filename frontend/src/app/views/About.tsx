@@ -5,8 +5,6 @@ import Image from "next/image";
 import Link from "next/link";
 import { motion, useInView } from "framer-motion";
 import { ArrowRight, BookOpen, Building2, Trophy, Users } from "lucide-react";
-import Navbar from "@/components/Navbar";
-import Footer from "@/components/Footer";
 
 const GOLD = "#D4AF37";
 const BLUE = "#00BFFF";
@@ -51,9 +49,7 @@ export default function AboutPage() {
   const inView = useInView(timelineRef, { once: true, margin: "-100px" });
 
   return (
-    <main className="min-h-screen bg-[#050505] text-[#F5F0E8]">
-      <Navbar />
-
+    <main className="bg-[#050505] text-[#F5F0E8]">
       {/* Hero — offset portrait, not a background image */}
       <section className="relative pt-32 pb-24 lg:pt-40 lg:pb-32 overflow-hidden">
         <div className="absolute top-1/3 -left-20 w-96 h-96 bg-[#D4AF37]/10 rounded-full blur-[130px]" />
@@ -89,7 +85,7 @@ export default function AboutPage() {
               blocks them — reprogramming the mind rather than simply advising it.
             </p>
 
-            <Link href="/#contact">
+            <Link href="/contact">
               <button
                 className="inline-flex items-center justify-center rounded-md text-[#0a0a0a] font-semibold group h-11 px-7"
                 style={{ background: `linear-gradient(to right, ${GOLD}, #B8960C)` }}
@@ -273,7 +269,7 @@ export default function AboutPage() {
         <h3 className="text-2xl md:text-3xl font-bold mb-4">
           Ready to <span className="text-gradient-gold">re-master your mind?</span>
         </h3>
-        <Link href="/#contact">
+        <Link href="/contact">
           <button
             className="inline-flex items-center justify-center rounded-md text-[#0a0a0a] font-semibold group h-11 px-8"
             style={{ background: `linear-gradient(to right, ${GOLD}, #B8960C)` }}
@@ -283,8 +279,6 @@ export default function AboutPage() {
           </button>
         </Link>
       </section>
-
-      <Footer />
     </main>
   );
 }

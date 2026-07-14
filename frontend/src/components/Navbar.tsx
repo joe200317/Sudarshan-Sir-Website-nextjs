@@ -2,29 +2,35 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import { Brain } from "lucide-react";
 
 const GOLD = "#D4AF37";
 
 const navLinks = [
-  { label: "Home", href: "#home" },
-  { label: "About", href: "#about" },
-  { label: "PROGRAMS", href: "#" },
-  { label: "Awards", href: "#awards" },
-  { label: "Testimonials", href: "#testimonials" },
-  { label: "Contact", href: "#contact" },
+  { label: "Home", href: "/" },
+  { label: "About", href: "/about" },
+  { label: "Programs", href: "/programs" },
+  { label: "Awards", href: "/awards" },
+  { label: "Testimonials", href: "/testimonials" },
+  { label: "Contact", href: "/contact" },
 ];
 
 export default function Navbar() {
   const [scrolled, setScrolled] = useState(false);
   const [open, setOpen] = useState(false);
+  const pathname = usePathname();
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 80);
     window.addEventListener("scroll", onScroll);
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
+
+  useEffect(() => {
+    setOpen(false);
+  }, [pathname]);
 
   return (
     <nav
@@ -53,16 +59,23 @@ export default function Navbar() {
         </Link>
 
         <div className="hidden lg:flex items-center gap-8">
-          {navLinks.map((link) => (
-            <Link
-              key={link.label}
-              href={link.href}
-              className="text-[#F5F0E8]/70 hover:text-[#D4AF37] transition-colors duration-300 text-sm tracking-wide uppercase"
-            >
-              {link.label}
-            </Link>
-          ))}
-          <Link href="/#contact">
+          {navLinks.map((link) => {
+            const active = pathname === link.href;
+            return (
+              <Link
+                key={link.label}
+                href={link.href}
+                className={`transition-colors duration-300 text-sm tracking-wide uppercase ${
+                  active
+                    ? "text-[#D4AF37]"
+                    : "text-[#F5F0E8]/70 hover:text-[#D4AF37]"
+                }`}
+              >
+                {link.label}
+              </Link>
+            );
+          })}
+          <Link href="/contact">
             <button
               className="inline-flex items-center justify-center rounded-md text-[#0a0a0a] font-semibold hover:shadow-[0_0_20px_rgba(212,175,55,0.4)] transition-all duration-300 px-6 h-9 text-sm"
               style={{
@@ -104,17 +117,23 @@ export default function Navbar() {
             className="lg:hidden bg-[#0a0a0a]/98 backdrop-blur-xl border-b border-[#D4AF37]/20"
           >
             <div className="container py-6 flex flex-col gap-4">
-              {navLinks.map((link) => (
-                <Link
-                  key={link.label}
-                  href={link.href}
-                  onClick={() => setOpen(false)}
-                  className="text-[#F5F0E8]/70 hover:text-[#D4AF37] transition-colors text-sm tracking-wide uppercase py-2"
-                >
-                  {link.label}
-                </Link>
-              ))}
-              <Link href="/#contact" onClick={() => setOpen(false)}>
+              {navLinks.map((link) => {
+                const active = pathname === link.href;
+                return (
+                  <Link
+                    key={link.label}
+                    href={link.href}
+                    className={`text-sm tracking-wide uppercase py-2 transition-colors ${
+                      active
+                        ? "text-[#D4AF37]"
+                        : "text-[#F5F0E8]/70 hover:text-[#D4AF37]"
+                    }`}
+                  >
+                    {link.label}
+                  </Link>
+                );
+              })}
+              <Link href="/contact">
                 <button
                   className="w-full inline-flex items-center justify-center rounded-md text-[#0a0a0a] font-semibold h-10 px-4"
                   style={{

@@ -1,19 +1,20 @@
 "use client";
 
+import Link from "next/link";
 import { Brain } from "lucide-react";
 
 const GOLD = "#D4AF37";
 
 const quickLinksLeft = [
   { label: "About", href: "/about" },
-  { label: "Awards", href: "#awards" },
-  { label: "Contact", href: "#contact" },
+  { label: "Programs", href: "/programs" },
+  { label: "Awards", href: "/awards" },
 ];
 
 const quickLinksRight = [
-  { label: "Services", href: "#services" },
-  { label: "Testimonials", href: "#testimonials" },
-  { label: "FAQ", href: "#faq" },
+  { label: "Testimonials", href: "/testimonials" },
+  { label: "Contact", href: "/contact" },
+  { label: "Home", href: "/" },
 ];
 
 export default function Footer() {
@@ -21,9 +22,8 @@ export default function Footer() {
     <footer className="bg-[#000000] border-t border-[#F5F0E8]/8">
       <div className="container py-16 md:py-20">
         <div className="grid md:grid-cols-3 gap-12 md:gap-8 mb-14">
-          {/* Brand */}
           <div>
-            <a href="/" className="inline-flex items-center gap-3 mb-4">
+            <Link href="/" className="inline-flex items-center gap-3 mb-4">
               <div
                 className="w-9 h-9 rounded-md flex items-center justify-center"
                 style={{
@@ -38,14 +38,13 @@ export default function Footer() {
               >
                 MIND TRAINER
               </span>
-            </a>
+            </Link>
             <p className="text-[#F5F0E8]/45 text-sm leading-relaxed max-w-xs">
               Elite mental performance coaching for those who refuse to accept
               ordinary limits.
             </p>
           </div>
 
-          {/* Quick Links */}
           <div>
             <h4
               className="text-[#F5F0E8] text-sm tracking-[0.15em] mb-5"
@@ -57,31 +56,30 @@ export default function Footer() {
               <ul className="flex flex-col gap-3">
                 {quickLinksLeft.map((link) => (
                   <li key={link.label}>
-                    <a
+                    <Link
                       href={link.href}
                       className="text-[#F5F0E8]/45 text-sm hover:text-[#D4AF37] transition-colors duration-300"
                     >
                       {link.label}
-                    </a>
+                    </Link>
                   </li>
                 ))}
               </ul>
               <ul className="flex flex-col gap-3">
                 {quickLinksRight.map((link) => (
                   <li key={link.label}>
-                    <a
+                    <Link
                       href={link.href}
                       className="text-[#F5F0E8]/45 text-sm hover:text-[#D4AF37] transition-colors duration-300"
                     >
                       {link.label}
-                    </a>
+                    </Link>
                   </li>
                 ))}
               </ul>
             </div>
           </div>
 
-          {/* Mantra */}
           <div>
             <h4
               className="text-[#F5F0E8] text-sm tracking-[0.15em] mb-5"
@@ -107,24 +105,13 @@ export default function Footer() {
           </div>
         </div>
 
-        {/* Bottom bar */}
         <div className="border-t border-[#F5F0E8]/10 pt-6 flex flex-col sm:flex-row items-center justify-between gap-4">
           <p className="text-[#F5F0E8]/35 text-xs">
             © 2025 Mind Trainer. All rights reserved.
           </p>
           <div className="flex items-center gap-6">
-            <a
-              href="#privacy"
-              className="text-[#F5F0E8]/35 text-xs hover:text-[#D4AF37] transition-colors duration-300"
-            >
-              Privacy Policy
-            </a>
-            <a
-              href="#terms"
-              className="text-[#F5F0E8]/35 text-xs hover:text-[#D4AF37] transition-colors duration-300"
-            >
-              Terms of Service
-            </a>
+            <span className="text-[#F5F0E8]/35 text-xs">Privacy Policy</span>
+            <span className="text-[#F5F0E8]/35 text-xs">Terms of Service</span>
           </div>
         </div>
       </div>
