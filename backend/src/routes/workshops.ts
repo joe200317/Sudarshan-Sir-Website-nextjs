@@ -1,15 +1,19 @@
 import { Router } from "express";
 import mongoose from "mongoose";
-import { Program } from "../models/Program.js";
 import { Workshop } from "../models/Workshop.js";
 import { AuthError, requirePermission } from "../lib/auth.js";
-import { parseOptionalFloat, uniqueSlug, toDate } from "../lib/utils.js";
+import {
+  getWorkshopProgramTitle,
+  isWorkshopProgramSlug,
+} from "../lib/workshop-programs.js";
+import { parseOptionalFloat, slugify, toDate } from "../lib/utils.js";
 import { asyncHandler } from "../middleware/error.js";
 
 const router = Router();
 
 type PopulatedWorkshop = {
   _id: mongoose.Types.ObjectId;
+  programSlug: string;
   slug: string;
   startDate: Date;
   endDate: Date;
@@ -20,7 +24,6 @@ type PopulatedWorkshop = {
   metaPixelCode?: string | null;
   includePayment?: boolean | null;
   imageUrl: string;
-  programId: { _id: mongoose.Types.ObjectId; title: string; slug: string };
   createdById: {
     _id: mongoose.Types.ObjectId;
     name: string;
@@ -32,6 +35,7 @@ type PopulatedWorkshop = {
 export function serializeWorkshop(w: PopulatedWorkshop) {
   return {
     id: w._id.toString(),
+    programSlug: w.programSlug,
     slug: w.slug,
     startDate: w.startDate,
     endDate: w.endDate,
@@ -43,9 +47,8 @@ export function serializeWorkshop(w: PopulatedWorkshop) {
     includePayment: Boolean(w.includePayment),
     imageUrl: w.imageUrl,
     program: {
-      id: w.programId._id.toString(),
-      title: w.programId.title,
-      slug: w.programId.slug,
+      slug: w.programSlug,
+      title: getWorkshopProgramTitle(w.programSlug),
     },
     createdBy: {
       id: w.createdById._id.toString(),
@@ -58,7 +61,6 @@ export function serializeWorkshop(w: PopulatedWorkshop) {
 
 async function loadWorkshop(id: string) {
   return Workshop.findById(id)
-    .populate("programId", "title slug")
     .populate("createdById", "name email")
     .lean<PopulatedWorkshop | null>();
 }
@@ -69,10 +71,22 @@ router.get(
     await requirePermission(req, "workshops");
     const workshops = await Workshop.find()
       .sort({ createdAt: -1 })
-      .populate("programId", "title slug")
       .populate("createdById", "name email")
       .lean<PopulatedWorkshop[]>();
     res.json({ workshops: workshops.map(serializeWorkshop) });
+  }),
+);
+
+/** Public — land page by workshop slug */
+router.get(
+  "/by-slug/:slug",
+  asyncHandler(async (req, res) => {
+    const slug = String(req.params.slug || "").trim();
+    const workshop = await Workshop.findOne({ slug })
+      .populate("createdById", "name email")
+      .lean<PopulatedWorkshop | null>();
+    if (!workshop) throw new AuthError("Workshop not found", 404);
+    res.json({ workshop: serializeWorkshop(workshop) });
   }),
 );
 
@@ -84,7 +98,7 @@ router.post(
       throw new AuthError("Only users can add workshops", 403);
     }
 
-    const programId = String(req.body.programId || "");
+    const programSlug = String(req.body.programSlug || "").trim();
     const location = String(req.body.location || "").trim();
     const notificationEmail = String(req.body.notificationEmail || "")
       .trim()
@@ -95,11 +109,16 @@ router.post(
     const fees = parseOptionalFloat(req.body.fees);
     const startDate = toDate(req.body.startDate);
     const endDate = toDate(req.body.endDate);
-    const eventDate = toDate(req.body.eventDate);
+    const eventDate = toDate(req.body.eventDate) || startDate;
 
-    if (!programId) throw new AuthError("Program is required", 400);
-    if (!startDate || !endDate || !eventDate) {
-      throw new AuthError("Start, end and event dates are required", 400);
+    if (!isWorkshopProgramSlug(programSlug)) {
+      throw new AuthError(
+        "Program must be Train The Trainer - 1 Day or Life Counselling - 4 Day",
+        400,
+      );
+    }
+    if (!startDate || !endDate) {
+      throw new AuthError("Start and end dates are required", 400);
     }
     if (!location) throw new AuthError("Location is required", 400);
     if (!notificationEmail) {
@@ -107,22 +126,20 @@ router.post(
     }
     if (!imageUrl) throw new AuthError("Image is required", 400);
 
-    const program = await Program.findById(programId);
-    if (!program || !program.isActive) {
-      throw new AuthError("Program not found", 404);
+    const slug = slugify(String(req.body.slug || ""));
+    if (!slug) throw new AuthError("Slug is required", 400);
+
+    const slugTaken = await Workshop.findOne({ slug }).select("_id").lean();
+    if (slugTaken) {
+      throw new AuthError("Slug already exists — choose a unique slug", 400);
     }
 
-    const datePart = eventDate.toISOString().slice(0, 10);
-    const slug = await uniqueSlug(`${program.title}-${datePart}`, async (s) =>
-      Boolean(await Workshop.findOne({ slug: s }).select("_id").lean()),
-    );
-
     const created = await Workshop.create({
-      programId,
+      programSlug,
       slug,
       startDate,
       endDate,
-      eventDate,
+      eventDate: eventDate || startDate,
       fees,
       location,
       notificationEmail,
@@ -151,7 +168,24 @@ router.patch(
       throw new AuthError("Forbidden", 403);
     }
 
-    if (req.body.programId) existing.programId = req.body.programId;
+    if (req.body.programSlug !== undefined) {
+      const programSlug = String(req.body.programSlug).trim();
+      if (!isWorkshopProgramSlug(programSlug)) {
+        throw new AuthError("Invalid program", 400);
+      }
+      existing.programSlug = programSlug;
+    }
+    if (req.body.slug !== undefined) {
+      const slug = slugify(String(req.body.slug));
+      if (!slug) throw new AuthError("Slug is required", 400);
+      if (slug !== existing.slug) {
+        const clash = await Workshop.findOne({ slug }).select("_id").lean();
+        if (clash) {
+          throw new AuthError("Slug already exists — choose a unique slug", 400);
+        }
+        existing.slug = slug;
+      }
+    }
     if (req.body.location !== undefined) {
       existing.location = String(req.body.location).trim();
     }
@@ -178,6 +212,7 @@ router.patch(
     if (startDate) existing.startDate = startDate;
     if (endDate) existing.endDate = endDate;
     if (eventDate) existing.eventDate = eventDate;
+    else if (startDate) existing.eventDate = startDate;
 
     await existing.save();
     const workshop = await loadWorkshop(existing._id.toString());

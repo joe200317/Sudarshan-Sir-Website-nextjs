@@ -2,11 +2,8 @@ import mongoose, { Schema, type InferSchemaType, type Model } from "mongoose";
 
 const workshopSchema = new Schema(
   {
-    programId: {
-      type: Schema.Types.ObjectId,
-      ref: "Program",
-      required: true,
-    },
+    /** Static: train-the-trainer-1-day | life-counselling-4-day */
+    programSlug: { type: String, required: true, trim: true },
     slug: { type: String, required: true, unique: true, trim: true },
     startDate: { type: Date, required: true },
     endDate: { type: Date, required: true },
@@ -27,11 +24,17 @@ const workshopSchema = new Schema(
 );
 
 workshopSchema.index({ eventDate: -1 });
+workshopSchema.index({ programSlug: 1 });
 
 export type WorkshopDoc = InferSchemaType<typeof workshopSchema> & {
   _id: mongoose.Types.ObjectId;
 };
 
-export const Workshop: Model<WorkshopDoc> =
-  mongoose.models.Workshop ||
-  mongoose.model<WorkshopDoc>("Workshop", workshopSchema);
+if (mongoose.models.Workshop) {
+  delete mongoose.models.Workshop;
+}
+
+export const Workshop: Model<WorkshopDoc> = mongoose.model<WorkshopDoc>(
+  "Workshop",
+  workshopSchema,
+);

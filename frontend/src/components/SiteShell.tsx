@@ -4,7 +4,7 @@ import { usePathname } from "next/navigation";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 
-const BARE_PREFIXES = ["/landing", "/4days"];
+const BARE_PREFIXES = ["/landing", "/4days", "/workshop"];
 
 export default function SiteShell({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();

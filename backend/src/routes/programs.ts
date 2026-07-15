@@ -1,6 +1,5 @@
 import { Router } from "express";
 import { Program } from "../models/Program.js";
-import { Workshop } from "../models/Workshop.js";
 import {
   AuthError,
   requirePermission,
@@ -109,15 +108,6 @@ router.delete(
   "/:id",
   asyncHandler(async (req, res) => {
     await requireSuperAdmin(req);
-    const count = await Workshop.countDocuments({
-      programId: req.params.id,
-    });
-    if (count > 0) {
-      throw new AuthError(
-        "Cannot delete program that has workshops. Deactivate it instead.",
-        400,
-      );
-    }
     await Program.findByIdAndDelete(req.params.id);
     res.json({ ok: true });
   }),

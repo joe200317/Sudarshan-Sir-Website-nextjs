@@ -1,13 +1,16 @@
 "use client";
 
 import { apiFetch } from "@/lib/api";
-import { formatDate } from "@/lib/utils";
+import { formatDate, slugify } from "@/lib/utils";
+import { WORKSHOP_PROGRAMS } from "@/data/workshop-programs";
 import { useEffect, useState } from "react";
-import { Plus, Pencil, Trash2, X, Upload, Check } from "lucide-react";
+import Link from "next/link";
+import { Plus, Pencil, Trash2, X, Upload, Check, ExternalLink } from "lucide-react";
 
-type Program = { id: string; title: string; slug: string };
+type Program = { slug: string; title: string };
 type Workshop = {
   id: string;
+  programSlug: string;
   slug: string;
   startDate: string;
   endDate: string;
@@ -23,7 +26,8 @@ type Workshop = {
 };
 
 const emptyForm = {
-  programId: "",
+  programSlug: "",
+  slug: "",
   startDate: "",
   endDate: "",
   eventDate: "",
@@ -48,7 +52,6 @@ export default function WorkshopManager({
   canCreate?: boolean;
 }) {
   const [workshops, setWorkshops] = useState<Workshop[]>([]);
-  const [programs, setPrograms] = useState<Program[]>([]);
   const [loading, setLoading] = useState(true);
   const [open, setOpen] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
@@ -60,14 +63,9 @@ export default function WorkshopManager({
   async function load() {
     setLoading(true);
     try {
-      const [wRes, pRes] = await Promise.all([
-        apiFetch("/api/workshops"),
-        apiFetch("/api/programs"),
-      ]);
+      const wRes = await apiFetch("/api/workshops");
       const wData = await wRes.json();
-      const pData = await pRes.json();
       if (wRes.ok) setWorkshops(wData.workshops || []);
-      if (pRes.ok) setPrograms(pData.programs || []);
     } finally {
       setLoading(false);
     }
@@ -88,10 +86,11 @@ export default function WorkshopManager({
   function openEdit(w: Workshop) {
     setEditingId(w.id);
     setForm({
-      programId: w.program.id,
+      programSlug: w.programSlug || w.program?.slug || "",
+      slug: w.slug || "",
       startDate: toInputDate(w.startDate),
       endDate: toInputDate(w.endDate),
-      eventDate: toInputDate(w.eventDate),
+      eventDate: toInputDate(w.eventDate || w.startDate),
       fees: w.fees != null ? String(w.fees) : "",
       location: w.location,
       notificationEmail: w.notificationEmail,
@@ -172,7 +171,7 @@ export default function WorkshopManager({
           </h1>
           <p className="text-sm text-[#F5F0E8]/45 mt-1">
             {canCreate
-              ? "Add workshops linked to programs"
+              ? "Add workshops — pick Train The Trainer or Life Counselling"
               : "All workshops created by users (view only — users add workshops)"}
           </p>
         </div>
@@ -197,6 +196,7 @@ export default function WorkshopManager({
             <thead>
               <tr className="border-b border-[#D4AF37]/12 text-[11px] uppercase tracking-wider text-[#F5F0E8]/40">
                 <th className="px-4 py-3 font-medium">Program</th>
+                <th className="px-4 py-3 font-medium">Slug</th>
                 <th className="px-4 py-3 font-medium">Start / End</th>
                 <th className="px-4 py-3 font-medium">Location</th>
                 <th className="px-4 py-3 font-medium">Fees</th>
@@ -206,13 +206,13 @@ export default function WorkshopManager({
             <tbody className="divide-y divide-[#F5F0E8]/6">
               {loading ? (
                 <tr>
-                  <td colSpan={5} className="px-4 py-10 text-center text-[#F5F0E8]/40">
+                  <td colSpan={6} className="px-4 py-10 text-center text-[#F5F0E8]/40">
                     Loading…
                   </td>
                 </tr>
               ) : workshops.length === 0 ? (
                 <tr>
-                  <td colSpan={5} className="px-4 py-10 text-center text-[#F5F0E8]/40">
+                  <td colSpan={6} className="px-4 py-10 text-center text-[#F5F0E8]/40">
                     {canCreate
                       ? "No workshops yet. Click Add Workshop."
                       : "No workshops yet."}
@@ -221,7 +221,19 @@ export default function WorkshopManager({
               ) : (
                 workshops.map((w) => (
                   <tr key={w.id} className="hover:bg-white/[0.02]">
-                    <td className="px-4 py-3 font-medium">{w.program.title}</td>
+                    <td className="px-4 py-3 font-medium">
+                      <div>{w.program?.title || w.programSlug}</div>
+                      <Link
+                        href={`/workshop/${w.slug}`}
+                        target="_blank"
+                        className="inline-flex items-center gap-1 text-[11px] text-[#00BFFF] hover:underline mt-0.5"
+                      >
+                        Open page <ExternalLink className="w-3 h-3" />
+                      </Link>
+                    </td>
+                    <td className="px-4 py-3 font-mono text-xs text-[#F5F0E8]/55">
+                      {w.slug}
+                    </td>
                     <td className="px-4 py-3 text-xs text-[#F5F0E8]/70">
                       <div>{formatDate(w.startDate)}</div>
                       <div>{formatDate(w.endDate)}</div>
@@ -281,23 +293,43 @@ export default function WorkshopManager({
                   Select program
                 </label>
                 <select
-                  value={form.programId}
+                  value={form.programSlug}
                   onChange={(e) =>
-                    setForm((f) => ({ ...f, programId: e.target.value }))
+                    setForm((f) => ({ ...f, programSlug: e.target.value }))
                   }
                   className="w-full rounded-lg border border-[#D4AF37]/20 bg-black/40 px-4 py-3 text-sm outline-none focus:border-[#D4AF37]/50 text-[#F5F0E8]"
                   required
                 >
                   <option value="">Choose program…</option>
-                  {programs.map((p) => (
-                    <option key={p.id} value={p.id}>
+                  {WORKSHOP_PROGRAMS.map((p) => (
+                    <option key={p.slug} value={p.slug}>
                       {p.title}
                     </option>
                   ))}
                 </select>
-                {programs.length === 0 && (
-                  <p className="text-xs text-amber-400/90 mt-1">
-                    No programs yet — super admin must add programs first.
+              </div>
+
+              <div>
+                <label className="block text-xs tracking-wider uppercase text-[#F5F0E8]/40 mb-2">
+                  Slug (unique URL)
+                </label>
+                <input
+                  type="text"
+                  value={form.slug}
+                  onChange={(e) =>
+                    setForm((f) => ({ ...f, slug: slugify(e.target.value) }))
+                  }
+                  placeholder="e.g. mumbai-ttt-july"
+                  className="w-full rounded-lg border border-[#D4AF37]/20 bg-black/40 px-4 py-3 text-sm font-mono outline-none focus:border-[#D4AF37]/50 text-[#F5F0E8]"
+                  required
+                />
+                {form.slug ? (
+                  <p className="mt-1.5 text-[11px] text-[#00BFFF]/80">
+                    Page: /workshop/{form.slug}
+                  </p>
+                ) : (
+                  <p className="mt-1.5 text-[11px] text-[#F5F0E8]/35">
+                    Must be unique — page opens at /workshop/your-slug
                   </p>
                 )}
               </div>
