@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { Brain } from "lucide-react";
 
 const GOLD = "#D4AF37";
@@ -18,6 +19,15 @@ const quickLinksRight = [
 ];
 
 export default function Footer() {
+  const pathname = usePathname();
+  if (
+    pathname?.startsWith("/admin") ||
+    pathname?.startsWith("/user") ||
+    pathname?.startsWith("/create-super-admin")
+  ) {
+    return null;
+  }
+
   return (
     <footer className="bg-[#000000] border-t border-[#F5F0E8]/8">
       <div className="container py-16 md:py-20">
@@ -99,7 +109,7 @@ export default function Footer() {
                 className="text-[#D4AF37] text-xs tracking-[0.2em]"
                 style={{ fontFamily: "var(--font-accent)" }}
               >
-                EST. 2019
+                EST. 2010
               </span>
             </div>
           </div>
@@ -107,7 +117,7 @@ export default function Footer() {
 
         <div className="border-t border-[#F5F0E8]/10 pt-6 flex flex-col sm:flex-row items-center justify-between gap-4">
           <p className="text-[#F5F0E8]/35 text-xs">
-            © 2026 Mind Trainer. All rights reserved.
+            © 2025 Mind Trainer. All rights reserved.
           </p>
           <div className="flex items-center gap-6">
             <span className="text-[#F5F0E8]/35 text-xs">Privacy Policy</span>

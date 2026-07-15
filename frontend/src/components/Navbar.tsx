@@ -52,6 +52,14 @@ export default function Navbar() {
     return () => document.removeEventListener("mousedown", onClick);
   }, []);
 
+  if (
+    pathname?.startsWith("/admin") ||
+    pathname?.startsWith("/user") ||
+    pathname?.startsWith("/create-super-admin")
+  ) {
+    return null;
+  }
+
   const programsActive =
     pathname === "/programs" || pathname.startsWith("/programs/");
 
