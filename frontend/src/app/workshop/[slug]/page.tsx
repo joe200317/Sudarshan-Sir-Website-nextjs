@@ -3,21 +3,44 @@ import TTT_1Day, { TTT_1DAY } from "@/components/workshop/TTT_1Day";
 import LC_4Day, { LC_4DAY } from "@/components/workshop/LC_4Day";
 import { API_BASE } from "@/lib/api";
 import { isWorkshopProgramSlug } from "@/data/workshop-programs";
+import type { WorkshopBookingInfo } from "@/data/reserve-spot";
 
-async function getWorkshopProgramSlug(slug: string) {
+type WorkshopPayload = {
+  slug: string;
+  programSlug: string;
+  fees: number | null;
+  includePayment: boolean;
+  program?: { title?: string };
+};
+
+async function getWorkshop(slug: string) {
   try {
     const res = await fetch(
       `${API_BASE}/api/workshops/by-slug/${encodeURIComponent(slug)}`,
       { next: { revalidate: 30 } },
     );
     if (!res.ok) return null;
-    const data = (await res.json()) as {
-      workshop?: { programSlug?: string };
-    };
-    return data.workshop?.programSlug ?? null;
+    const data = (await res.json()) as { workshop?: WorkshopPayload };
+    return data.workshop ?? null;
   } catch {
     return null;
   }
+}
+
+function toBookingInfo(w: WorkshopPayload): WorkshopBookingInfo {
+  return {
+    slug: w.slug,
+    programSlug: w.programSlug,
+    programTitle:
+      w.program?.title ||
+      (w.programSlug === TTT_1DAY.slug
+        ? TTT_1DAY.programName
+        : w.programSlug === LC_4DAY.slug
+          ? LC_4DAY.programName
+          : w.programSlug),
+    fees: w.fees,
+    includePayment: Boolean(w.includePayment),
+  };
 }
 
 export async function generateMetadata({
@@ -26,7 +49,8 @@ export async function generateMetadata({
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = await params;
-  const programSlug = await getWorkshopProgramSlug(slug);
+  const workshop = await getWorkshop(slug);
+  const programSlug = workshop?.programSlug;
   if (programSlug === TTT_1DAY.slug) {
     return { title: `${TTT_1DAY.programName} | Sudarshan Sabat` };
   }
@@ -42,11 +66,22 @@ export default async function WorkshopSlugPage({
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = await params;
-  const programSlug = await getWorkshopProgramSlug(slug);
-  if (!programSlug || !isWorkshopProgramSlug(programSlug)) notFound();
+  const workshop = await getWorkshop(slug);
+  if (
+    !workshop?.programSlug ||
+    !isWorkshopProgramSlug(workshop.programSlug)
+  ) {
+    notFound();
+  }
 
-  if (programSlug === "train-the-trainer-1-day") return <TTT_1Day />;
-  if (programSlug === "life-counselling-4-day") return <LC_4Day />;
+  const booking = toBookingInfo(workshop);
+
+  if (workshop.programSlug === "train-the-trainer-1-day") {
+    return <TTT_1Day workshop={booking} />;
+  }
+  if (workshop.programSlug === "life-counselling-4-day") {
+    return <LC_4Day workshop={booking} />;
+  }
 
   notFound();
 }

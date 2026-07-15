@@ -6,6 +6,9 @@ import { WORKSHOP_PROGRAMS } from "@/data/workshop-programs";
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { Plus, Pencil, Trash2, X, Upload, Check, ExternalLink } from "lucide-react";
+import WorkshopRegistrationsReport, {
+  ViewRegistrationsButton,
+} from "@/components/admin/WorkshopRegistrationsReport";
 
 type Program = { slug: string; title: string };
 type Workshop = {
@@ -59,6 +62,7 @@ export default function WorkshopManager({
   const [error, setError] = useState("");
   const [saving, setSaving] = useState(false);
   const [uploading, setUploading] = useState(false);
+  const [reportWorkshop, setReportWorkshop] = useState<Workshop | null>(null);
 
   async function load() {
     setLoading(true);
@@ -244,6 +248,9 @@ export default function WorkshopManager({
                     </td>
                     <td className="px-4 py-3">
                       <div className="flex justify-end gap-2">
+                        <ViewRegistrationsButton
+                          onClick={() => setReportWorkshop(w)}
+                        />
                         {canCreate && (
                           <button
                             type="button"
@@ -472,6 +479,17 @@ export default function WorkshopManager({
             </form>
           </div>
         </div>
+      )}
+
+      {reportWorkshop && (
+        <WorkshopRegistrationsReport
+          open={Boolean(reportWorkshop)}
+          onClose={() => setReportWorkshop(null)}
+          workshopSlug={reportWorkshop.slug}
+          workshopTitle={
+            reportWorkshop.program?.title || reportWorkshop.programSlug
+          }
+        />
       )}
     </div>
   );

@@ -17,6 +17,8 @@ import {
   TrendingUp,
   Trophy,
 } from "lucide-react";
+import ReserveSpotModal from "@/components/workshop/ReserveSpotModal";
+import type { WorkshopBookingInfo } from "@/data/reserve-spot";
 
 export const TTT_1DAY = {
   programName: "Train The Trainer - 1 day",
@@ -164,26 +166,40 @@ function SectionLabel({ children }: { children: React.ReactNode }) {
 
 function GoldButton({
   href,
+  onClick,
   children,
   className = "",
 }: {
-  href: string;
+  href?: string;
+  onClick?: () => void;
   children: React.ReactNode;
   className?: string;
 }) {
+  const inner = (
+    <motion.span
+      whileHover={{ scale: 1.02 }}
+      whileTap={{ scale: 0.98 }}
+      className="inline-flex w-full items-center justify-center gap-2 rounded-lg px-8 py-3.5 text-sm font-semibold tracking-wide text-[#0a0a0a] transition-shadow hover:shadow-[0_0_36px_rgba(212,175,55,0.4)]"
+      style={{
+        background: `linear-gradient(135deg, ${GOLD}, #B8960C)`,
+      }}
+    >
+      {children}
+      <ArrowRight className="w-4 h-4" />
+    </motion.span>
+  );
+
+  if (onClick) {
+    return (
+      <button type="button" onClick={onClick} className={`inline-block ${className}`}>
+        {inner}
+      </button>
+    );
+  }
+
   return (
-    <Link href={href} className={`inline-block ${className}`}>
-      <motion.span
-        whileHover={{ scale: 1.02 }}
-        whileTap={{ scale: 0.98 }}
-        className="inline-flex w-full items-center justify-center gap-2 rounded-lg px-8 py-3.5 text-sm font-semibold tracking-wide text-[#0a0a0a] transition-shadow hover:shadow-[0_0_36px_rgba(212,175,55,0.4)]"
-        style={{
-          background: `linear-gradient(135deg, ${GOLD}, #B8960C)`,
-        }}
-      >
-        {children}
-        <ArrowRight className="w-4 h-4" />
-      </motion.span>
+    <Link href={href || "/payment"} className={`inline-block ${className}`}>
+      {inner}
     </Link>
   );
 }
@@ -227,14 +243,28 @@ function VideoThumb({
   );
 }
 
-export default function TTT_1Day() {
+export default function TTT_1Day({
+  workshop,
+}: {
+  workshop?: WorkshopBookingInfo;
+}) {
   const [timeLeft, setTimeLeft] = useState<TimeLeft>(getTimeLeft);
   const [masterVideoPlaying, setMasterVideoPlaying] = useState(false);
+  const [reserveOpen, setReserveOpen] = useState(false);
 
   useEffect(() => {
     const id = window.setInterval(() => setTimeLeft(getTimeLeft()), 1000);
     return () => window.clearInterval(id);
   }, []);
+
+  const openReserve = () => {
+    if (workshop) setReserveOpen(true);
+  };
+
+  const ctaLabel =
+    workshop?.includePayment && workshop.fees
+      ? `Book Your Seat — ₹${workshop.fees}`
+      : "Book Your Seat Now";
 
   const timerUnits = [
     { value: timeLeft.days, label: "Days" },
@@ -311,8 +341,13 @@ export default function TTT_1Day() {
               </p>
 
               <div className="flex flex-col sm:flex-row gap-3 sm:items-center mb-10">
-                <GoldButton href="/payment" className="w-full sm:w-auto">
-                  Book Your Seat Now
+                <GoldButton
+                  {...(workshop
+                    ? { onClick: openReserve }
+                    : { href: "/payment" })}
+                  className="w-full sm:w-auto"
+                >
+                  {ctaLabel}
                 </GoldButton>
                 <span className="inline-flex items-center justify-center sm:justify-start gap-2 text-xs text-[#F5F0E8]/45 tracking-wide">
                   <MapPin className="w-3.5 h-3.5 text-[#D4AF37]" />
@@ -834,8 +869,11 @@ export default function TTT_1Day() {
             Live in Pune · Limited seats · One transformative day with
             Sudarshan Sabat
           </p>
-          <GoldButton href="/payment" className="w-full sm:w-auto mb-6">
-            Book Your Seat Now
+          <GoldButton
+            {...(workshop ? { onClick: openReserve } : { href: "/payment" })}
+            className="w-full sm:w-auto mb-6"
+          >
+            {ctaLabel}
           </GoldButton>
           <div className="flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-6 text-xs text-[#F5F0E8]/40">
             <a
@@ -857,11 +895,22 @@ export default function TTT_1Day() {
 
       {/* Mobile sticky CTA */}
       <div className="fixed bottom-0 inset-x-0 z-40 p-3 sm:hidden bg-gradient-to-t from-[#050505] via-[#050505]/95 to-transparent pt-8">
-        <GoldButton href="/payment" className="w-full">
-          Book Your Seat Now
+        <GoldButton
+          {...(workshop ? { onClick: openReserve } : { href: "/payment" })}
+          className="w-full"
+        >
+          {ctaLabel}
         </GoldButton>
       </div>
       <div className="h-20 sm:hidden" aria-hidden />
+
+      {workshop && (
+        <ReserveSpotModal
+          open={reserveOpen}
+          onClose={() => setReserveOpen(false)}
+          workshop={workshop}
+        />
+      )}
     </main>
   );
 }

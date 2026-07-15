@@ -11,6 +11,7 @@ import programsRoutes from "./routes/programs.js";
 import workshopsRoutes from "./routes/workshops.js";
 import eventsRoutes from "./routes/events.js";
 import uploadRoutes from "./routes/upload.js";
+import registrationsRoutes from "./routes/registrations.js";
 
 const PORT = Number(process.env.PORT || 4000);
 const MONGODB_URI =
@@ -42,6 +43,7 @@ async function main() {
   app.use("/api/workshops", workshopsRoutes);
   app.use("/api/events", eventsRoutes);
   app.use("/api/upload", uploadRoutes);
+  app.use("/api/registrations", registrationsRoutes);
 
   app.use(errorHandler);
 

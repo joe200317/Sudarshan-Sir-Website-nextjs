@@ -17,6 +17,8 @@ import {
   Target,
   Users,
 } from "lucide-react";
+import ReserveSpotModal from "@/components/workshop/ReserveSpotModal";
+import type { WorkshopBookingInfo } from "@/data/reserve-spot";
 
 export const LC_4DAY = {
   programName: "Life Counselling - 4 Day",
@@ -117,37 +119,74 @@ const fadeUp = {
 
 function CtaButton({
   href,
+  onClick,
   children,
   className = "",
 }: {
-  href: string;
+  href?: string;
+  onClick?: () => void;
   children: React.ReactNode;
   className?: string;
 }) {
+  const inner = (
+    <motion.span
+      whileHover={{ scale: 1.02 }}
+      whileTap={{ scale: 0.98 }}
+      className="inline-flex w-full items-center justify-center gap-2 rounded-full px-8 py-3.5 text-sm font-semibold tracking-wide text-[#0a0a0a] transition-shadow hover:shadow-[0_0_32px_rgba(212,175,55,0.35)]"
+      style={{
+        background: `linear-gradient(135deg, ${GOLD}, #B8960C)`,
+      }}
+    >
+      {children}
+      <ArrowRight className="w-4 h-4" />
+    </motion.span>
+  );
+
+  if (onClick) {
+    return (
+      <button type="button" onClick={onClick} className={`inline-block ${className}`}>
+        {inner}
+      </button>
+    );
+  }
+
   return (
-    <Link href={href} className={`inline-block ${className}`}>
-      <motion.span
-        whileHover={{ scale: 1.02 }}
-        whileTap={{ scale: 0.98 }}
-        className="inline-flex w-full items-center justify-center gap-2 rounded-full px-8 py-3.5 text-sm font-semibold tracking-wide text-[#0a0a0a] transition-shadow hover:shadow-[0_0_32px_rgba(212,175,55,0.35)]"
-        style={{
-          background: `linear-gradient(135deg, ${GOLD}, #B8960C)`,
-        }}
-      >
-        {children}
-        <ArrowRight className="w-4 h-4" />
-      </motion.span>
+    <Link href={href || "/payment"} className={`inline-block ${className}`}>
+      {inner}
     </Link>
   );
 }
 
-export default function LC_4Day() {
+export default function LC_4Day({
+  workshop,
+}: {
+  workshop?: WorkshopBookingInfo;
+}) {
   const [timeLeft, setTimeLeft] = useState<TimeLeft>(getTimeLeft);
+  const [reserveOpen, setReserveOpen] = useState(false);
 
   useEffect(() => {
     const id = window.setInterval(() => setTimeLeft(getTimeLeft()), 1000);
     return () => window.clearInterval(id);
   }, []);
+
+  const openReserve = () => {
+    if (workshop) setReserveOpen(true);
+  };
+
+  const feeText =
+    workshop?.fees != null ? `₹${workshop.fees}` : "₹500";
+  const reserveLabel =
+    workshop?.includePayment && workshop.fees
+      ? `Reserve Your Spot — ₹${workshop.fees}`
+      : `Reserve Your Spot — ${feeText}`;
+  const stickyLabel =
+    workshop?.includePayment && workshop.fees
+      ? `Reserve — ₹${workshop.fees}`
+      : "Reserve — ₹500";
+  const ctaProps = workshop
+    ? { onClick: openReserve }
+    : { href: "/payment" as const };
 
   const timerUnits = [
     { value: timeLeft.days, label: "Days" },
@@ -229,8 +268,8 @@ export default function LC_4Day() {
               </p>
 
               <div className="flex flex-col sm:flex-row gap-3 sm:items-center mb-8">
-                <CtaButton href="/payment" className="w-full sm:w-auto">
-                  Reserve Your Spot — ₹500
+                <CtaButton {...ctaProps} className="w-full sm:w-auto">
+                  {reserveLabel}
                 </CtaButton>
                 <span className="text-center sm:text-left text-xs text-[#F5F0E8]/40 tracking-wide">
                   Mumbai · 15–16 July 2026
@@ -523,9 +562,9 @@ export default function LC_4Day() {
                 className="text-2xl font-bold text-[#D4AF37] mb-8"
                 style={{ fontFamily: "var(--font-display)" }}
               >
-                Fees: ₹500
+                Fees: {feeText}
               </p>
-              <CtaButton href="/payment" className="w-full sm:w-auto">
+              <CtaButton {...ctaProps} className="w-full sm:w-auto">
                 Book Life Counselling Now
               </CtaButton>
             </div>
@@ -549,11 +588,19 @@ export default function LC_4Day() {
 
       {/* Mobile sticky CTA */}
       <div className="fixed bottom-0 inset-x-0 z-40 p-3 sm:hidden bg-gradient-to-t from-[#070708] via-[#070708]/95 to-transparent pt-8">
-        <CtaButton href="/payment" className="w-full">
-          Reserve — ₹500
+        <CtaButton {...ctaProps} className="w-full">
+          {stickyLabel}
         </CtaButton>
       </div>
       <div className="h-20 sm:hidden" aria-hidden />
+
+      {workshop && (
+        <ReserveSpotModal
+          open={reserveOpen}
+          onClose={() => setReserveOpen(false)}
+          workshop={workshop}
+        />
+      )}
     </main>
   );
 }
