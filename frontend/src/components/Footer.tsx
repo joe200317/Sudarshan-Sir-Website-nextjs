@@ -99,7 +99,7 @@ export default function Footer() {
                 className="text-[#D4AF37] text-xs tracking-[0.2em]"
                 style={{ fontFamily: "var(--font-accent)" }}
               >
-                EST. 2010
+                EST. 2019
               </span>
             </div>
           </div>
@@ -107,7 +107,7 @@ export default function Footer() {
 
         <div className="border-t border-[#F5F0E8]/10 pt-6 flex flex-col sm:flex-row items-center justify-between gap-4">
           <p className="text-[#F5F0E8]/35 text-xs">
-            © 2025 Mind Trainer. All rights reserved.
+            © 2026 Mind Trainer. All rights reserved.
           </p>
           <div className="flex items-center gap-6">
             <span className="text-[#F5F0E8]/35 text-xs">Privacy Policy</span>
