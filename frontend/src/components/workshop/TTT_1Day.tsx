@@ -25,6 +25,7 @@ export const TTT_1DAY = {
 
 const GOLD = "#D4AF37";
 const EVENT_DATE = new Date("2026-07-12T09:00:00+05:30");
+const YOUTUBE_VIDEO_ID = "qZrc-Dq4JYU";
 
 const EVENT_DETAILS = [
   { label: "Date", value: "12 July 2026" },
@@ -228,6 +229,7 @@ function VideoThumb({
 
 export default function TTT_1Day() {
   const [timeLeft, setTimeLeft] = useState<TimeLeft>(getTimeLeft);
+  const [masterVideoPlaying, setMasterVideoPlaying] = useState(false);
 
   useEffect(() => {
     const id = window.setInterval(() => setTimeLeft(getTimeLeft()), 1000);
@@ -440,6 +442,44 @@ export default function TTT_1Day() {
               </motion.div>
             ))}
           </div>
+
+          {/* In-page YouTube player */}
+          <motion.div
+            {...fadeUp}
+            className="mt-12 sm:mt-14 lg:mt-16 max-w-4xl mx-auto"
+          >
+            <div className="relative aspect-video overflow-hidden rounded-2xl border border-[#D4AF37]/20 bg-[#0a0a0a] shadow-[0_0_50px_rgba(212,175,55,0.08)]">
+              {masterVideoPlaying ? (
+                <iframe
+                  src={`https://www.youtube-nocookie.com/embed/${YOUTUBE_VIDEO_ID}?autoplay=1&rel=0`}
+                  title="Train The Trainer — workshop preview"
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                  allowFullScreen
+                  className="absolute inset-0 h-full w-full"
+                />
+              ) : (
+                <button
+                  type="button"
+                  onClick={() => setMasterVideoPlaying(true)}
+                  className="group absolute inset-0 w-full h-full focus:outline-none focus-visible:ring-2 focus-visible:ring-[#D4AF37]/50 focus-visible:ring-inset"
+                  aria-label="Play workshop preview video"
+                >
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img
+                    src={`https://i.ytimg.com/vi/${YOUTUBE_VIDEO_ID}/hqdefault.jpg`}
+                    alt="Workshop preview video thumbnail"
+                    className="absolute inset-0 h-full w-full object-cover transition-transform duration-700 group-hover:scale-105"
+                  />
+                  <div className="absolute inset-0 bg-black/45 group-hover:bg-black/35 transition-colors" />
+                  <span
+                    className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 flex h-14 w-14 sm:h-16 sm:w-16 items-center justify-center rounded-full border border-[#D4AF37]/40 bg-black/55 backdrop-blur-sm transition-transform duration-300 group-hover:scale-110"
+                  >
+                    <Play className="w-6 h-6 text-[#D4AF37] fill-[#D4AF37] ml-0.5" />
+                  </span>
+                </button>
+              )}
+            </div>
+          </motion.div>
         </div>
       </section>
 
