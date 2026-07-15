@@ -35,7 +35,7 @@ const details = [
   {
     icon: Clock,
     title: "Working Hours",
-    lines: ["Monday – Sunday: 08:00 AM to 10:00 PM"],
+    lines: ["Monday – Saturday: 10:00 AM to 7:00 PM"],
   },
 ];
 

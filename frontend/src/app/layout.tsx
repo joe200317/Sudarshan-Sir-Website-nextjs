@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import { Cinzel, DM_Sans, Orbitron } from "next/font/google";
-import Navbar from "@/components/Navbar";
-import Footer from "@/components/Footer";
+import SiteShell from "@/components/SiteShell";
 import "./globals.css";
 
 const cinzel = Cinzel({
@@ -39,9 +38,7 @@ export default function RootLayout({
       className={`${cinzel.variable} ${dmSans.variable} ${orbitron.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col bg-[#050505] text-[#F5F0E8]">
-        <Navbar />
-        <div className="flex-1 flex flex-col">{children}</div>
-        <Footer />
+        <SiteShell>{children}</SiteShell>
       </body>
     </html>
   );
