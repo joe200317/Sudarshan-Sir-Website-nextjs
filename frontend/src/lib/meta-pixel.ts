@@ -51,8 +51,8 @@ declare global {
 }
 
 /**
- * Fire a standard/custom Meta event. Retries briefly so early CTA clicks
- * still queue after fbevents.js finishes loading (needed for Setup Event).
+ * Fire a Meta event without blocking the UI / redirect.
+ * fbq queues calls even before fbevents.js finishes — safe for Meta console.
  */
 export function trackMetaEvent(
   event: string,
@@ -61,21 +61,37 @@ export function trackMetaEvent(
 ) {
   if (typeof window === "undefined") return;
 
-  const fire = () => {
-    if (typeof window.fbq !== "function") return false;
-    if (options?.custom) {
-      window.fbq("trackCustom", event, params);
-    } else {
-      window.fbq("track", event, params);
+  try {
+    if (typeof window.fbq === "function") {
+      if (options?.custom) {
+        window.fbq("trackCustom", event, params);
+      } else {
+        window.fbq("track", event, params);
+      }
+      return;
     }
-    return true;
-  };
+  } catch {
+    // ignore — never block redirect
+  }
 
-  if (fire()) return;
-
+  // Short non-blocking retry if stub not ready yet (Meta tool / slow network)
   let tries = 0;
   const timer = window.setInterval(() => {
     tries += 1;
-    if (fire() || tries >= 40) window.clearInterval(timer);
-  }, 100);
+    try {
+      if (typeof window.fbq === "function") {
+        if (options?.custom) {
+          window.fbq("trackCustom", event, params);
+        } else {
+          window.fbq("track", event, params);
+        }
+        window.clearInterval(timer);
+        return;
+      }
+    } catch {
+      window.clearInterval(timer);
+      return;
+    }
+    if (tries >= 15) window.clearInterval(timer);
+  }, 50);
 }

@@ -11,6 +11,24 @@ import { asyncHandler } from "../middleware/error.js";
 
 const router = Router();
 
+/** Prefer a clean Pixel ID; keep trimmed paste if ID cannot be parsed. */
+function normalizeMetaPixelCode(raw: unknown): string {
+  const text = String(raw ?? "")
+    .trim()
+    .replace(/[\u2018\u2019]/g, "'")
+    .replace(/[\u201C\u201D]/g, '"');
+  if (!text) return "";
+  if (/^\d{5,20}$/.test(text)) return text;
+  const initMatch = text.match(
+    /fbq\s*\(\s*['"]init['"]\s*,\s*['"](\d{5,20})['"]\s*\)/i,
+  );
+  if (initMatch?.[1]) return initMatch[1];
+  const queryMatch = text.match(/[?&]id=(\d{5,20})/i);
+  if (queryMatch?.[1]) return queryMatch[1];
+  const loose = text.match(/\b(\d{10,20})\b/);
+  return loose?.[1] ?? text;
+}
+
 type PopulatedWorkshop = {
   _id: mongoose.Types.ObjectId;
   programSlug: string;
@@ -103,7 +121,7 @@ router.post(
     const notificationEmail = String(req.body.notificationEmail || "")
       .trim()
       .toLowerCase();
-    const metaPixelCode = String(req.body.metaPixelCode || "").trim();
+    const metaPixelCode = normalizeMetaPixelCode(req.body.metaPixelCode);
     const includePayment = Boolean(req.body.includePayment);
     const imageUrl = String(req.body.imageUrl || "").trim();
     const fees = parseOptionalFloat(req.body.fees);
@@ -125,6 +143,9 @@ router.post(
       throw new AuthError("Notification email is required", 400);
     }
     if (!imageUrl) throw new AuthError("Image is required", 400);
+    if (includePayment && (fees == null || fees <= 0)) {
+      throw new AuthError("Fees are required when Include payment is on", 400);
+    }
 
     const slug = slugify(String(req.body.slug || ""));
     if (!slug) throw new AuthError("Slug is required", 400);
@@ -194,17 +215,22 @@ router.patch(
         .trim()
         .toLowerCase();
     }
-    if (req.body.metaPixelCode !== undefined) {
-      existing.metaPixelCode = String(req.body.metaPixelCode).trim();
+    // Always persist when the edit form sends the field (including empty to clear)
+    if (Object.prototype.hasOwnProperty.call(req.body, "metaPixelCode")) {
+      existing.metaPixelCode = normalizeMetaPixelCode(req.body.metaPixelCode);
+      existing.markModified("metaPixelCode");
     }
     if (typeof req.body.includePayment === "boolean") {
       existing.includePayment = req.body.includePayment;
     }
-    if (req.body.imageUrl !== undefined) {
-      existing.imageUrl = String(req.body.imageUrl).trim();
-    }
     if (req.body.fees !== undefined) {
       existing.fees = parseOptionalFloat(req.body.fees);
+    }
+    if (existing.includePayment && !(existing.fees != null && existing.fees > 0)) {
+      throw new AuthError("Fees are required when Include payment is on", 400);
+    }
+    if (req.body.imageUrl !== undefined) {
+      existing.imageUrl = String(req.body.imageUrl).trim();
     }
     const startDate = req.body.startDate ? toDate(req.body.startDate) : null;
     const endDate = req.body.endDate ? toDate(req.body.endDate) : null;

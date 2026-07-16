@@ -2,6 +2,7 @@
 
 import { apiFetch } from "@/lib/api";
 import { formatDate, slugify } from "@/lib/utils";
+import { extractMetaPixelId } from "@/lib/meta-pixel";
 import { WORKSHOP_PROGRAMS } from "@/data/workshop-programs";
 import { useEffect, useState } from "react";
 import Link from "next/link";
@@ -9,6 +10,7 @@ import { Plus, Pencil, Trash2, X, Upload, Check, ExternalLink } from "lucide-rea
 import WorkshopRegistrationsReport, {
   ViewRegistrationsButton,
 } from "@/components/admin/WorkshopRegistrationsReport";
+import { useAuth } from "@/components/admin/AuthProvider";
 
 type Program = { slug: string; title: string };
 type Workshop = {
@@ -63,6 +65,7 @@ export default function WorkshopManager({
   const [saving, setSaving] = useState(false);
   const [uploading, setUploading] = useState(false);
   const [reportWorkshop, setReportWorkshop] = useState<Workshop | null>(null);
+  const { user } = useAuth();
 
   async function load() {
     setLoading(true);
@@ -82,7 +85,10 @@ export default function WorkshopManager({
   function openCreate() {
     if (!canCreate) return;
     setEditingId(null);
-    setForm(emptyForm);
+    setForm({
+      ...emptyForm,
+      notificationEmail: user?.email || "",
+    });
     setError("");
     setOpen(true);
   }
@@ -98,7 +104,7 @@ export default function WorkshopManager({
       fees: w.fees != null ? String(w.fees) : "",
       location: w.location,
       notificationEmail: w.notificationEmail,
-      metaPixelCode: w.metaPixelCode,
+      metaPixelCode: w.metaPixelCode || "",
       includePayment: w.includePayment,
       imageUrl: w.imageUrl,
     });
@@ -131,9 +137,19 @@ export default function WorkshopManager({
     setSaving(true);
     setError("");
     try {
+      const pixelRaw = form.metaPixelCode || "";
+      const pixelId = extractMetaPixelId(pixelRaw);
+      const fees =
+        form.fees === "" ? null : Number(form.fees);
+      if (form.includePayment && (fees == null || Number.isNaN(fees) || fees <= 0)) {
+        setError("Fees are required when Include payment is on");
+        setSaving(false);
+        return;
+      }
       const payload = {
         ...form,
-        fees: form.fees === "" ? null : Number(form.fees),
+        metaPixelCode: pixelId || pixelRaw.trim(),
+        fees,
       };
       const url = editingId
         ? `/api/workshops/${editingId}`
@@ -196,7 +212,7 @@ export default function WorkshopManager({
 
       <div className="rounded-xl border border-[#D4AF37]/15 bg-[#0a0a0a] overflow-hidden">
         <div className="overflow-x-auto">
-          <table className="w-full text-left text-sm min-w-[800px]">
+          <table className="w-full text-left text-sm min-w-[960px]">
             <thead>
               <tr className="border-b border-[#D4AF37]/12 text-[11px] uppercase tracking-wider text-[#F5F0E8]/40">
                 <th className="px-4 py-3 font-medium">Program</th>
@@ -204,26 +220,32 @@ export default function WorkshopManager({
                 <th className="px-4 py-3 font-medium">Start / End</th>
                 <th className="px-4 py-3 font-medium">Location</th>
                 <th className="px-4 py-3 font-medium">Fees</th>
+                <th className="px-4 py-3 font-medium">Pay</th>
+                <th className="px-4 py-3 font-medium">Pixel ID</th>
                 <th className="px-4 py-3 font-medium text-right">Actions</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-[#F5F0E8]/6">
               {loading ? (
                 <tr>
-                  <td colSpan={6} className="px-4 py-10 text-center text-[#F5F0E8]/40">
+                  <td colSpan={8} className="px-4 py-10 text-center text-[#F5F0E8]/40">
                     Loading…
                   </td>
                 </tr>
               ) : workshops.length === 0 ? (
                 <tr>
-                  <td colSpan={6} className="px-4 py-10 text-center text-[#F5F0E8]/40">
+                  <td colSpan={8} className="px-4 py-10 text-center text-[#F5F0E8]/40">
                     {canCreate
                       ? "No workshops yet. Click Add Workshop."
                       : "No workshops yet."}
                   </td>
                 </tr>
               ) : (
-                workshops.map((w) => (
+                workshops.map((w) => {
+                  const pixelId =
+                    extractMetaPixelId(w.metaPixelCode || "") ||
+                    (w.metaPixelCode || "").trim();
+                  return (
                   <tr key={w.id} className="hover:bg-white/[0.02]">
                     <td className="px-4 py-3 font-medium">
                       <div>{w.program?.title || w.programSlug}</div>
@@ -245,6 +267,22 @@ export default function WorkshopManager({
                     <td className="px-4 py-3">{w.location}</td>
                     <td className="px-4 py-3 text-[#D4AF37]">
                       {w.fees != null ? `₹${w.fees}` : "—"}
+                    </td>
+                    <td className="px-4 py-3 text-xs">
+                      {w.includePayment ? (
+                        <span className="text-emerald-400">Yes</span>
+                      ) : (
+                        <span className="text-[#F5F0E8]/35">No</span>
+                      )}
+                    </td>
+                    <td className="px-4 py-3 font-mono text-[11px] text-[#F5F0E8]/55 max-w-[140px]">
+                      {pixelId ? (
+                        <span className="block truncate" title={pixelId}>
+                          {pixelId}
+                        </span>
+                      ) : (
+                        <span className="text-[#F5F0E8]/30">—</span>
+                      )}
                     </td>
                     <td className="px-4 py-3">
                       <div className="flex justify-end gap-2">
@@ -272,7 +310,8 @@ export default function WorkshopManager({
                       </div>
                     </td>
                   </tr>
-                ))
+                  );
+                })
               )}
             </tbody>
           </table>
@@ -379,7 +418,7 @@ export default function WorkshopManager({
                 required
               />
               <Field
-                label="Notification email"
+                label="Notification email (this slug)"
                 type="email"
                 value={form.notificationEmail}
                 onChange={(v) =>
@@ -387,23 +426,35 @@ export default function WorkshopManager({
                 }
                 required
               />
+              <p className="-mt-2 text-[11px] text-[#F5F0E8]/35">
+                When someone registers on{" "}
+                <span className="font-mono">/workshop/{form.slug || "slug"}</span>
+                , this email gets that lead (name, phone, etc.). Use the account
+                email of the user who owns this landing page.
+              </p>
               <div>
                 <label className="block text-xs tracking-wider uppercase text-[#F5F0E8]/40 mb-2">
-                  Meta Pixel ID / code
+                  Meta Pixel ID
                 </label>
-                <textarea
+                <input
+                  type="text"
                   value={form.metaPixelCode}
                   onChange={(e) =>
                     setForm((f) => ({ ...f, metaPixelCode: e.target.value }))
                   }
-                  rows={3}
-                  className="w-full rounded-lg border border-[#D4AF37]/20 bg-black/40 px-4 py-3 text-xs font-mono outline-none focus:border-[#D4AF37]/50 text-[#F5F0E8]"
-                  placeholder="Pixel ID (e.g. 28359733993614251) or paste full Meta Pixel snippet"
+                  onBlur={() => {
+                    const id = extractMetaPixelId(form.metaPixelCode || "");
+                    if (id && id !== form.metaPixelCode.trim()) {
+                      setForm((f) => ({ ...f, metaPixelCode: id }));
+                    }
+                  }}
+                  className="w-full rounded-lg border border-[#D4AF37]/20 bg-black/40 px-4 py-3 text-sm font-mono outline-none focus:border-[#D4AF37]/50 text-[#F5F0E8]"
+                  placeholder="e.g. 28359733993614251 (or paste full snippet)"
+                  autoComplete="off"
                 />
                 <p className="mt-1.5 text-[11px] text-[#F5F0E8]/35">
-                  Per landing page. Injected only on that workshop&apos;s{" "}
-                  <span className="font-mono">/workshop/slug</span> URL. CTA +
-                  form/payment events fire automatically.
+                  Saved per workshop slug. Only loads on{" "}
+                  <span className="font-mono">/workshop/{form.slug || "slug"}</span>.
                 </p>
               </div>
 
@@ -419,7 +470,13 @@ export default function WorkshopManager({
                   }
                   className="h-4 w-4 accent-[#D4AF37]"
                 />
-                <span className="text-sm">Include payment</span>
+                <span className="text-sm">
+                  Include payment
+                  <span className="block text-[11px] text-[#F5F0E8]/40 mt-0.5 font-normal">
+                    If on, landing form submit opens Razorpay for the Fees
+                    amount above.
+                  </span>
+                </span>
               </label>
 
               <div>

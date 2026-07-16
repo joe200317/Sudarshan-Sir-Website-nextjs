@@ -1,4 +1,4 @@
-import mongoose, { Schema } from "mongoose";
+import mongoose, { Schema, type InferSchemaType, type Model } from "mongoose";
 
 const workshopRegistrationSchema = new Schema(
   {
@@ -29,6 +29,20 @@ const workshopRegistrationSchema = new Schema(
   { timestamps: true },
 );
 
-export const WorkshopRegistration =
-  mongoose.models.WorkshopRegistration ||
-  mongoose.model("WorkshopRegistration", workshopRegistrationSchema);
+export type WorkshopRegistrationDoc = InferSchemaType<
+  typeof workshopRegistrationSchema
+> & {
+  _id: mongoose.Types.ObjectId;
+  createdAt?: Date;
+  updatedAt?: Date;
+};
+
+if (mongoose.models.WorkshopRegistration) {
+  delete mongoose.models.WorkshopRegistration;
+}
+
+export const WorkshopRegistration: Model<WorkshopRegistrationDoc> =
+  mongoose.model<WorkshopRegistrationDoc>(
+    "WorkshopRegistration",
+    workshopRegistrationSchema,
+  );
