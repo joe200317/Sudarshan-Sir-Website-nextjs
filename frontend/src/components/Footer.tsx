@@ -109,7 +109,7 @@ export default function Footer() {
                 className="text-[#D4AF37] text-xs tracking-[0.2em]"
                 style={{ fontFamily: "var(--font-accent)" }}
               >
-                EST. 2010
+                EST. 2019
               </span>
             </div>
           </div>

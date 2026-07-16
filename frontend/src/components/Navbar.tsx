@@ -128,7 +128,7 @@ export default function Navbar() {
                           <div className="px-5 pt-4 pb-3 border-b border-[#ffffff08]">
                             <p
                               style={{ fontFamily: "var(--font-accent)" }}
-                              className="text-[#00BFFF] text-[10px] tracking-[0.3em] uppercase"
+                              className="text-white text-[10px] tracking-[0.3em] uppercase"
                             >
                               Choose Your Path
                             </p>
