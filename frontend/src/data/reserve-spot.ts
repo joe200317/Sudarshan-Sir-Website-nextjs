@@ -20,6 +20,8 @@ export type WorkshopBookingInfo = {
   programTitle: string;
   fees: number | null;
   includePayment: boolean;
+  /** Hero image URL (compressed WebP from workshop upload) */
+  imageUrl?: string;
   /** Raw Pixel ID or full Meta Pixel snippet (per landing page) */
   metaPixelCode?: string;
 };

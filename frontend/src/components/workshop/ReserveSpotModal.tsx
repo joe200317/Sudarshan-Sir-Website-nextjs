@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { X, Loader2 } from "lucide-react";
 import { apiFetch } from "@/lib/api";
@@ -44,19 +44,29 @@ type Props = {
   workshop: WorkshopBookingInfo;
 };
 
+type BusyPhase = null | "submit" | "payment" | "verify" | "redirect";
+
+const BUSY_COPY: Record<Exclude<BusyPhase, null>, string> = {
+  submit: "Submitting your details…",
+  payment: "Opening secure payment…",
+  verify: "Confirming payment…",
+  redirect: "Redirecting…",
+};
+
 export default function ReserveSpotModal({ open, onClose, workshop }: Props) {
   const router = useRouter();
+  const lockRef = useRef(false);
   const [name, setName] = useState("");
   const [phone, setPhone] = useState("");
   const [profession, setProfession] = useState("");
   const [monthlyIncome, setMonthlyIncome] = useState("");
   const [isSerious, setIsSerious] = useState<"" | "yes" | "no">("");
   const [error, setError] = useState("");
-  const [saving, setSaving] = useState(false);
+  const [busy, setBusy] = useState<BusyPhase>(null);
 
   const thankYouBase = `/workshop/${encodeURIComponent(workshop.slug)}/thank-you`;
+  const isBusy = busy !== null;
 
-  // Prefetch thank-you + Razorpay while user fills the form (faster submit → redirect)
   useEffect(() => {
     if (!open) return;
     router.prefetch(`${thankYouBase}?paid=0`);
@@ -74,8 +84,9 @@ export default function ReserveSpotModal({ open, onClose, workshop }: Props) {
       ? `Pay ₹${fees} & Reserve`
       : "Submit";
 
-  /** Hard redirect — snappy + Meta console gets a real page load with pixel. */
   function goToThankYou(paid: boolean) {
+    setBusy("redirect");
+    // Hard redirect — fastest; Meta also sees full page load
     window.location.replace(`${thankYouBase}?paid=${paid ? "1" : "0"}`);
   }
 
@@ -102,25 +113,36 @@ export default function ReserveSpotModal({ open, onClose, workshop }: Props) {
     }
   }
 
+  function unlock(msg?: string) {
+    lockRef.current = false;
+    setBusy(null);
+    if (msg) setError(msg);
+  }
+
   function reset() {
+    lockRef.current = false;
     setName("");
     setPhone("");
     setProfession("");
     setMonthlyIncome("");
     setIsSerious("");
     setError("");
-    setSaving(false);
+    setBusy(null);
   }
 
   function handleClose() {
+    if (isBusy) return; // block close while processing
     reset();
     onClose();
   }
 
   async function onSubmit(e: React.FormEvent) {
     e.preventDefault();
-    setSaving(true);
+    if (lockRef.current) return;
+    lockRef.current = true;
     setError("");
+    setBusy("submit");
+
     try {
       const res = await apiFetch("/api/registrations", {
         method: "POST",
@@ -135,22 +157,20 @@ export default function ReserveSpotModal({ open, onClose, workshop }: Props) {
       });
       const data = await res.json();
       if (!res.ok) {
-        setError(data.error || "Submit failed");
-        setSaving(false);
+        unlock(data.error || "Submit failed");
         return;
       }
 
       if (!data.requiresPayment) {
-        // Queue Meta events, then redirect immediately (do not wait on fbq)
         fireSuccessEvents(false);
         goToThankYou(false);
         return;
       }
 
+      setBusy("payment");
       const loaded = await loadRazorpayScript();
       if (!loaded || !window.Razorpay) {
-        setError("Could not load Razorpay. Try again.");
-        setSaving(false);
+        unlock("Could not load Razorpay. Try again.");
         return;
       }
 
@@ -177,6 +197,9 @@ export default function ReserveSpotModal({ open, onClose, workshop }: Props) {
           razorpay_payment_id: string;
           razorpay_signature: string;
         }) => {
+          lockRef.current = true;
+          setBusy("verify");
+          setError("");
           try {
             const vRes = await apiFetch("/api/registrations/verify-payment", {
               method: "POST",
@@ -189,37 +212,56 @@ export default function ReserveSpotModal({ open, onClose, workshop }: Props) {
             });
             const vData = await vRes.json();
             if (!vRes.ok) {
-              setError(vData.error || "Payment verification failed");
-              setSaving(false);
+              unlock(vData.error || "Payment verification failed");
               return;
             }
             fireSuccessEvents(true);
             goToThankYou(true);
           } catch {
-            setError("Payment verification failed");
-            setSaving(false);
+            unlock("Payment verification failed");
           }
         },
       });
 
       rzp.on("payment.failed", () => {
-        setError("Payment failed. Please try again.");
-        setSaving(false);
+        unlock("Payment failed. Please try again.");
       });
+
+      // Checkout open — hide our spinner so Razorpay UI is usable
+      setBusy(null);
+      lockRef.current = false;
       rzp.open();
-      setSaving(false);
     } catch {
-      setError("Network error. Please try again.");
-      setSaving(false);
+      unlock("Network error. Please try again.");
     }
   }
 
   const fieldClass =
-    "w-full rounded-lg border border-[#D4AF37]/20 bg-black/50 px-4 py-3 text-sm text-[#F5F0E8] outline-none focus:border-[#D4AF37]/50 [color-scheme:dark]";
+    "w-full rounded-lg border border-[#D4AF37]/20 bg-black/50 px-4 py-3 text-sm text-[#F5F0E8] outline-none focus:border-[#D4AF37]/50 disabled:opacity-50 [color-scheme:dark]";
 
   return (
     <div className="fixed inset-0 z-[80] flex items-start justify-center overflow-y-auto bg-black/75 p-4 py-10">
-      <div className="w-full max-w-md rounded-2xl border border-[#D4AF37]/25 bg-[#0a0a0a] shadow-2xl">
+      <div className="relative w-full max-w-md rounded-2xl border border-[#D4AF37]/25 bg-[#0a0a0a] shadow-2xl overflow-hidden">
+        {/* Full modal spinner — blocks double submit */}
+        {isBusy && (
+          <div
+            className="absolute inset-0 z-20 flex flex-col items-center justify-center gap-3 bg-black/80 backdrop-blur-[2px]"
+            aria-live="polite"
+            aria-busy="true"
+          >
+            <Loader2 className="w-10 h-10 animate-spin text-[#D4AF37]" />
+            <p
+              className="text-sm font-medium text-[#F5F0E8]/90"
+              style={{ fontFamily: "var(--font-display)" }}
+            >
+              {BUSY_COPY[busy]}
+            </p>
+            <p className="text-[11px] text-[#F5F0E8]/45 px-6 text-center">
+              Please wait — do not refresh or press back
+            </p>
+          </div>
+        )}
+
         <div className="flex items-center justify-between border-b border-[#D4AF37]/12 px-5 py-4">
           <div>
             <h2
@@ -238,12 +280,22 @@ export default function ReserveSpotModal({ open, onClose, workshop }: Props) {
                 : "After you submit, your spot is reserved — no payment on this page."}
             </p>
           </div>
-          <button type="button" onClick={handleClose} aria-label="Close">
+          <button
+            type="button"
+            onClick={handleClose}
+            disabled={isBusy}
+            aria-label="Close"
+            className="disabled:opacity-30"
+          >
             <X className="w-5 h-5 text-[#F5F0E8]/50" />
           </button>
         </div>
 
-        <form onSubmit={onSubmit} className="p-5 space-y-4">
+        <form
+          onSubmit={onSubmit}
+          className="p-5 space-y-4"
+          aria-disabled={isBusy}
+        >
           <div>
             <label className="block text-xs uppercase tracking-wider text-[#F5F0E8]/40 mb-1.5">
               Name
@@ -254,6 +306,7 @@ export default function ReserveSpotModal({ open, onClose, workshop }: Props) {
               className={fieldClass}
               required
               autoComplete="name"
+              disabled={isBusy}
             />
           </div>
 
@@ -269,6 +322,7 @@ export default function ReserveSpotModal({ open, onClose, workshop }: Props) {
               placeholder="10-digit mobile"
               required
               autoComplete="tel"
+              disabled={isBusy}
             />
           </div>
 
@@ -281,6 +335,7 @@ export default function ReserveSpotModal({ open, onClose, workshop }: Props) {
               onChange={(e) => setProfession(e.target.value)}
               className={fieldClass}
               required
+              disabled={isBusy}
             >
               <option value="">Select Profession</option>
               {PROFESSIONS.map((p) => (
@@ -300,6 +355,7 @@ export default function ReserveSpotModal({ open, onClose, workshop }: Props) {
               onChange={(e) => setMonthlyIncome(e.target.value)}
               className={fieldClass}
               required
+              disabled={isBusy}
             >
               <option value="">Select income slab</option>
               {INCOME_SLABS.map((s) => (
@@ -321,6 +377,7 @@ export default function ReserveSpotModal({ open, onClose, workshop }: Props) {
               }
               className={fieldClass}
               required
+              disabled={isBusy}
             >
               <option value="">Select</option>
               <option value="yes">Yes</option>
@@ -336,15 +393,15 @@ export default function ReserveSpotModal({ open, onClose, workshop }: Props) {
 
           <button
             type="submit"
-            disabled={saving}
-            className="w-full inline-flex items-center justify-center gap-2 rounded-lg px-4 py-3 text-sm font-semibold text-[#0a0a0a] disabled:opacity-60"
+            disabled={isBusy}
+            className="w-full inline-flex items-center justify-center gap-2 rounded-lg px-4 py-3 text-sm font-semibold text-[#0a0a0a] disabled:opacity-50 disabled:pointer-events-none"
             style={{
               background: "linear-gradient(135deg, #D4AF37, #B8960C)",
             }}
             data-meta-event="Lead"
             data-cta="reserve-submit"
           >
-            {saving ? (
+            {isBusy ? (
               <>
                 <Loader2 className="w-4 h-4 animate-spin" />
                 Please wait…

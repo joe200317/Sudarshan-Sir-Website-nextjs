@@ -12,6 +12,7 @@ type WorkshopPayload = {
   programSlug: string;
   fees: number | null;
   includePayment: boolean;
+  imageUrl?: string;
   metaPixelCode?: string;
   program?: { title?: string };
 };
@@ -43,6 +44,7 @@ function toBookingInfo(w: WorkshopPayload): WorkshopBookingInfo {
           : w.programSlug),
     fees: w.fees,
     includePayment: Boolean(w.includePayment),
+    imageUrl: w.imageUrl || "",
     metaPixelCode: w.metaPixelCode || "",
   };
 }

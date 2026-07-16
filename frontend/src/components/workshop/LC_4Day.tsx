@@ -191,6 +191,8 @@ export default function LC_4Day({
 
   const feeText =
     workshop?.fees != null ? `₹${workshop.fees}` : "₹500";
+  const heroImage =
+    workshop?.imageUrl?.trim() || "/images/meditation.png";
   const reserveLabel =
     workshop?.includePayment && workshop.fees
       ? `Reserve Your Spot — ₹${workshop.fees}`
@@ -319,12 +321,13 @@ export default function LC_4Day({
             >
               <div className="relative aspect-[4/5] overflow-hidden rounded-[1.75rem] border border-white/10">
                 <Image
-                  src="/images/meditation.png"
+                  src={heroImage}
                   alt="Life Counselling — inner clarity"
                   fill
                   priority
                   className="object-cover"
                   sizes="(max-width: 1024px) 90vw, 440px"
+                  unoptimized={heroImage.startsWith("http://localhost")}
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-[#070708] via-[#070708]/20 to-transparent" />
                 <div className="absolute bottom-0 inset-x-0 p-6">
@@ -349,7 +352,7 @@ export default function LC_4Day({
                   className="text-2xl font-bold text-[#D4AF37]"
                   style={{ fontFamily: "var(--font-display)" }}
                 >
-                  ₹500
+                  {feeText}
                 </p>
               </div>
             </motion.div>

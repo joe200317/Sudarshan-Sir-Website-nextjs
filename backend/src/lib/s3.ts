@@ -2,6 +2,7 @@ import { randomUUID } from "crypto";
 import { mkdir, writeFile } from "fs/promises";
 import path from "path";
 import { S3Client, PutObjectCommand } from "@aws-sdk/client-s3";
+import { optimizeWorkshopImage } from "./image-processing.js";
 
 const ALLOWED_TYPES = new Set([
   "image/jpeg",
@@ -10,7 +11,7 @@ const ALLOWED_TYPES = new Set([
   "image/gif",
 ]);
 
-const MAX_BYTES = 5 * 1024 * 1024;
+const MAX_BYTES = 8 * 1024 * 1024;
 
 export type UploadResult = {
   url: string;
@@ -99,20 +100,25 @@ export async function uploadImageBuffer(
     throw new UploadError("Only JPEG, PNG, WEBP or GIF images are allowed");
   }
   if (buffer.length > MAX_BYTES) {
-    throw new UploadError("Image must be 5MB or smaller");
+    throw new UploadError("Image must be 8MB or smaller");
   }
 
-  const key = buildKey(originalname || "image", mimetype, folder);
+  const { buffer: optimized, mimetype: outMime } = await optimizeWorkshopImage(
+    buffer,
+    mimetype,
+  );
+
+  const key = buildKey(originalname || "image", outMime, folder);
 
   if (getS3Config()) {
     try {
-      return await uploadToS3(buffer, key, mimetype);
+      return await uploadToS3(optimized, key, outMime);
     } catch (err) {
       console.error("S3 upload failed, falling back to local storage:", err);
     }
   }
 
-  return uploadLocal(buffer, key);
+  return uploadLocal(optimized, key);
 }
 
 export function isS3Configured() {

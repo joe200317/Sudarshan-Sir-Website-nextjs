@@ -481,7 +481,7 @@ export default function WorkshopManager({
 
               <div>
                 <label className="block text-xs tracking-wider uppercase text-[#F5F0E8]/40 mb-2">
-                  Image
+                  Hero image (landing page right side)
                 </label>
                 <div className="flex flex-wrap items-center gap-3">
                   <label className="inline-flex items-center gap-2 rounded-lg border border-[#D4AF37]/25 px-4 py-2.5 text-sm text-[#D4AF37] cursor-pointer hover:bg-[#D4AF37]/10">
@@ -503,6 +503,10 @@ export default function WorkshopManager({
                     </span>
                   )}
                 </div>
+                <p className="mt-1.5 text-[11px] text-[#F5F0E8]/35">
+                  Auto-compressed to WebP and shown on{" "}
+                  <span className="font-mono">/workshop/{form.slug || "slug"}</span>
+                </p>
                 {form.imageUrl && (
                   // eslint-disable-next-line @next/next/no-img-element
                   <img

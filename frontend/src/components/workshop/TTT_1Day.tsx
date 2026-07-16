@@ -281,6 +281,8 @@ export default function TTT_1Day({
       ? `Book Your Seat — ₹${workshop.fees}`
       : "Book Your Seat Now";
 
+  const heroImage = workshop?.imageUrl?.trim() || "/images/sir2.jpg";
+
   const timerUnits = [
     { value: timeLeft.days, label: "Days" },
     { value: timeLeft.hours, label: "Hours" },
@@ -398,12 +400,13 @@ export default function TTT_1Day({
             >
               <div className="relative aspect-[3/4] sm:aspect-[4/5] overflow-hidden rounded-2xl border border-[#D4AF37]/20 shadow-[0_0_60px_rgba(212,175,55,0.12)]">
                 <Image
-                  src="/images/sir2.jpg"
+                  src={heroImage}
                   alt="Sudarshan Sabat"
                   fill
                   priority
                   className="object-cover object-top"
                   sizes="(max-width: 1024px) 90vw, 480px"
+                  unoptimized={heroImage.startsWith("http://localhost")}
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-[#050505]/80 via-transparent to-transparent" />
                 <div className="absolute bottom-0 inset-x-0 p-5 sm:p-6">
