@@ -13,6 +13,7 @@ import {
   Layers,
   ExternalLink,
   Brain,
+  MessageSquare,
 } from "lucide-react";
 import { useState } from "react";
 import { AuthProvider, useAuth } from "@/components/admin/AuthProvider";
@@ -209,6 +210,11 @@ const adminItems: NavItem[] = [
     icon: CalendarDays,
     permission: "events",
   },
+  {
+    label: "Contact Messages",
+    href: "/admin/contact-messages",
+    icon: MessageSquare,
+  },
 ];
 
 const userItems: NavItem[] = [
@@ -223,6 +229,11 @@ const userItems: NavItem[] = [
     href: "/user/events",
     icon: CalendarDays,
     permission: "events",
+  },
+  {
+    label: "Contact Messages",
+    href: "/user/contact-messages",
+    icon: MessageSquare,
   },
 ];
 

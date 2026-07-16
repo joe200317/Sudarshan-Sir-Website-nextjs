@@ -2,7 +2,13 @@
 
 import Link from "next/link";
 import { useAuth } from "@/components/admin/AuthProvider";
-import { BookOpen, CalendarDays, Layers, Users } from "lucide-react";
+import {
+  BookOpen,
+  CalendarDays,
+  Layers,
+  MessageSquare,
+  Users,
+} from "lucide-react";
 
 export default function AdminDashboardPage() {
   const { user, can } = useAuth();
@@ -32,6 +38,12 @@ export default function AdminDashboardPage() {
       icon: CalendarDays,
       show: can("events"),
     },
+    {
+      label: "Contact Messages",
+      href: "/admin/contact-messages",
+      icon: MessageSquare,
+      show: true,
+    },
   ].filter((c) => c.show);
 
   return (
@@ -44,11 +56,12 @@ export default function AdminDashboardPage() {
           Welcome, {user?.name}
         </h1>
         <p className="text-sm text-[#F5F0E8]/45">
-          Super admin control panel — manage users, programs, workshops & events
+          Super admin control panel — manage users, programs, workshops, events &
+          contact messages
         </p>
       </div>
 
-      <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
+      <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
         {cards.map(({ label, href, icon: Icon }) => (
           <Link
             key={href}
