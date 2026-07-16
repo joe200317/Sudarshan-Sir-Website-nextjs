@@ -21,13 +21,13 @@ export default function About() {
   return (
     <section
       id="about"
-      className="relative py-24 lg:py-32 bg-[#0a0a0a] overflow-hidden"
+      className="relative py-10 md:py-12 lg:py-24 bg-[#0a0a0a] overflow-hidden"
     >
       <div className="absolute top-0 left-1/4 w-96 h-96 bg-[#D4AF37]/5 rounded-full blur-[120px]" />
       <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-[#00BFFF]/5 rounded-full blur-[120px]" />
 
       <div ref={ref} className="container relative z-10">
-        <div className="grid lg:grid-cols-2 gap-16 items-center">
+        <div className="grid lg:grid-cols-2 gap-8 lg:gap-10 items-center">
           {/* Image */}
           <motion.div
             initial={{ opacity: 0, x: -60 }}
@@ -41,7 +41,7 @@ export default function About() {
                 alt="Meditation and mental training"
                 width={800}
                 height={1000}
-                className="w-full h-[500px] lg:h-[600px] object-cover"
+                className="w-full h-[320px] sm:h-[400px] lg:h-[600px] object-cover"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-[#0a0a0a] via-transparent to-transparent" />
             </div>
@@ -50,7 +50,7 @@ export default function About() {
               initial={{ opacity: 0, scale: 0.9 }}
               animate={inView ? { opacity: 1, scale: 1 } : {}}
               transition={{ delay: 0.4, duration: 0.5 }}
-              className="absolute -bottom-6 -right-6 bg-[#0a0a0a] border border-[#D4AF37]/30 rounded-lg p-6 glow-gold-sm"
+              className="mt-4 sm:mt-0 sm:absolute sm:-bottom-6 sm:-right-6 bg-[#0a0a0a] border border-[#D4AF37]/30 rounded-lg p-4 sm:p-6 glow-gold-sm"
             >
               <div
                 className="text-4xl font-bold text-gradient-gold mb-1"
@@ -82,7 +82,7 @@ export default function About() {
               </span>
             </div>
 
-            <h2 className="text-4xl md:text-5xl font-bold mb-6 leading-tight">
+            <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-4 sm:mb-6 leading-tight">
               <span className="text-[#F5F0E8]">Forging </span>
               <span className="text-gradient-gold">Minds</span>
               <span className="text-[#F5F0E8]"> of </span>

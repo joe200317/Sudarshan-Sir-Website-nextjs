@@ -29,9 +29,9 @@ export default function Footer() {
   }
 
   return (
-    <footer className="bg-[#000000] border-t border-[#F5F0E8]/8">
-      <div className="container py-16 md:py-20">
-        <div className="grid md:grid-cols-3 gap-12 md:gap-8 mb-14">
+    <footer className="mt-auto bg-[#000000] border-t border-[#F5F0E8]/8 pb-0 mb-0">
+      <div className="container pt-10 md:pt-12 pb-8 md:pb-10">
+        <div className="grid md:grid-cols-3 gap-10 md:gap-8 mb-8 md:mb-12">
           <div>
             <Link href="/" className="inline-flex items-center gap-3 mb-4">
               <div
@@ -62,7 +62,7 @@ export default function Footer() {
             >
               QUICK LINKS
             </h4>
-            <div className="flex gap-12">
+            <div className="flex flex-col sm:flex-row gap-6 sm:gap-10 md:gap-12">
               <ul className="flex flex-col gap-3">
                 {quickLinksLeft.map((link) => (
                   <li key={link.label}>
@@ -115,13 +115,26 @@ export default function Footer() {
           </div>
         </div>
 
-        <div className="border-t border-[#F5F0E8]/10 pt-6 flex flex-col sm:flex-row items-center justify-between gap-4">
-          <p className="text-[#F5F0E8]/35 text-xs">
+      </div>
+
+      <div className="border-t border-[#F5F0E8]/10 bg-[#000000]">
+        <div className="container py-3.5 flex flex-col sm:flex-row items-center justify-between gap-3">
+          <p className="text-[#F5F0E8]/35 text-xs text-center sm:text-left">
             © 2025 Mind Trainer. All rights reserved.
           </p>
           <div className="flex items-center gap-6">
-            <span className="text-[#F5F0E8]/35 text-xs">Privacy Policy</span>
-            <span className="text-[#F5F0E8]/35 text-xs">Terms of Service</span>
+            <Link
+              href="/privacy-policy"
+              className="text-[#F5F0E8]/35 text-xs hover:text-[#D4AF37] transition-colors"
+            >
+              Privacy Policy
+            </Link>
+            <Link
+              href="/terms-of-service"
+              className="text-[#F5F0E8]/35 text-xs hover:text-[#D4AF37] transition-colors"
+            >
+              Terms of Service
+            </Link>
           </div>
         </div>
       </div>

@@ -25,16 +25,16 @@ const items = [
 
 export default function Science() {
   return (
-    <section className="relative py-24 lg:py-32 bg-[#050505] overflow-hidden">
+    <section className="relative py-10 md:py-12 lg:py-14 bg-[#050505] overflow-hidden">
       <div className="container relative z-10">
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.6 }}
-          className="text-center mb-12"
+          className="text-center mb-8 md:mb-10"
         >
-          <h2 className="text-4xl md:text-5xl font-bold mb-4">
+          <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-3 sm:mb-4">
             <span className="text-[#F5F0E8]">The Science of </span>
             <span className="text-gradient-gold">Mental Mastery</span>
           </h2>
@@ -43,7 +43,7 @@ export default function Science() {
           </p>
         </motion.div>
 
-        <div className="grid lg:grid-cols-2 gap-12 items-center">
+        <div className="grid lg:grid-cols-2 gap-6 lg:gap-8 items-center">
           <motion.div
             initial={{ opacity: 0, scale: 0.95 }}
             whileInView={{ opacity: 1, scale: 1 }}
@@ -64,7 +64,7 @@ export default function Science() {
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.8, delay: 0.2 }}
-            className="space-y-8"
+            className="space-y-6"
           >
             {items.map((item, i) => (
               <div key={item.title}>

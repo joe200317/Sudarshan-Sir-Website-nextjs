@@ -29,7 +29,7 @@ export default function PaymentPage() {
       {/* Atmosphere */}
       <section
         ref={heroRef}
-        className="relative min-h-[100svh] flex items-center justify-center overflow-hidden py-28 md:py-32"
+        className="relative min-h-[100svh] flex items-center justify-center overflow-hidden py-20 sm:py-24 md:py-32"
       >
         <motion.div style={{ y }} className="absolute inset-0 scale-110">
           <Image
@@ -59,7 +59,7 @@ export default function PaymentPage() {
 
             <div className="absolute -top-20 left-1/2 -translate-x-1/2 w-56 h-56 bg-[#D4AF37]/15 rounded-full blur-[80px] pointer-events-none" />
 
-            <div className="relative z-10 px-7 py-12 md:px-12 md:py-14 text-center">
+            <div className="relative z-10 px-5 py-10 sm:px-7 sm:py-12 md:px-12 md:py-14 text-center">
               <div className="mx-auto mb-6 flex h-14 w-14 items-center justify-center rounded-2xl border border-[#D4AF37]/30 bg-[#D4AF37]/10">
                 <CreditCard className="w-6 h-6 text-[#D4AF37]" strokeWidth={1.5} />
               </div>

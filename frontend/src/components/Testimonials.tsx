@@ -65,7 +65,7 @@ export default function Testimonials() {
   return (
     <section
       id="testimonials"
-      className="relative py-24 lg:py-32 bg-[#050505] overflow-hidden"
+      className="relative py-10 md:py-12 lg:py-14 bg-[#050505] overflow-hidden"
     >
       <div className="absolute top-1/3 right-0 w-[400px] h-[400px] bg-[#D4AF37]/5 rounded-full blur-[140px]" />
 
@@ -75,10 +75,10 @@ export default function Testimonials() {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.6 }}
-          className="text-center mb-20 lg:mb-24"
+          className="text-center mt-16 sm:mt-12 md:mt-15 mb-8 sm:mb-10 md:mb-14 lg:mb-24"
         >
           <h2
-            className="text-4xl md:text-5xl lg:text-6xl font-bold mb-4 text-gradient-gold"
+            className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold mb-4 text-gradient-gold"
             style={{ fontFamily: "var(--font-display)" }}
           >
             Success Stories
@@ -88,7 +88,7 @@ export default function Testimonials() {
           </p>
         </motion.div>
 
-        <div className="grid md:grid-cols-3 gap-x-8 gap-y-20 lg:gap-x-12 px-2 md:px-4">
+        <div className="grid md:grid-cols-3 gap-x-5 gap-y-10 sm:gap-y-12 lg:gap-x-8 px-0 sm:px-2 md:px-4">
           {testimonials.map((t, i) => (
             <motion.article
               key={t.name}
@@ -126,7 +126,7 @@ export default function Testimonials() {
                     {t.name}
                   </h4>
 
-                  <p className="text-[#F5F0E8]/65 text-sm md:text-[15px] leading-relaxed mb-6 min-h-[5.5rem]">
+                  <p className="text-[#F5F0E8]/65 text-sm md:text-[15px] leading-relaxed mb-6 min-h-0 md:min-h-[5.5rem]">
                     &ldquo;{t.quote}&rdquo;
                   </p>
 

@@ -17,7 +17,7 @@ export default function PageHero({
   description,
 }: PageHeroProps) {
   return (
-    <section className="relative pt-32 pb-16 lg:pt-40 lg:pb-20 overflow-hidden">
+    <section className="relative pt-24 pb-10 sm:pt-28 sm:pb-12 lg:pt-40 lg:pb-20 overflow-hidden">
       <div className="absolute top-1/3 -left-20 w-96 h-96 bg-[#D4AF37]/10 rounded-full blur-[130px]" />
       <div className="absolute bottom-0 right-0 w-80 h-80 bg-[#D4AF37]/5 rounded-full blur-[120px]" />
 
@@ -38,13 +38,13 @@ export default function PageHero({
           </div>
 
           <h1
-            className="text-4xl md:text-5xl lg:text-6xl font-bold leading-tight mb-6"
+            className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold leading-tight mb-4 sm:mb-6"
             style={{ fontFamily: "var(--font-display)" }}
           >
             {title}
           </h1>
 
-          <p className="text-[#F5F0E8]/65 text-lg md:text-xl leading-relaxed">
+          <p className="text-[#F5F0E8]/65 text-base sm:text-lg md:text-xl leading-relaxed">
             {description}
           </p>
         </motion.div>

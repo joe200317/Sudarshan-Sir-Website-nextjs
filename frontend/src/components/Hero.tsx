@@ -83,8 +83,8 @@ export default function Hero() {
       <div className="absolute bottom-1/4 left-1/4 w-[400px] h-[400px] bg-[#00BFFF]/3 rounded-full blur-[120px]" />
       <Particles />
 
-      <div ref={ref} className="relative z-10 container pt-32 pb-16">
-        <div className="grid lg:grid-cols-2 gap-12 lg:gap-16 items-center">
+      <div ref={ref} className="relative z-10 container pt-24 pb-8 sm:pt-28 sm:pb-10 md:pb-12">
+        <div className="grid lg:grid-cols-2 gap-8 lg:gap-12 items-center">
           {/* Text */}
           <motion.div
             initial={{ opacity: 0, x: -60 }}
@@ -102,13 +102,13 @@ export default function Hero() {
               <div className="w-12 h-px bg-gradient-to-r from-transparent via-[#D4AF37] to-transparent" />
             </div>
 
-            <h1 className="text-5xl md:text-6xl lg:text-7xl font-bold leading-[0.95] mb-8">
+            <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold leading-[0.95] mb-6 sm:mb-8">
               <span className="text-gradient-gold block">Awaken Your</span>
               <span className="text-gradient-gold block">Mind&apos;s Hidden</span>
               <span className="text-[#F5F0E8] block">Power</span>
             </h1>
 
-            <p className="text-[#F5F0E8]/60 text-lg md:text-xl max-w-xl mb-10 leading-relaxed">
+            <p className="text-[#F5F0E8]/60 text-base sm:text-lg md:text-xl max-w-xl mb-8 sm:mb-10 leading-relaxed">
               The mind is a universe of infinite potential. I guide leaders,
               athletes, and high achievers to unlock cognitive mastery and
               transcend their limits.
@@ -147,14 +147,14 @@ export default function Hero() {
           >
             <div className="relative">
               <div className="absolute -inset-4 bg-gradient-to-br from-[#D4AF37]/20 via-[#D4AF37]/5 to-transparent rounded-2xl blur-2xl" />
-              <div className="relative rounded-2xl overflow-hidden glow-gold-sm">
+              <div className="relative rounded-2xl overflow-hidden glow-gold-sm animate-float-soft">
                 <Image
                   src="/images/hero.png"
                   alt="Mind Trainer - Elite Mental Performance Coach"
                   width={800}
                   height={1000}
                   priority
-                  className="w-full h-[500px] lg:h-[650px] object-cover object-center"
+                  className="w-full h-[380px] sm:h-[440px] lg:h-[650px] object-cover object-center"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-[#050505]/40 via-transparent to-transparent" />
               </div>

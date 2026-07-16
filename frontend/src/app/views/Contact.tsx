@@ -20,7 +20,7 @@ export default function ContactPage() {
     <main className="bg-[#050505] text-[#F5F0E8] overflow-x-hidden">
       <section
         ref={heroRef}
-        className="relative min-h-[58svh] flex items-end overflow-hidden"
+        className="relative min-h-[50svh] sm:min-h-[58svh] flex items-end overflow-hidden"
       >
         <motion.div style={{ y }} className="absolute inset-0 scale-110">
           <Image
@@ -37,7 +37,7 @@ export default function ContactPage() {
         <div className="absolute inset-0 bg-gradient-to-t from-[#050505] via-[#050505]/45 to-[#050505]/55" />
         <div className="absolute top-1/3 left-1/2 -translate-x-1/2 w-[65vw] h-[35vh] bg-[#D4AF37]/12 rounded-full blur-[130px] pointer-events-none" />
 
-        <div className="relative z-10 container w-full pt-28 pb-12 md:pb-14 text-center">
+        <div className="relative z-10 container w-full pt-24 pb-10 sm:pt-28 sm:pb-12 md:pb-14 text-center">
           <motion.div
             initial={{ opacity: 0, y: 28 }}
             animate={inView ? { opacity: 1, y: 0 } : {}}
@@ -54,7 +54,7 @@ export default function ContactPage() {
             </div>
 
             <h1
-              className="text-5xl sm:text-6xl md:text-7xl font-bold leading-[0.92] mb-4"
+              className="text-4xl sm:text-5xl md:text-7xl font-bold leading-[0.92] mb-4"
               style={{ fontFamily: "var(--font-display)" }}
             >
               <span className="text-[#F5F0E8]">Get in </span>

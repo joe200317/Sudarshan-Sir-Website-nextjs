@@ -66,13 +66,13 @@ const press = [
 
 export default function AwardsPage() {
   return (
-    <main className="bg-[#050505] text-[#F5F0E8]">
+    <main className="bg-[#050505] text-[#F5F0E8] overflow-x-hidden">
       {/* Hero */}
-      <section className="relative pt-32 pb-16 lg:pt-44 lg:pb-24 overflow-hidden">
+      <section className="relative pt-24 pb-12 sm:pt-28 sm:pb-14 lg:pt-44 lg:pb-24 overflow-hidden">
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_20%_0%,_rgba(212,175,55,0.14),_transparent_50%)]" />
         <div className="absolute bottom-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-[#D4AF37]/35 to-transparent" />
 
-        <div className="container relative z-10 grid lg:grid-cols-[1.15fr_0.85fr] gap-12 lg:gap-20 items-center">
+        <div className="container relative z-10 grid lg:grid-cols-[1.15fr_0.85fr] gap-8 sm:gap-10 lg:gap-20 items-center">
           <motion.div
             initial={{ opacity: 0, y: 24 }}
             animate={{ opacity: 1, y: 0 }}
@@ -89,12 +89,13 @@ export default function AwardsPage() {
             </div>
 
             <h1
-              className="text-4xl md:text-5xl lg:text-6xl font-bold leading-[1.1] mb-6"
+              className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold leading-[1.1] mb-4 sm:mb-6"
               style={{ fontFamily: "var(--font-display)" }}
             >
               Excellence{" "}
               <span className="text-gradient-gold">recognized</span>
-              <br />
+              <br className="hidden sm:block" />
+              <span className="sm:hidden"> </span>
               worldwide
             </h1>
 
@@ -153,9 +154,9 @@ export default function AwardsPage() {
       </section>
 
       {/* Award index — modern editorial list */}
-      <section className="py-20 lg:py-28">
+      <section className="py-12 sm:py-16 lg:py-28">
         <div className="container">
-          <div className="flex items-end justify-between gap-6 mb-12 border-b border-[#F5F0E8]/10 pb-6">
+          <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4 sm:gap-6 mb-8 sm:mb-12 border-b border-[#F5F0E8]/10 pb-5 sm:pb-6">
             <div>
               <span
                 style={{ fontFamily: "var(--font-accent)" }}
@@ -181,27 +182,29 @@ export default function AwardsPage() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true, margin: "-40px" }}
                 transition={{ duration: 0.45, delay: i * 0.05 }}
-                className="group grid grid-cols-[72px_88px_1fr] md:grid-cols-[110px_140px_1fr_auto] gap-4 md:gap-8 py-7 items-center"
+                className="group grid grid-cols-1 sm:grid-cols-[88px_1fr] md:grid-cols-[110px_140px_1fr_auto] gap-3 sm:gap-4 md:gap-8 py-5 sm:py-7 items-start sm:items-center"
               >
-                <div
-                  className="text-2xl md:text-3xl font-bold text-gradient-gold tabular-nums"
-                  style={{ fontFamily: "var(--font-accent)" }}
-                >
-                  {award.year}
+                <div className="flex items-center gap-3 sm:contents">
+                  <div
+                    className="text-xl sm:text-2xl md:text-3xl font-bold text-gradient-gold tabular-nums shrink-0"
+                    style={{ fontFamily: "var(--font-accent)" }}
+                  >
+                    {award.year}
+                  </div>
+
+                  <div className="relative w-16 h-16 sm:w-20 sm:h-20 md:w-[120px] md:h-[88px] rounded-lg overflow-hidden border border-[#D4AF37]/25 bg-[#0a0a0a] shrink-0">
+                    <Image
+                      src={award.image}
+                      alt={award.title}
+                      fill
+                      sizes="120px"
+                      className="object-cover transition-transform duration-500 group-hover:scale-105"
+                    />
+                  </div>
                 </div>
 
-                <div className="relative w-20 h-20 md:w-[120px] md:h-[88px] rounded-lg overflow-hidden border border-[#D4AF37]/25 bg-[#0a0a0a] shrink-0">
-                  <Image
-                    src={award.image}
-                    alt={award.title}
-                    fill
-                    sizes="120px"
-                    className="object-cover transition-transform duration-500 group-hover:scale-105"
-                  />
-                </div>
-
-                <div>
-                  <h3 className="text-lg md:text-xl font-semibold text-[#F5F0E8] group-hover:text-[#D4AF37] transition-colors duration-300">
+                <div className="sm:col-span-1 md:col-span-1">
+                  <h3 className="text-base sm:text-lg md:text-xl font-semibold text-[#F5F0E8] group-hover:text-[#D4AF37] transition-colors duration-300">
                     {award.title}
                   </h3>
                   <p className="text-[#F5F0E8]/40 text-sm mt-1.5">{award.org}</p>
@@ -218,7 +221,7 @@ export default function AwardsPage() {
       </section>
 
       {/* Feature band */}
-      <section className="relative py-20 lg:py-24 bg-[#0a0a0a] border-y border-[#D4AF37]/12 overflow-hidden">
+      <section className="relative py-12 sm:py-16 lg:py-24 bg-[#0a0a0a] border-y border-[#D4AF37]/12 overflow-hidden">
         <div className="absolute right-0 top-1/2 -translate-y-1/2 w-[420px] h-[420px] bg-[#D4AF37]/8 rounded-full blur-[120px]" />
         <div className="container relative z-10 grid lg:grid-cols-2 gap-12 items-center">
           <div className="relative aspect-square max-w-md mx-auto lg:mx-0">
@@ -258,7 +261,7 @@ export default function AwardsPage() {
       </section>
 
       {/* Press mentions */}
-      <section className="py-20 lg:py-28">
+      <section className="py-12 sm:py-16 lg:py-28">
         <div className="container">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -309,8 +312,8 @@ export default function AwardsPage() {
       </section>
 
       {/* CTA */}
-      <section className="py-20">
-        <div className="container flex flex-col md:flex-row md:items-center justify-between gap-8">
+      <section className="py-12 sm:py-16 lg:py-20">
+        <div className="container flex flex-col md:flex-row md:items-center justify-between gap-6 sm:gap-8">
           <div>
             <h3 className="text-2xl md:text-3xl font-bold mb-2">
               Train with a coach who{" "}

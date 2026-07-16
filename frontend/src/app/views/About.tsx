@@ -94,13 +94,13 @@ export default function AboutPage() {
   const step = journey[active];
 
   return (
-    <main className="bg-[#050505] text-[#F5F0E8]">
+    <main className="bg-[#050505] text-[#F5F0E8] overflow-x-hidden">
       {/* Hero */}
-      <section className="relative pt-32 pb-24 lg:pt-40 lg:pb-32 overflow-hidden">
+      <section className="relative pt-24 pb-14 sm:pt-28 sm:pb-16 lg:pt-40 lg:pb-32 overflow-hidden">
         <div className="absolute top-1/3 -left-20 w-96 h-96 bg-[#D4AF37]/10 rounded-full blur-[130px]" />
         <div className="absolute bottom-0 right-0 w-80 h-80 bg-[#D4AF37]/5 rounded-full blur-[120px]" />
 
-        <div className="container relative z-10 grid lg:grid-cols-[1.1fr_0.9fr] gap-14 items-center">
+        <div className="container relative z-10 grid lg:grid-cols-[1.1fr_0.9fr] gap-8 sm:gap-10 lg:gap-14 items-center">
           <motion.div
             initial={{ opacity: 0, y: 24 }}
             animate={{ opacity: 1, y: 0 }}
@@ -117,7 +117,7 @@ export default function AboutPage() {
             </div>
 
             <h1
-              className="text-4xl md:text-6xl font-bold leading-tight mb-6"
+              className="text-3xl sm:text-4xl md:text-6xl font-bold leading-tight mb-4 sm:mb-6"
               style={{ fontFamily: "var(--font-display)" }}
             >
               <span className="text-[#F5F0E8]">Be the Master </span>
@@ -153,10 +153,10 @@ export default function AboutPage() {
                 alt="Sudarshan Sabat"
                 width={700}
                 height={860}
-                className="w-full h-[420px] lg:h-[520px] object-cover"
+                className="w-full h-[300px] sm:h-[380px] lg:h-[520px] object-cover"
               />
             </div>
-            <div className="absolute -bottom-6 -left-6 bg-[#0a0a0a] border border-[#D4AF37]/30 rounded-xl px-6 py-4 glow-gold-sm">
+            <div className="mt-4 sm:mt-0 sm:absolute sm:-bottom-6 sm:-left-6 bg-[#0a0a0a] border border-[#D4AF37]/30 rounded-xl px-5 py-3 sm:px-6 sm:py-4 glow-gold-sm">
               <div
                 className="text-3xl font-bold text-gradient-gold"
                 style={{ fontFamily: "var(--font-accent)" }}
@@ -173,7 +173,7 @@ export default function AboutPage() {
 
       {/* Stat band */}
       <section className="border-y border-[#D4AF37]/15 bg-[#0a0a0a]">
-        <div className="container py-10 grid grid-cols-2 md:grid-cols-4 gap-8">
+        <div className="container py-8 sm:py-10 grid grid-cols-2 md:grid-cols-4 gap-6 sm:gap-8">
           {stats.map((s, i) => (
             <motion.div
               key={s.label}
@@ -199,7 +199,7 @@ export default function AboutPage() {
       </section>
 
       {/* Journey — left image slider, right numbered content */}
-      <section className="relative py-20 lg:py-28 bg-[#050505]">
+      <section className="relative py-12 sm:py-16 lg:py-28 bg-[#050505]">
         <div className="container">
           <div className="max-w-2xl mb-14">
             <div className="flex items-center gap-3 mb-4">
@@ -336,7 +336,7 @@ export default function AboutPage() {
       </section>
 
       {/* Philosophy */}
-      <section className="relative py-20 lg:py-28 bg-[#0a0a0a]">
+      <section className="relative py-12 sm:py-16 lg:py-28 bg-[#0a0a0a]">
         <div className="container space-y-16">
           <div className="grid lg:grid-cols-2 gap-10 items-center">
             <div>
@@ -403,7 +403,7 @@ export default function AboutPage() {
       </section>
 
       {/* Core Values */}
-      <section className="relative py-20 lg:py-28 bg-[#050505]">
+      <section className="relative py-12 sm:py-16 lg:py-28 bg-[#050505]">
         <div className="container">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -454,7 +454,7 @@ export default function AboutPage() {
       </section>
 
       {/* Closing CTA */}
-      <section className="py-20 text-center">
+      <section className="py-12 sm:py-16 lg:py-20 text-center">
         <h3 className="text-2xl md:text-3xl font-bold mb-4">
           Ready to{" "}
           <span className="text-gradient-gold">re-master your mind?</span>

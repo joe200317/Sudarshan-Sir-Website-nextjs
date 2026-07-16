@@ -37,7 +37,7 @@ export default function RootLayout({
       lang="en"
       className={`${cinzel.variable} ${dmSans.variable} ${orbitron.variable} h-full antialiased`}
     >
-      <body className="min-h-full flex flex-col bg-[#050505] text-[#F5F0E8]">
+      <body className="min-h-full flex flex-col bg-[#050505] text-[#F5F0E8] m-0 p-0">
         <SiteShell>{children}</SiteShell>
       </body>
     </html>

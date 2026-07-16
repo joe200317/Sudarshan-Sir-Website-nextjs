@@ -52,10 +52,10 @@ const stats = [
 
 export default function Stats() {
   return (
-    <section className="relative py-16 bg-gradient-to-b from-[#050505] to-[#0a0a0a]">
+    <section className="relative py-10 md:py-12 bg-gradient-to-b from-[#050505] to-[#0a0a0a]">
       <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-[#D4AF37]/30 to-transparent" />
       <div className="container">
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-8 lg:gap-12">
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-6 lg:gap-8">
           {stats.map((stat, i) => (
             <motion.div
               key={stat.label}
@@ -63,7 +63,8 @@ export default function Stats() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.6, delay: i * 0.15 }}
-              className="text-center"
+              whileHover={{ y: -6, scale: 1.03 }}
+              className="text-center rounded-xl border border-transparent px-3 py-4 transition-colors hover:border-[#D4AF37]/20 hover:bg-[#D4AF37]/5"
             >
               <stat.icon
                 className="w-6 h-6 mx-auto mb-3"

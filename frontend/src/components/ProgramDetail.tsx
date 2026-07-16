@@ -76,7 +76,7 @@ export default function ProgramDetail({ program }: { program: Program }) {
       {/* ═══ HERO — stage / spotlight ═══ */}
       <section
         ref={heroRef}
-        className="relative min-h-[75svh] flex items-start overflow-hidden"
+        className="relative min-h-[62svh] sm:min-h-[68svh] lg:min-h-[75svh] flex items-start overflow-hidden"
       >
         <motion.div style={{ y: yImg }} className="absolute inset-0 scale-110">
           <Image
@@ -100,7 +100,7 @@ export default function ProgramDetail({ program }: { program: Program }) {
 
         <motion.div
           style={{ y: yText }}
-          className="relative z-10 container pt-28 md:pt-32 pb-12 text-center w-full"
+          className="relative z-10 container pt-24 sm:pt-28 md:pt-32 pb-10 sm:pb-12 text-center w-full"
         >
           <motion.div
             initial={{ opacity: 0, scale: 0.96, y: 30 }}
@@ -108,13 +108,13 @@ export default function ProgramDetail({ program }: { program: Program }) {
             transition={{ duration: 1, ease: [0.22, 1, 0.36, 1] }}
           >
             <h1
-              className="text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-bold leading-[0.9] mb-5"
+              className="text-3xl sm:text-4xl md:text-6xl lg:text-8xl font-bold leading-[0.95] sm:leading-[0.9] mb-4 sm:mb-5"
               style={{ fontFamily: "var(--font-display)" }}
             >
               <span className="text-gradient-gold">{program.title}</span>
             </h1>
 
-            <p className="mx-auto max-w-xl text-[#F5F0E8]/70 text-lg md:text-xl leading-relaxed mb-8">
+            <p className="mx-auto max-w-xl text-[#F5F0E8]/70 text-base sm:text-lg md:text-xl leading-relaxed mb-6 sm:mb-8 px-2">
               {program.tagline}
             </p>
 
@@ -172,8 +172,8 @@ export default function ProgramDetail({ program }: { program: Program }) {
                 <div className="absolute inset-0 bg-gradient-to-t from-[#050505]/80 via-transparent to-transparent" />
               </div>
               {/* Offset accent frame */}
-              <div className="absolute -bottom-4 -right-4 w-full h-full rounded-2xl border border-[#D4AF37]/30 -z-10" />
-              <div className="absolute -top-5 -left-5 w-24 h-24 border-t border-l border-[#D4AF37]/40 rounded-tl-2xl" />
+              <div className="absolute -bottom-4 -right-4 w-full h-full rounded-2xl border border-[#D4AF37]/30 -z-10 hidden sm:block" />
+              <div className="absolute -top-5 -left-5 w-24 h-24 border-t border-l border-[#D4AF37]/40 rounded-tl-2xl hidden sm:block" />
             </motion.div>
 
             {/* Copy */}
@@ -194,7 +194,7 @@ export default function ProgramDetail({ program }: { program: Program }) {
               </div>
 
               <h2
-                className="text-3xl md:text-5xl font-bold leading-tight mb-6"
+                className="text-2xl sm:text-3xl md:text-5xl font-bold leading-tight mb-4 sm:mb-6"
                 style={{ fontFamily: "var(--font-display)" }}
               >
                 {program.aboutHeading.replace(/\?$/, "")}

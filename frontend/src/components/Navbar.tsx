@@ -72,9 +72,9 @@ export default function Navbar() {
       }`}
     >
       <div className="container flex items-center justify-between">
-        <Link href="/" className="flex items-center gap-3">
+        <Link href="/" className="flex items-center gap-2 sm:gap-3 min-w-0">
           <div
-            className="w-10 h-10 rounded-lg flex items-center justify-center"
+            className="w-9 h-9 sm:w-10 sm:h-10 rounded-lg flex items-center justify-center shrink-0"
             style={{
               background: `linear-gradient(135deg, ${GOLD}, #B8960C)`,
             }}
@@ -82,7 +82,7 @@ export default function Navbar() {
             <Brain className="w-5 h-5 text-[#0a0a0a]" />
           </div>
           <span
-            className="text-gradient-gold text-xl font-bold tracking-wider"
+            className="text-gradient-gold text-base sm:text-xl font-bold tracking-wider truncate"
             style={{ fontFamily: "var(--font-display)" }}
           >
             MIND TRAINER
@@ -187,7 +187,7 @@ export default function Navbar() {
               </Link>
             );
           })}
-          <Link href="/payment">
+         {/* <Link href="/payment">
             <button
               className="inline-flex items-center justify-center rounded-md text-[#0a0a0a] font-semibold hover:shadow-[0_0_20px_rgba(212,175,55,0.4)] transition-all duration-300 px-6 h-9 text-sm"
               style={{
@@ -197,6 +197,7 @@ export default function Navbar() {
               Payment
             </button>
           </Link>
+          */}
         </div>
 
         <button
@@ -300,7 +301,7 @@ export default function Navbar() {
                   </Link>
                 );
               })}
-              <Link href="/payment" className="mt-3">
+              {/*<Link href="/payment" className="mt-3">
                 <button
                   className="w-full inline-flex items-center justify-center rounded-md text-[#0a0a0a] font-semibold h-10 px-4"
                   style={{
@@ -310,6 +311,7 @@ export default function Navbar() {
                   Payment
                 </button>
               </Link>
+              */}
             </div>
           </motion.div>
         )}

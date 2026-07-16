@@ -64,8 +64,8 @@ export default function GalleryPage() {
   );
 
   return (
-    <main className="bg-[#050505] text-[#F5F0E8]">
-      <section className="relative pt-32 pb-12 lg:pt-40 lg:pb-16 overflow-hidden">
+    <main className="bg-[#050505] text-[#F5F0E8] overflow-x-hidden">
+      <section className="relative pt-24 pb-10 sm:pt-28 sm:pb-12 lg:pt-40 lg:pb-16 overflow-hidden">
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_80%_0%,_rgba(212,175,55,0.12),_transparent_50%)]" />
         <div className="container relative z-10 max-w-3xl">
           <motion.div
@@ -83,7 +83,7 @@ export default function GalleryPage() {
               </span>
             </div>
             <h1
-              className="text-4xl md:text-5xl lg:text-6xl font-bold leading-tight mb-5"
+              className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold leading-tight mb-4 sm:mb-5"
               style={{ fontFamily: "var(--font-display)" }}
             >
               Moments from the{" "}
@@ -97,9 +97,9 @@ export default function GalleryPage() {
         </div>
       </section>
 
-      <section className="pb-24 lg:pb-32">
+      <section className="pb-16 sm:pb-20 lg:pb-32">
         <div className="container">
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3 md:gap-4 auto-rows-[220px] md:auto-rows-[240px]">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3 md:gap-4 auto-rows-[180px] sm:auto-rows-[200px] md:auto-rows-[240px]">
             {galleryItems.map((item, i) => (
               <motion.button
                 key={item.src + item.caption}
@@ -156,7 +156,7 @@ export default function GalleryPage() {
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0, scale: 0.96 }}
               transition={{ duration: 0.3 }}
-              className="relative w-full max-w-4xl aspect-[16/11] max-h-[80vh]"
+              className="relative w-full max-w-4xl aspect-[16/11] max-h-[75vh] sm:max-h-[80vh] mb-10 sm:mb-0"
               onClick={(e) => e.stopPropagation()}
             >
               <Image
@@ -166,7 +166,7 @@ export default function GalleryPage() {
                 sizes="90vw"
                 className="object-contain"
               />
-              <p className="absolute -bottom-10 left-0 text-[#F5F0E8]/50 text-sm tracking-wide">
+              <p className="absolute -bottom-8 sm:-bottom-10 left-0 right-0 text-center sm:text-left text-[#F5F0E8]/50 text-xs sm:text-sm tracking-wide px-2">
                 {active.caption} — {active.alt}
               </p>
             </motion.div>

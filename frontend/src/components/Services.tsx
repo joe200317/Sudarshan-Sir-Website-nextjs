@@ -42,7 +42,11 @@ const services = [
 
 export default function Services() {
   return (
-    <section id="services" className="relative py-24 lg:py-32 bg-[#050505]">
+    <section id="services" className="relative py-10 md:py-12 lg:py-14 bg-[#050505] overflow-hidden">
+      <div className="pointer-events-none absolute inset-0">
+        <div className="absolute -top-16 right-[10%] h-56 w-56 rounded-full bg-[#D4AF37]/10 blur-[120px]" />
+        <div className="absolute bottom-8 left-[6%] h-48 w-48 rounded-full bg-[#00BFFF]/10 blur-[120px]" />
+      </div>
       <div className="container relative z-10">
         {/* Header */}
         <motion.div
@@ -50,30 +54,22 @@ export default function Services() {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.6 }}
-          className="flex flex-col lg:flex-row lg:items-end lg:justify-between gap-8 mb-20 pb-10 border-b border-[#D4AF37]/15"
+          className="relative mb-8 md:mb-10 pb-6 border-b border-[#D4AF37]/15"
         >
-          <div>
-            <div className="flex items-center gap-3 mb-5">
-              <div className="w-8 h-px" style={{ background: GOLD }} />
-              <span
-                style={{ fontFamily: "var(--font-accent)" }}
-                className="text-[#D4AF37] text-xs tracking-[0.3em] uppercase"
-              >
-                What I Offer
-              </span>
-            </div>
-
-            <h2 className="text-4xl md:text-6xl font-bold leading-[1.05]">
-              <span className="text-[#F5F0E8]">Master Your</span>
-              <br />
-              <span className="text-gradient-gold">Mental Craft</span>
-            </h2>
+          <div className="inline-flex items-center gap-3 mb-4 rounded-full border border-[#D4AF37]/25 bg-[#D4AF37]/10 px-4 py-1.5">
+            <div className="w-8 h-px" style={{ background: GOLD }} />
+            <span
+              style={{ fontFamily: "var(--font-accent)" }}
+              className="text-[#D4AF37] text-xs tracking-[0.3em] uppercase"
+            >
+              What I Offer
+            </span>
           </div>
 
-          <p className="text-[#F5F0E8]/50 max-w-sm text-base leading-relaxed lg:text-right">
-            Four disciplines of mental training, each built to sharpen a
-            different edge of how you think, perform, and hold steady.
-          </p>
+          <h2 className="text-[clamp(1.35rem,4.8vw,3.75rem)] font-bold leading-tight lg:whitespace-nowrap">
+            <span className="text-[#F5F0E8]">Master Your </span>
+            <span className="text-gradient-gold">Mental Craft</span>
+          </h2>
         </motion.div>
 
         {/* Rows */}
@@ -85,13 +81,13 @@ export default function Services() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.6, delay: i * 0.1 }}
-              className="group relative grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-10 items-start py-10 border-b border-[#F5F0E8]/10 hover:border-[#D4AF37]/30 transition-colors duration-500"
+              className="group relative mb-3 grid grid-cols-1 lg:grid-cols-12 gap-4 sm:gap-5 lg:gap-8 items-start rounded-2xl border border-[#F5F0E8]/10 bg-[#0c0c0c] px-4 sm:px-3 md:px-4 lg:px-5 py-5 sm:py-6 md:py-7 lg:py-8 hover:border-[#D4AF37]/35 hover:shadow-[0_0_35px_rgba(212,175,55,0.08)] transition-all duration-500"
             >
               {/* left accent bar on hover */}
-              <div className="absolute left-0 top-0 bottom-0 w-[2px] bg-[#D4AF37] scale-y-0 group-hover:scale-y-100 origin-top transition-transform duration-500" />
+              <div className="absolute left-0 top-0 bottom-0 w-[2px] bg-[#D4AF37] scale-y-0 group-hover:scale-y-100 origin-top transition-transform duration-500 rounded-l-2xl" />
 
               {/* index + icon */}
-              <div className="lg:col-span-3 flex items-center gap-5 pl-4 lg:pl-6">
+              <div className="lg:col-span-3 flex items-center gap-4 sm:gap-5 pl-0 sm:pl-4 lg:pl-6">
                 <span
                   className="text-5xl md:text-6xl font-bold text-[#F5F0E8]/10 group-hover:text-[#D4AF37]/20 transition-colors duration-500 leading-none"
                   style={{ fontFamily: "var(--font-accent)" }}
@@ -105,15 +101,15 @@ export default function Services() {
               </div>
 
               {/* title */}
-              <div className="lg:col-span-3 pl-4 lg:pl-0">
-                <h3 className="text-2xl md:text-3xl font-bold text-[#F5F0E8] group-hover:text-gradient-gold transition-all duration-300">
+              <div className="lg:col-span-3 pl-0 sm:pl-4 lg:pl-0">
+                <h3 className="text-xl sm:text-2xl md:text-3xl font-bold text-[#F5F0E8] group-hover:text-gradient-gold transition-all duration-300">
                   {service.title}
                 </h3>
               </div>
 
               {/* description + features */}
-              <div className="lg:col-span-6 pl-4 lg:pl-0">
-                <p className="text-[#F5F0E8]/50 leading-relaxed mb-5 max-w-xl">
+              <div className="lg:col-span-6 pl-0 sm:pl-4 lg:pl-0">
+                <p className="text-[#F5F0E8]/60 leading-relaxed mb-4 max-w-xl">
                   {service.description}
                 </p>
 

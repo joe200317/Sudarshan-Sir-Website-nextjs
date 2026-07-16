@@ -10,6 +10,7 @@ import {
   Phone,
   Sparkles,
 } from "lucide-react";
+import { apiFetch } from "@/lib/api";
 
 const GOLD = "#D4AF37";
 
@@ -50,18 +51,52 @@ export default function Contact() {
   const inView = useInView(ref, { once: true, margin: "-60px" });
   const [form, setForm] = useState({ name: "", email: "", message: "" });
   const [sent, setSent] = useState(false);
+  const [error, setError] = useState("");
+  const [busy, setBusy] = useState(false);
 
-  function handleSubmit(e: FormEvent) {
+  async function handleSubmit(e: FormEvent) {
     e.preventDefault();
-    if (!form.name.trim() || !form.email.trim() || !form.message.trim()) return;
-    setSent(true);
-    setForm({ name: "", email: "", message: "" });
+    if (
+      !form.name.trim() ||
+      !form.email.trim() ||
+      !form.message.trim() ||
+      busy
+    ) {
+      return;
+    }
+
+    setBusy(true);
+    setError("");
+
+    try {
+      const res = await apiFetch("/api/contact-messages", {
+        method: "POST",
+        body: JSON.stringify({
+          name: form.name.trim(),
+          email: form.email.trim(),
+          message: form.message.trim(),
+        }),
+      });
+      const data = await res.json();
+
+      if (!res.ok) {
+        setError(data.error || "Could not send message. Please try again.");
+        return;
+      }
+
+      setSent(true);
+      setForm({ name: "", email: "", message: "" });
+    } catch {
+      setError("Network error. Please try again.");
+    } finally {
+      setBusy(false);
+    }
   }
 
   return (
     <section
       id="contact"
-      className="relative bg-[#050505] overflow-hidden pb-16 md:pb-20"
+      className="relative bg-[#050505] overflow-hidden pb-12 sm:pb-16 md:pb-20"
     >
       <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[70vw] h-[40vh] bg-[#D4AF37]/8 rounded-full blur-[140px] pointer-events-none" />
       <div className="absolute bottom-20 right-0 w-[35vw] h-[35vh] bg-[#00BFFF]/6 rounded-full blur-[120px] pointer-events-none" />
@@ -74,7 +109,7 @@ export default function Contact() {
             initial={{ opacity: 0, x: -28 }}
             animate={inView ? { opacity: 1, x: 0 } : {}}
             transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
-            className="rounded-2xl border border-[#D4AF37]/15 bg-[#0a0a0a]/90 ring-1 ring-black/50 p-6 md:p-8 lg:p-10"
+            className="rounded-2xl border border-[#D4AF37]/15 bg-[#0a0a0a]/90 ring-1 ring-black/50 p-5 sm:p-6 md:p-8 lg:p-10"
           >
             <div className="flex items-center gap-2 mb-2">
               <Sparkles className="w-4 h-4 text-[#D4AF37]" />
@@ -139,16 +174,21 @@ export default function Contact() {
 
               <button
                 type="submit"
-                className="mt-1 w-full inline-flex items-center justify-center gap-2 rounded-lg text-[#0a0a0a] font-semibold text-sm md:text-base py-4 hover:shadow-[0_0_30px_rgba(212,175,55,0.35)] transition-all duration-300 group"
+                disabled={busy}
+                className="mt-1 w-full inline-flex items-center justify-center gap-2 rounded-lg text-[#0a0a0a] font-semibold text-sm md:text-base py-4 hover:shadow-[0_0_30px_rgba(212,175,55,0.35)] transition-all duration-300 group disabled:opacity-60 disabled:cursor-not-allowed"
                 style={{
                   background: `linear-gradient(135deg, ${GOLD}, #B8960C)`,
                 }}
               >
-                Send Message
+                {busy ? "Sending..." : "Send Message"}
                 <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
               </button>
 
-              {sent && (
+              {error && (
+                <p className="text-center text-sm text-red-400/90">{error}</p>
+              )}
+
+              {sent && !error && (
                 <p className="text-center text-sm text-[#D4AF37]/90">
                   Thank you — your message has been received.
                 </p>

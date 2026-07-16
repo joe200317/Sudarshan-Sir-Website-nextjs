@@ -43,12 +43,12 @@ export default function Awards() {
   return (
     <section
       id="awards"
-      className="relative py-24 lg:py-32 bg-[#0a0a0a] overflow-hidden"
+      className="relative py-10 md:py-12 lg:py-14 bg-[#0a0a0a] overflow-hidden"
     >
       <div className="absolute top-1/2 left-0 w-[500px] h-[500px] bg-[#D4AF37]/3 rounded-full blur-[150px] -translate-y-1/2" />
 
       <div className="container relative z-10">
-        <div className="grid lg:grid-cols-2 gap-16 items-center">
+        <div className="grid lg:grid-cols-2 gap-8 lg:gap-10 items-center">
           <motion.div
             initial={{ opacity: 0, scale: 0.95 }}
             whileInView={{ opacity: 1, scale: 1 }}
@@ -62,7 +62,7 @@ export default function Awards() {
                 alt="Achievement Award"
                 width={600}
                 height={800}
-                className="w-full max-w-md mx-auto rounded-lg glow-gold-sm"
+                className="w-full max-w-xs sm:max-w-md mx-auto h-auto rounded-lg glow-gold-sm"
               />
               <div className="absolute -bottom-4 -right-4 w-32 h-32 bg-[#00BFFF]/10 rounded-full blur-[40px]" />
             </div>
@@ -84,12 +84,12 @@ export default function Awards() {
               </span>
             </div>
 
-            <h2 className="text-4xl md:text-5xl font-bold mb-10">
+            <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-6 sm:mb-10">
               <span className="text-[#F5F0E8]">Awards & </span>
               <span className="text-gradient-gold">Recognition</span>
             </h2>
 
-            <div className="space-y-6">
+            <div className="space-y-4">
               {awards.map((award, i) => (
                 <motion.div
                   key={award.year}

@@ -26,7 +26,7 @@ export default function ProgramsPage() {
       {/* Hero */}
       <section
         ref={heroRef}
-        className="relative min-h-[68svh] flex items-end overflow-hidden"
+        className="relative min-h-[56svh] sm:min-h-[62svh] lg:min-h-[68svh] flex items-end overflow-hidden"
       >
         <motion.div style={{ y }} className="absolute inset-0 scale-110">
           <Image
@@ -43,7 +43,7 @@ export default function ProgramsPage() {
         <div className="absolute inset-0 bg-gradient-to-t from-[#050505] via-[#050505]/40 to-[#050505]/60" />
         <div className="absolute top-1/3 left-1/2 -translate-x-1/2 w-[70vw] h-[40vh] bg-[#D4AF37]/12 rounded-full blur-[140px] pointer-events-none" />
 
-        <div className="relative z-10 container w-full pt-28 pb-14 md:pb-16 text-center">
+        <div className="relative z-10 container w-full pt-24 pb-10 sm:pt-28 sm:pb-12 md:pb-16 text-center">
           <motion.div
             initial={{ opacity: 0, y: 32 }}
             animate={{ opacity: 1, y: 0 }}
@@ -60,7 +60,7 @@ export default function ProgramsPage() {
             </div>
 
             <h1
-              className="text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-bold leading-[0.92] mb-5"
+              className="text-4xl sm:text-5xl md:text-7xl lg:text-8xl font-bold leading-[0.92] mb-4 sm:mb-5"
               style={{ fontFamily: "var(--font-display)" }}
             >
               <span className="text-[#F5F0E8]">All </span>
@@ -102,7 +102,7 @@ export default function ProgramsPage() {
                   <Link
                     href={`/programs/${program.slug}`}
                     className={`group relative block overflow-hidden rounded-2xl border border-[#D4AF37]/12 bg-[#0a0a0a] ring-1 ring-black/60 hover:border-[#D4AF37]/40 hover:ring-[#D4AF37]/15 transition-all duration-500 hover:shadow-[0_0_40px_rgba(212,175,55,0.12),inset_0_0_0_1px_rgba(212,175,55,0.08)] ${
-                      featured ? "h-[320px] md:h-[380px]" : "h-[300px] md:h-[340px]"
+                      featured ? "h-[260px] sm:h-[300px] md:h-[380px]" : "h-[240px] sm:h-[280px] md:h-[340px]"
                     }`}
                   >
                     <Image

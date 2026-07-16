@@ -49,7 +49,7 @@ export default function TransformShowcase({
   const imageSrc = images[active % images.length];
 
   return (
-    <section className="relative py-14 md:py-20 overflow-hidden bg-[#050505]">
+    <section className="relative py-10 sm:py-12 md:py-20 overflow-hidden bg-[#050505]">
       <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[80vw] h-[50vh] bg-[#D4AF37]/8 rounded-full blur-[140px] pointer-events-none" />
       <div className="absolute bottom-0 right-0 w-[40vw] h-[40vh] bg-[#00BFFF]/6 rounded-full blur-[120px] pointer-events-none" />
 
@@ -70,7 +70,7 @@ export default function TransformShowcase({
             </span>
           </div>
           <h2
-            className="text-4xl md:text-5xl lg:text-6xl font-bold leading-[0.95]"
+            className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold leading-[0.95]"
             style={{ fontFamily: "var(--font-display)" }}
           >
             Built to <span className="text-gradient-gold">transform</span>
