@@ -76,7 +76,7 @@ export default function About() {
               <div className="w-8 h-px" style={{ background: GOLD }} />
               <span
                 style={{ fontFamily: "var(--font-accent)" }}
-                className="text-[#00BFFF] text-xs tracking-[0.3em] uppercase"
+                className="text-white text-xs tracking-[0.3em] uppercase"
               >
                 About Me
               </span>

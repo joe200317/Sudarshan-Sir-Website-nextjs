@@ -95,7 +95,7 @@ export default function Hero() {
             <div className="flex items-center gap-3 mb-6">
               <span
                 style={{ fontFamily: "var(--font-accent)" }}
-                className="text-[#00BFFF] text-sm tracking-[0.3em] uppercase"
+                className="text-white text-sm tracking-[0.3em] uppercase"
               >
                 Elite Mental Performance
               </span>

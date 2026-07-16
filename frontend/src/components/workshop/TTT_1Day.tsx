@@ -328,11 +328,45 @@ export default function TTT_1Day({
         </div>
 
         <div className="relative z-10 w-full mx-auto max-w-6xl px-4 sm:px-6 pt-28 pb-14 sm:py-28 lg:py-32">
-          <div className="grid lg:grid-cols-[1.05fr_0.95fr] gap-10 lg:gap-14 items-center">
+          <div className="grid lg:grid-cols-[0.95fr_1.05fr] gap-10 lg:gap-14 items-center">
+            <motion.div
+              initial={{ opacity: 0, x: -28 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.85, ease: [0.22, 1, 0.36, 1] }}
+              className="relative mx-auto w-full max-w-md lg:max-w-none order-2 lg:order-1"
+            >
+              <div className="relative aspect-[3/4] sm:aspect-[4/5] overflow-hidden rounded-2xl border border-[#D4AF37]/20 shadow-[0_0_60px_rgba(212,175,55,0.12)]">
+                <Image
+                  src="/images/sir2.jpg"
+                  alt="Sudarshan Sabat"
+                  fill
+                  priority
+                  className="object-cover object-top"
+                  sizes="(max-width: 1024px) 90vw, 480px"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-[#050505]/80 via-transparent to-transparent" />
+                <div className="absolute bottom-0 inset-x-0 p-5 sm:p-6">
+                  <p
+                    className="text-[#D4AF37] text-[10px] tracking-[0.28em] uppercase mb-1"
+                    style={{ fontFamily: "var(--font-accent)" }}
+                  >
+                    #1 Mind Trainer India
+                  </p>
+                  <p
+                    className="text-xl sm:text-2xl font-bold text-[#F5F0E8]"
+                    style={{ fontFamily: "var(--font-display)" }}
+                  >
+                    Sudarshan Sabat
+                  </p>
+                </div>
+              </div>
+            </motion.div>
+
             <motion.div
               initial={{ opacity: 0, y: 32 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.85, ease: [0.22, 1, 0.36, 1] }}
+              transition={{ duration: 0.85, delay: 0.12, ease: [0.22, 1, 0.36, 1] }}
+              className="order-1 lg:order-2"
             >
               <p
                 className="text-[#D4AF37] text-[11px] tracking-[0.3em] uppercase mb-4"
@@ -366,7 +400,7 @@ export default function TTT_1Day({
                 </GoldButton>
                 <span className="inline-flex items-center justify-center sm:justify-start gap-2 text-xs text-[#F5F0E8]/45 tracking-wide">
                   <MapPin className="w-3.5 h-3.5 text-[#D4AF37]" />
-                  Sunday 12 July · Pune · 09:00–18:00
+                  Sunday 12 July · Pune · 09:00–06:00
                 </span>
               </div>
 
@@ -387,39 +421,6 @@ export default function TTT_1Day({
                     </p>
                   </div>
                 ))}
-              </div>
-            </motion.div>
-
-            <motion.div
-              initial={{ opacity: 0, x: 28 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.85, delay: 0.12, ease: [0.22, 1, 0.36, 1] }}
-              className="relative mx-auto w-full max-w-md lg:max-w-none"
-            >
-              <div className="relative aspect-[3/4] sm:aspect-[4/5] overflow-hidden rounded-2xl border border-[#D4AF37]/20 shadow-[0_0_60px_rgba(212,175,55,0.12)]">
-                <Image
-                  src="/images/sir2.jpg"
-                  alt="Sudarshan Sabat"
-                  fill
-                  priority
-                  className="object-cover object-top"
-                  sizes="(max-width: 1024px) 90vw, 480px"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-[#050505]/80 via-transparent to-transparent" />
-                <div className="absolute bottom-0 inset-x-0 p-5 sm:p-6">
-                  <p
-                    className="text-[#D4AF37] text-[10px] tracking-[0.28em] uppercase mb-1"
-                    style={{ fontFamily: "var(--font-accent)" }}
-                  >
-                    #1 Mind Trainer India
-                  </p>
-                  <p
-                    className="text-xl sm:text-2xl font-bold text-[#F5F0E8]"
-                    style={{ fontFamily: "var(--font-display)" }}
-                  >
-                    Sudarshan Sabat
-                  </p>
-                </div>
               </div>
             </motion.div>
           </div>

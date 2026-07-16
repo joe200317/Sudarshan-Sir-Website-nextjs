@@ -3,7 +3,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { motion } from "framer-motion";
-import { ArrowRight, Trophy } from "lucide-react";
+import { ArrowRight, Trophy, Quote } from "lucide-react";
 
 const GOLD = "#D4AF37";
 
@@ -43,6 +43,24 @@ const awards = [
     title: "Outstanding Contribution to Mindfulness",
     org: "Global Meditation Federation",
     image: "/images/award-gold.png",
+  },
+];
+
+const press = [
+  {
+    outlet: "Business Horizon Weekly",
+    quote:
+      "One of the few mind-power trainers whose workshops translate directly into boardroom decisions.",
+  },
+  {
+    outlet: "Wellness Daily India",
+    quote:
+      "Sabat treats the mind like a muscle — trainable, measurable, and never fixed.",
+  },
+  {
+    outlet: "The Leadership Post",
+    quote:
+      "A rare coach whose results show up in performance reviews, not just in feel-good testimonials.",
   },
 ];
 
@@ -235,6 +253,57 @@ export default function AwardsPage() {
               View Gallery
               <ArrowRight className="w-4 h-4" />
             </Link>
+          </div>
+        </div>
+      </section>
+
+      {/* Press mentions */}
+      <section className="py-20 lg:py-28">
+        <div className="container">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, amount: 0.3 }}
+            transition={{ duration: 0.6 }}
+            className="max-w-2xl mb-12"
+          >
+            <div className="flex items-center gap-3 mb-4">
+              <div className="w-8 h-px" style={{ background: GOLD }} />
+              <span
+                style={{ fontFamily: "var(--font-accent)" }}
+                className="text-[#D4AF37] text-xs tracking-[0.3em] uppercase"
+              >
+                As Featured In
+              </span>
+            </div>
+            <h2 className="text-2xl md:text-3xl font-bold leading-tight">
+              What the{" "}
+              <span className="text-gradient-gold">press is saying</span>
+            </h2>
+          </motion.div>
+
+          <div className="grid md:grid-cols-3 gap-6 lg:gap-8">
+            {press.map((p, i) => (
+              <motion.div
+                key={p.outlet}
+                initial={{ opacity: 0, y: 24 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, amount: 0.3 }}
+                transition={{ duration: 0.5, delay: i * 0.1 }}
+                className="group relative rounded-xl border border-[#D4AF37]/15 bg-[#0a0a0a]/60 p-6 lg:p-7 hover:border-[#D4AF37]/40 transition-colors duration-500"
+              >
+                <Quote
+                  className="w-6 h-6 mb-4 group-hover:text-[#00BFFF] transition-colors duration-500"
+                  style={{ color: GOLD }}
+                />
+                <p className="text-[#F5F0E8]/70 text-sm md:text-base leading-relaxed mb-5">
+                  {p.quote}
+                </p>
+                <div className="text-[#D4AF37]/70 text-xs tracking-[0.15em] uppercase font-semibold">
+                  {p.outlet}
+                </div>
+              </motion.div>
+            ))}
           </div>
         </div>
       </section>

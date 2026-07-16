@@ -78,7 +78,7 @@ export default function Awards() {
               <div className="w-8 h-px" style={{ background: GOLD }} />
               <span
                 style={{ fontFamily: "var(--font-accent)" }}
-                className="text-[#00BFFF] text-xs tracking-[0.3em] uppercase"
+                className="text-white text-xs tracking-[0.3em] uppercase"
               >
                 Recognition
               </span>
@@ -105,7 +105,7 @@ export default function Awards() {
                   <div>
                     <div
                       style={{ fontFamily: "var(--font-accent)" }}
-                      className="text-[#00BFFF]/70 text-xs mb-1 tracking-wider"
+                      className="text-white text-xs mb-1 tracking-wider"
                     >
                       {award.year}
                     </div>

@@ -4,7 +4,17 @@ import { useEffect, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { AnimatePresence, motion } from "framer-motion";
-import { ArrowRight, BookOpen, Building2, Trophy, Users } from "lucide-react";
+import {
+  ArrowRight,
+  BookOpen,
+  Building2,
+  Trophy,
+  Users,
+  Target,
+  Flame,
+  Compass,
+  Repeat,
+} from "lucide-react";
 
 const GOLD = "#D4AF37";
 
@@ -45,6 +55,29 @@ const journey = [
     title: "50,000+ Lives, and Counting",
     text: "Workshops across Maharashtra, Gujarat, Odisha and beyond, with a standing goal to reach a million lives — one re-trained mind at a time.",
     image: "/images/meditation.png",
+  },
+];
+
+const values = [
+  {
+    icon: Flame,
+    title: "Discipline over motivation",
+    text: "Motivation fades by design. Every program is built around repeatable discipline — the kind that still shows up once the excitement is gone.",
+  },
+  {
+    icon: Target,
+    title: "Every mind is trainable",
+    text: "No one is written off as \"just not wired for it.\" The mind responds to the right training, at the right intensity, applied consistently.",
+  },
+  {
+    icon: Repeat,
+    title: "Practice over theory",
+    text: "Concepts are only proven in application. Sessions are built around drills and real decisions, not slides and takeaway PDFs.",
+  },
+  {
+    icon: Compass,
+    title: "Results over rhetoric",
+    text: "The measure of a session is what changes on Monday morning — not how inspiring it felt on Saturday afternoon.",
   },
 ];
 
@@ -365,6 +398,57 @@ export default function AboutPage() {
                 belief drives the pace and intensity of every session.
               </p>
             </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Core Values */}
+      <section className="relative py-20 lg:py-28 bg-[#050505]">
+        <div className="container">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, amount: 0.3 }}
+            transition={{ duration: 0.6 }}
+            className="max-w-2xl mb-14"
+          >
+            <div className="flex items-center gap-3 mb-4">
+              <div className="w-8 h-px" style={{ background: GOLD }} />
+              <span
+                style={{ fontFamily: "var(--font-accent)" }}
+                className="text-[#D4AF37] text-xs tracking-[0.3em] uppercase"
+              >
+                What Drives The Work
+              </span>
+            </div>
+            <h2 className="text-3xl md:text-4xl font-bold leading-tight">
+              Four beliefs behind{" "}
+              <span className="text-gradient-gold">every session</span>
+            </h2>
+          </motion.div>
+
+          <div className="grid sm:grid-cols-2 gap-6 lg:gap-8">
+            {values.map((v, i) => (
+              <motion.div
+                key={v.title}
+                initial={{ opacity: 0, y: 24 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, amount: 0.3 }}
+                transition={{ duration: 0.5, delay: i * 0.1 }}
+                className="group relative rounded-xl border border-[#D4AF37]/15 bg-[#0a0a0a]/60 p-6 lg:p-8 hover:border-[#D4AF37]/40 transition-colors duration-500"
+              >
+                <v.icon
+                  className="w-8 h-8 mb-5 group-hover:text-[#00BFFF] transition-colors duration-500"
+                  style={{ color: GOLD }}
+                />
+                <h3 className="text-lg md:text-xl font-bold text-[#F5F0E8] mb-2">
+                  {v.title}
+                </h3>
+                <p className="text-[#F5F0E8]/55 text-sm md:text-base leading-relaxed">
+                  {v.text}
+                </p>
+              </motion.div>
+            ))}
           </div>
         </div>
       </section>
