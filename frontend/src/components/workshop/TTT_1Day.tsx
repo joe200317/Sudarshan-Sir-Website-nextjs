@@ -339,12 +339,13 @@ export default function TTT_1Day({
             >
               <div className="relative aspect-[3/4] sm:aspect-[4/5] overflow-hidden rounded-2xl border border-[#D4AF37]/20 shadow-[0_0_60px_rgba(212,175,55,0.12)]">
                 <Image
-                  src="/images/sir2.jpg"
+                  src={heroImage}
                   alt="Sudarshan Sabat"
                   fill
                   priority
                   className="object-cover object-top"
                   sizes="(max-width: 1024px) 90vw, 480px"
+                  unoptimized={heroImage.startsWith("http://localhost")}
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-[#050505]/80 via-transparent to-transparent" />
                 <div className="absolute bottom-0 inset-x-0 p-5 sm:p-6">
@@ -423,40 +424,6 @@ export default function TTT_1Day({
                     </p>
                   </div>
                 ))}
-              </div>
-            </motion.div>
-
-            <motion.div
-              initial={{ opacity: 0, x: 28 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.85, delay: 0.12, ease: [0.22, 1, 0.36, 1] }}
-              className="relative mx-auto w-full max-w-md lg:max-w-none"
-            >
-              <div className="relative aspect-[3/4] sm:aspect-[4/5] overflow-hidden rounded-2xl border border-[#D4AF37]/20 shadow-[0_0_60px_rgba(212,175,55,0.12)]">
-                <Image
-                  src={heroImage}
-                  alt="Sudarshan Sabat"
-                  fill
-                  priority
-                  className="object-cover object-top"
-                  sizes="(max-width: 1024px) 90vw, 480px"
-                  unoptimized={heroImage.startsWith("http://localhost")}
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-[#050505]/80 via-transparent to-transparent" />
-                <div className="absolute bottom-0 inset-x-0 p-5 sm:p-6">
-                  <p
-                    className="text-[#D4AF37] text-[10px] tracking-[0.28em] uppercase mb-1"
-                    style={{ fontFamily: "var(--font-accent)" }}
-                  >
-                    #1 Mind Trainer India
-                  </p>
-                  <p
-                    className="text-xl sm:text-2xl font-bold text-[#F5F0E8]"
-                    style={{ fontFamily: "var(--font-display)" }}
-                  >
-                    Sudarshan Sabat
-                  </p>
-                </div>
               </div>
             </motion.div>
           </div>
