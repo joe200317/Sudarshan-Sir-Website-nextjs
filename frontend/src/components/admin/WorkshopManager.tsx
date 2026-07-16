@@ -44,8 +44,11 @@ const emptyForm = {
   imageUrl: "",
 };
 
-function toInputDate(iso: string) {
-  return iso.slice(0, 10);
+function toInputDateTime(iso: string) {
+  const d = new Date(iso);
+  if (Number.isNaN(d.getTime())) return "";
+  const pad = (n: number) => String(n).padStart(2, "0");
+  return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`;
 }
 
 export default function WorkshopManager({
@@ -98,9 +101,9 @@ export default function WorkshopManager({
     setForm({
       programSlug: w.programSlug || w.program?.slug || "",
       slug: w.slug || "",
-      startDate: toInputDate(w.startDate),
-      endDate: toInputDate(w.endDate),
-      eventDate: toInputDate(w.eventDate || w.startDate),
+      startDate: toInputDateTime(w.startDate),
+      endDate: toInputDateTime(w.endDate),
+      eventDate: toInputDateTime(w.eventDate || w.startDate),
       fees: w.fees != null ? String(w.fees) : "",
       location: w.location,
       notificationEmail: w.notificationEmail,
@@ -389,22 +392,22 @@ export default function WorkshopManager({
 
               <div className="grid sm:grid-cols-3 gap-4">
                 <Field
-                  label="Start date"
-                  type="date"
+                  label="Start date & time"
+                  type="datetime-local"
                   value={form.startDate}
                   onChange={(v) => setForm((f) => ({ ...f, startDate: v }))}
                   required
                 />
                 <Field
-                  label="End date"
-                  type="date"
+                  label="End date & time"
+                  type="datetime-local"
                   value={form.endDate}
                   onChange={(v) => setForm((f) => ({ ...f, endDate: v }))}
                   required
                 />
                 <Field
-                  label="Event date"
-                  type="date"
+                  label="Event date & time"
+                  type="datetime-local"
                   value={form.eventDate}
                   onChange={(v) => setForm((f) => ({ ...f, eventDate: v }))}
                   required

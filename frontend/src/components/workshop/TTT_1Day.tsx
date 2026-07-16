@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { motion } from "framer-motion";
@@ -27,15 +27,9 @@ export const TTT_1DAY = {
 } as const;
 
 const GOLD = "#D4AF37";
-const EVENT_DATE = new Date("2026-07-12T09:00:00+05:30");
+const DEFAULT_EVENT_START = new Date("2026-07-16T09:00:00+05:30");
+const DEFAULT_EVENT_END = new Date("2026-07-18T18:00:00+05:30");
 const YOUTUBE_VIDEO_ID = "qZrc-Dq4JYU";
-
-const EVENT_DETAILS = [
-  { label: "Date", value: "12 July 2026" },
-  { label: "Time", value: "09:00 AM – 06:00 PM" },
-  { label: "Venue", value: "Pune" },
-  { label: "Format", value: "Live Interactive" },
-] as const;
 
 const LEARNINGS = [
   {
@@ -68,18 +62,18 @@ const BENEFITS = [
 ] as const;
 
 const BOOKS = [
-  "Mind Winner World Winner",
-  "Rich Mind Blueprint",
-  "Dare Your Mind to Think Beyond",
-  "Infinite Strength of Mind",
-  "Achiever Mind Set",
-  "Mind Map to Success",
-  "Millionaire Mind Habits",
-  "Miracle of Fearless Mind",
-  "Master Mind Principles",
-  "Universal Law of Mind",
-  "Awaken Your Genius Mind",
-  "Ultimate Happiness of Mind",
+  { title: "Mind Winner World Winner", image: "/images/Book1.webp" },
+  { title: "Rich Mind Blueprint", image: "/images/Book2.webp" },
+  { title: "Dare Your Mind to Think Beyond", image: "/images/Book3.webp" },
+  { title: "Infinite Strength of Mind", image: "/images/Book4.webp" },
+  { title: "Achiever Mind Set", image: "/images/Book5.webp" },
+  { title: "Mind Map to Success", image: "/images/Book6.webp" },
+  { title: "Millionaire Mind Habits", image: "/images/Book7.webp" },
+  { title: "Miracle of Fearless Mind", image: "/images/Book8.webp" },
+  { title: "Master Mind Principles", image: "/images/Book9.webp" },
+  { title: "Universal Law of Mind", image: "/images/Book10.webp" },
+  { title: "Awaken Your Genius Mind", image: "/images/Book11.webp" },
+  { title: "Ultimate Happiness of Mind", image: "/images/Book12.webp" },
 ] as const;
 
 const AWARDS = [
@@ -88,14 +82,29 @@ const AWARDS = [
 ] as const;
 
 const EVENT_VIDEOS = [
-  { title: "Event Highlights", image: "/images/sir4.jpg" },
-  { title: "Autograph Session", image: "/images/sir5.jpg" },
+  {
+    title: "Event Highlights",
+    videoId: "AtWI6NZY62g",
+  },
+  {
+    title: "Autograph Session",
+    videoId: "POOX0rSeDNQ",
+  },
 ] as const;
 
 const PEOPLE_VIDEOS = [
-  { image: "/images/sir3.jpg", alt: "Workshop testimonial" },
-  { image: "/images/meditation.png", alt: "Audience testimonial" },
-  { image: "/images/hero.png", alt: "Training session testimonial" },
+  {
+    title: "Workshop testimonial",
+    videoId: "ql0m9sMXJ_U",
+  },
+  {
+    title: "Audience testimonial",
+    videoId: "Y7kl9hTrSsg",
+  },
+  {
+    title: "Training session testimonial",
+    videoId: "xjQG9STaWB4",
+  },
 ] as const;
 
 const WRITTEN_REVIEWS = [
@@ -129,8 +138,32 @@ type TimeLeft = {
   seconds: number;
 };
 
-function getTimeLeft(): TimeLeft {
-  const diff = Math.max(0, EVENT_DATE.getTime() - Date.now());
+function parseDateOrFallback(value: string | undefined, fallback: Date) {
+  if (!value) return fallback;
+  const parsed = new Date(value);
+  return Number.isNaN(parsed.getTime()) ? fallback : parsed;
+}
+
+function formatDateTimeRange(start: Date, end: Date) {
+  const datePart = start.toLocaleDateString("en-GB", {
+    day: "2-digit",
+    month: "short",
+    year: "numeric",
+  });
+  const timeFmt: Intl.DateTimeFormatOptions = {
+    hour: "2-digit",
+    minute: "2-digit",
+    hour12: true,
+  };
+  const startTime = start.toLocaleTimeString("en-IN", timeFmt);
+  const endTime = end.toLocaleTimeString("en-IN", timeFmt);
+  return { datePart, timePart: `${startTime} - ${endTime}` };
+}
+
+function getTimeLeft(startAt: Date, endAt: Date): TimeLeft {
+  const now = Date.now();
+  const targetMs = now < startAt.getTime() ? startAt.getTime() : endAt.getTime();
+  const diff = Math.max(0, targetMs - now);
   const totalSeconds = Math.floor(diff / 1000);
   return {
     days: Math.floor(totalSeconds / 86400),
@@ -214,6 +247,54 @@ function GoldButton({
   );
 }
 
+function YouTubePlayer({
+  videoId,
+  title,
+}: {
+  videoId: string;
+  title: string;
+}) {
+  const [playing, setPlaying] = useState(false);
+  const thumb = `https://i.ytimg.com/vi/${videoId}/hqdefault.jpg`;
+
+  return (
+    <div className="relative aspect-video overflow-hidden rounded-xl border border-[#D4AF37]/15 bg-[#0a0a0a]">
+      {playing ? (
+        <iframe
+          src={`https://www.youtube-nocookie.com/embed/${videoId}?autoplay=1&rel=0`}
+          title={title}
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+          allowFullScreen
+          className="absolute inset-0 h-full w-full"
+        />
+      ) : (
+        <button
+          type="button"
+          onClick={() => setPlaying(true)}
+          className="group absolute inset-0 w-full h-full text-left focus:outline-none focus-visible:ring-2 focus-visible:ring-[#D4AF37]/50 focus-visible:ring-inset"
+          aria-label={`Play ${title}`}
+        >
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src={thumb}
+            alt={title}
+            className="absolute inset-0 h-full w-full object-cover transition-transform duration-700 group-hover:scale-105"
+          />
+          <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
+          <div className="absolute inset-0 flex items-center justify-center">
+            <span className="flex h-12 w-12 sm:h-14 sm:w-14 items-center justify-center rounded-full border border-[#D4AF37]/40 bg-black/50 backdrop-blur-sm transition-transform duration-300 group-hover:scale-110">
+              <Play className="w-5 h-5 text-[#D4AF37] fill-[#D4AF37] ml-0.5" />
+            </span>
+          </div>
+          <span className="absolute bottom-3 left-3 text-xs sm:text-sm font-medium text-white/90 tracking-wide">
+            {title}
+          </span>
+        </button>
+      )}
+    </div>
+  );
+}
+
 function VideoThumb({
   src,
   alt,
@@ -258,14 +339,31 @@ export default function TTT_1Day({
 }: {
   workshop?: WorkshopBookingInfo;
 }) {
-  const [timeLeft, setTimeLeft] = useState<TimeLeft>(getTimeLeft);
+  const startAt = useMemo(
+    () => parseDateOrFallback(workshop?.startDate, DEFAULT_EVENT_START),
+    [workshop?.startDate],
+  );
+  const endAt = useMemo(
+    () => parseDateOrFallback(workshop?.endDate, DEFAULT_EVENT_END),
+    [workshop?.endDate],
+  );
+  const [timeLeft, setTimeLeft] = useState<TimeLeft>({
+    days: 0,
+    hours: 0,
+    minutes: 0,
+    seconds: 0,
+  });
   const [masterVideoPlaying, setMasterVideoPlaying] = useState(false);
   const [reserveOpen, setReserveOpen] = useState(false);
 
   useEffect(() => {
-    const id = window.setInterval(() => setTimeLeft(getTimeLeft()), 1000);
+    setTimeLeft(getTimeLeft(startAt, endAt));
+    const id = window.setInterval(
+      () => setTimeLeft(getTimeLeft(startAt, endAt)),
+      1000,
+    );
     return () => window.clearInterval(id);
-  }, []);
+  }, [startAt, endAt]);
 
   const openReserve = () => {
     if (!workshop) return;
@@ -282,6 +380,14 @@ export default function TTT_1Day({
       : "Book Your Seat Now";
 
   const heroImage = workshop?.imageUrl?.trim() || "/images/sir2.jpg";
+  const eventInfo = formatDateTimeRange(startAt, endAt);
+  const venue = workshop?.location?.trim() || "Pune";
+  const eventDetails = [
+    { label: "Date", value: eventInfo.datePart },
+    { label: "Time", value: eventInfo.timePart },
+    { label: "Venue", value: venue },
+    { label: "Format", value: "Live Interactive" },
+  ] as const;
 
   const timerUnits = [
     { value: timeLeft.days, label: "Days" },
@@ -403,7 +509,7 @@ export default function TTT_1Day({
                 </GoldButton>
                 <span className="inline-flex items-center justify-center sm:justify-start gap-2 text-xs text-[#F5F0E8]/45 tracking-wide">
                   <MapPin className="w-3.5 h-3.5 text-[#D4AF37]" />
-                  Sunday 12 July · Pune · 09:00–06:00
+                  {eventInfo.datePart} · {venue} · {eventInfo.timePart}
                 </span>
               </div>
 
@@ -433,7 +539,7 @@ export default function TTT_1Day({
       {/* Event meta strip */}
       <section className="border-y border-[#D4AF37]/12 bg-[#0a0a0a]">
         <div className="mx-auto max-w-6xl px-4 sm:px-6 py-5 sm:py-6 grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
-          {EVENT_DETAILS.map((item, i) => (
+          {eventDetails.map((item, i) => (
             <motion.div
               key={item.label}
               initial={{ opacity: 0, y: 12 }}
@@ -670,9 +776,9 @@ export default function TTT_1Day({
           </motion.div>
 
           <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-5">
-            {BOOKS.map((title, i) => (
+            {BOOKS.map((book, i) => (
               <motion.div
-                key={title}
+                key={book.title}
                 initial={{ opacity: 0, y: 16 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
@@ -680,22 +786,16 @@ export default function TTT_1Day({
                 className="group"
               >
                 <div className="relative aspect-[3/4] mb-3 overflow-hidden rounded-lg border border-[#D4AF37]/12 bg-[#111] transition-transform duration-500 group-hover:-translate-y-1">
-                  <div
-                    className="absolute inset-0"
-                    style={{
-                      background: `linear-gradient(155deg, #141414 0%, #0a0a0a 50%, ${GOLD}18 100%)`,
-                    }}
+                  <Image
+                    src={book.image}
+                    alt={book.title}
+                    fill
+                    className="object-cover"
+                    sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
                   />
-                  <div className="absolute left-0 top-0 bottom-0 w-1.5 bg-gradient-to-b from-[#E8C547] via-[#D4AF37] to-[#8B6914]" />
-                  <div className="absolute inset-0 flex flex-col items-center justify-center px-3 pl-4">
-                    <Brain className="w-5 h-5 mb-2 text-[#D4AF37]/50" />
-                    <p className="text-[9px] sm:text-[10px] font-semibold leading-snug tracking-wide uppercase text-center text-[#D4AF37]/90">
-                      {title}
-                    </p>
-                  </div>
                 </div>
-                <p className="text-[10px] sm:text-xs text-center text-[#F5F0E8]/55 leading-snug px-1">
-                  {title}
+                <p className="text-sm sm:text-base md:text-lg text-center text-[#F5F0E8]/65 leading-snug px-1 font-medium">
+                  {book.title}
                 </p>
               </motion.div>
             ))}
@@ -761,10 +861,9 @@ export default function TTT_1Day({
                 viewport={{ once: true }}
                 transition={{ delay: i * 0.08 }}
               >
-                <VideoThumb
-                  src={video.image}
-                  alt={video.title}
-                  label={video.title}
+                <YouTubePlayer
+                  videoId={video.videoId}
+                  title={video.title}
                 />
               </motion.div>
             ))}
@@ -804,13 +903,16 @@ export default function TTT_1Day({
           <div className="grid sm:grid-cols-3 gap-4 sm:gap-5 mb-10 sm:mb-12">
             {PEOPLE_VIDEOS.map((video, i) => (
               <motion.div
-                key={video.alt}
+                key={video.videoId}
                 initial={{ opacity: 0, y: 16 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: i * 0.07 }}
               >
-                <VideoThumb src={video.image} alt={video.alt} />
+                <YouTubePlayer
+                  videoId={video.videoId}
+                  title={video.title}
+                />
               </motion.div>
             ))}
           </div>

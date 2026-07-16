@@ -1,4 +1,5 @@
 import { extractMetaPixelId, getMetaPixelBootstrapScript } from "@/lib/meta-pixel";
+import Script from "next/script";
 
 type Props = {
   /** Raw Pixel ID or full Meta Pixel snippet from admin */
@@ -16,7 +17,9 @@ export default function MetaPixel({ code }: Props) {
   return (
     <>
       {/* Meta Pixel Code */}
-      <script
+      <Script
+        id={`meta-pixel-${pixelId}`}
+        strategy="afterInteractive"
         dangerouslySetInnerHTML={{
           __html: getMetaPixelBootstrapScript(pixelId),
         }}

@@ -18,6 +18,9 @@ export type WorkshopBookingInfo = {
   slug: string;
   programSlug: string;
   programTitle: string;
+  startDate?: string;
+  endDate?: string;
+  location?: string;
   fees: number | null;
   includePayment: boolean;
   /** Hero image URL (compressed WebP from workshop upload) */
