@@ -20,4 +20,6 @@ export type WorkshopBookingInfo = {
   programTitle: string;
   fees: number | null;
   includePayment: boolean;
+  /** Raw Pixel ID or full Meta Pixel snippet (per landing page) */
+  metaPixelCode?: string;
 };

@@ -8,6 +8,7 @@ import {
   INCOME_SLABS,
   type WorkshopBookingInfo,
 } from "@/data/reserve-spot";
+import { trackMetaEvent } from "@/lib/meta-pixel";
 
 declare global {
   interface Window {
@@ -99,6 +100,13 @@ export default function ReserveSpotModal({ open, onClose, workshop }: Props) {
       }
 
       if (!data.requiresPayment) {
+        trackMetaEvent("Lead", {
+          content_name: workshop.programTitle,
+          content_category: workshop.programSlug,
+        });
+        trackMetaEvent("CompleteRegistration", {
+          content_name: workshop.programTitle,
+        });
         setDone(true);
         return;
       }
@@ -108,6 +116,12 @@ export default function ReserveSpotModal({ open, onClose, workshop }: Props) {
         setError("Could not load Razorpay. Try again.");
         return;
       }
+
+      trackMetaEvent("InitiateCheckout", {
+        content_name: workshop.programTitle,
+        value: fees,
+        currency: "INR",
+      });
 
       const rzp = new window.Razorpay({
         key: data.keyId,
@@ -141,6 +155,16 @@ export default function ReserveSpotModal({ open, onClose, workshop }: Props) {
               setError(vData.error || "Payment verification failed");
               return;
             }
+            trackMetaEvent("Purchase", {
+              content_name: workshop.programTitle,
+              value: fees,
+              currency: "INR",
+            });
+            trackMetaEvent("CompleteRegistration", {
+              content_name: workshop.programTitle,
+              value: fees,
+              currency: "INR",
+            });
             setDone(true);
           } catch {
             setError("Payment verification failed");
@@ -306,6 +330,8 @@ export default function ReserveSpotModal({ open, onClose, workshop }: Props) {
               style={{
                 background: "linear-gradient(135deg, #D4AF37, #B8960C)",
               }}
+              data-meta-event="Lead"
+              data-cta="reserve-submit"
             >
               {saving ? (
                 <>

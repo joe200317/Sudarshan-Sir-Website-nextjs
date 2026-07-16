@@ -389,7 +389,7 @@ export default function WorkshopManager({
               />
               <div>
                 <label className="block text-xs tracking-wider uppercase text-[#F5F0E8]/40 mb-2">
-                  Meta pixel code
+                  Meta Pixel ID / code
                 </label>
                 <textarea
                   value={form.metaPixelCode}
@@ -398,8 +398,13 @@ export default function WorkshopManager({
                   }
                   rows={3}
                   className="w-full rounded-lg border border-[#D4AF37]/20 bg-black/40 px-4 py-3 text-xs font-mono outline-none focus:border-[#D4AF37]/50 text-[#F5F0E8]"
-                  placeholder="Paste Meta Pixel snippet (optional)"
+                  placeholder="Pixel ID (e.g. 28359733993614251) or paste full Meta Pixel snippet"
                 />
+                <p className="mt-1.5 text-[11px] text-[#F5F0E8]/35">
+                  Per landing page. Injected only on that workshop&apos;s{" "}
+                  <span className="font-mono">/workshop/slug</span> URL. CTA +
+                  form/payment events fire automatically.
+                </p>
               </div>
 
               <label className="flex items-center gap-3 rounded-lg border border-[#D4AF37]/15 px-4 py-3 cursor-pointer hover:bg-white/[0.02]">

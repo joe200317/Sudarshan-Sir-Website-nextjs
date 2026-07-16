@@ -19,6 +19,7 @@ import {
 } from "lucide-react";
 import ReserveSpotModal from "@/components/workshop/ReserveSpotModal";
 import type { WorkshopBookingInfo } from "@/data/reserve-spot";
+import { trackMetaEvent } from "@/lib/meta-pixel";
 
 export const LC_4DAY = {
   programName: "Life Counselling - 4 Day",
@@ -128,31 +129,40 @@ function CtaButton({
   children: React.ReactNode;
   className?: string;
 }) {
-  const inner = (
-    <motion.span
-      whileHover={{ scale: 1.02 }}
-      whileTap={{ scale: 0.98 }}
-      className="inline-flex w-full items-center justify-center gap-2 rounded-full px-8 py-3.5 text-sm font-semibold tracking-wide text-[#0a0a0a] transition-shadow hover:shadow-[0_0_32px_rgba(212,175,55,0.35)]"
-      style={{
-        background: `linear-gradient(135deg, ${GOLD}, #B8960C)`,
-      }}
-    >
-      {children}
-      <ArrowRight className="w-4 h-4" />
-    </motion.span>
-  );
+  const styles = {
+    background: `linear-gradient(135deg, ${GOLD}, #B8960C)`,
+  } as const;
+  const classes = `inline-flex w-full items-center justify-center gap-2 rounded-full px-8 py-3.5 text-sm font-semibold tracking-wide text-[#0a0a0a] transition-shadow hover:shadow-[0_0_32px_rgba(212,175,55,0.35)] ${className}`;
 
   if (onClick) {
     return (
-      <button type="button" onClick={onClick} className={`inline-block ${className}`}>
-        {inner}
-      </button>
+      <motion.button
+        type="button"
+        onClick={onClick}
+        whileHover={{ scale: 1.02 }}
+        whileTap={{ scale: 0.98 }}
+        className={classes}
+        style={styles}
+        data-meta-event="Schedule"
+        data-cta="reserve-spot"
+      >
+        {children}
+        <ArrowRight className="w-4 h-4" />
+      </motion.button>
     );
   }
 
   return (
     <Link href={href || "/payment"} className={`inline-block ${className}`}>
-      {inner}
+      <motion.span
+        whileHover={{ scale: 1.02 }}
+        whileTap={{ scale: 0.98 }}
+        className="inline-flex w-full items-center justify-center gap-2 rounded-full px-8 py-3.5 text-sm font-semibold tracking-wide text-[#0a0a0a] transition-shadow hover:shadow-[0_0_32px_rgba(212,175,55,0.35)]"
+        style={styles}
+      >
+        {children}
+        <ArrowRight className="w-4 h-4" />
+      </motion.span>
     </Link>
   );
 }
@@ -171,7 +181,12 @@ export default function LC_4Day({
   }, []);
 
   const openReserve = () => {
-    if (workshop) setReserveOpen(true);
+    if (!workshop) return;
+    trackMetaEvent("Schedule", {
+      content_name: workshop.programTitle,
+      content_category: workshop.programSlug,
+    });
+    setReserveOpen(true);
   };
 
   const feeText =

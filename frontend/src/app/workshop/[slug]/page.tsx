@@ -1,6 +1,8 @@
 import { notFound } from "next/navigation";
 import TTT_1Day, { TTT_1DAY } from "@/components/workshop/TTT_1Day";
 import LC_4Day, { LC_4DAY } from "@/components/workshop/LC_4Day";
+import MetaPixel from "@/components/workshop/MetaPixel";
+import MetaPixelClient from "@/components/workshop/MetaPixelClient";
 import { API_BASE } from "@/lib/api";
 import { isWorkshopProgramSlug } from "@/data/workshop-programs";
 import type { WorkshopBookingInfo } from "@/data/reserve-spot";
@@ -10,6 +12,7 @@ type WorkshopPayload = {
   programSlug: string;
   fees: number | null;
   includePayment: boolean;
+  metaPixelCode?: string;
   program?: { title?: string };
 };
 
@@ -40,6 +43,7 @@ function toBookingInfo(w: WorkshopPayload): WorkshopBookingInfo {
           : w.programSlug),
     fees: w.fees,
     includePayment: Boolean(w.includePayment),
+    metaPixelCode: w.metaPixelCode || "",
   };
 }
 
@@ -75,13 +79,26 @@ export default async function WorkshopSlugPage({
   }
 
   const booking = toBookingInfo(workshop);
+  const pixelCode = workshop.metaPixelCode || "";
 
-  if (workshop.programSlug === "train-the-trainer-1-day") {
-    return <TTT_1Day workshop={booking} />;
-  }
-  if (workshop.programSlug === "life-counselling-4-day") {
-    return <LC_4Day workshop={booking} />;
-  }
+  const landing =
+    workshop.programSlug === "train-the-trainer-1-day" ? (
+      <TTT_1Day workshop={booking} />
+    ) : workshop.programSlug === "life-counselling-4-day" ? (
+      <LC_4Day workshop={booking} />
+    ) : null;
 
-  notFound();
+  if (!landing) notFound();
+
+  return (
+    <>
+      {pixelCode ? (
+        <>
+          <MetaPixel code={pixelCode} />
+          <MetaPixelClient code={pixelCode} />
+        </>
+      ) : null}
+      {landing}
+    </>
+  );
 }
