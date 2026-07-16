@@ -6,16 +6,23 @@ import Link from "next/link";
 import { motion } from "framer-motion";
 import {
   ArrowRight,
+  Award,
   Brain,
+  Briefcase,
   Check,
   DollarSign,
   Gem,
+  GraduationCap,
+  Lightbulb,
   MapPin,
+  Mic2,
   Phone,
   Play,
   Star,
+  Target,
   TrendingUp,
   Trophy,
+  Users,
 } from "lucide-react";
 import ReserveSpotModal from "@/components/workshop/ReserveSpotModal";
 import type { WorkshopBookingInfo } from "@/data/reserve-spot";
@@ -79,6 +86,52 @@ const BOOKS = [
 const AWARDS = [
   { title: "Best Mind Trainer Award", image: "/images/sir3.jpg" },
   { title: "Achievers Icon Award", image: "/images/sir4.jpg" },
+] as const;
+
+const WHY_CHOOSE = [
+  {
+    icon: Award,
+    title: "Learn from India's #1 Mind Trainer",
+    desc: "Direct training from Sudarshan Sabat — not a recorded course or junior facilitator.",
+  },
+  {
+    icon: Target,
+    title: "Practical, not theoretical",
+    desc: "Walk away with usable scripts, frameworks, and delivery methods you can apply the next day.",
+  },
+  {
+    icon: TrendingUp,
+    title: "Built for income growth",
+    desc: "Positioning, packaging, and persuasion systems designed to raise your coaching fees.",
+  },
+  {
+    icon: Users,
+    title: "Live interactive format",
+    desc: "One high-impact day with live demos, practice, and feedback — not a passive webinar.",
+  },
+] as const;
+
+const WHO_SHOULD_ATTEND = [
+  {
+    icon: Mic2,
+    title: "Aspiring coaches & speakers",
+    desc: "Ready to turn knowledge into paid stages, workshops, and client work.",
+  },
+  {
+    icon: Briefcase,
+    title: "Corporate trainers",
+    desc: "Want sharper delivery, stronger presence, and premium program design.",
+  },
+  {
+    icon: GraduationCap,
+    title: "Teachers & educators",
+    desc: "Looking to expand beyond classrooms into consulting and paid training.",
+  },
+  {
+    icon: Lightbulb,
+    title: "Entrepreneurs & consultants",
+    desc: "Need authority, clarity, and a signature method that sells.",
+  },
 ] as const;
 
 const EVENT_VIDEOS = [
@@ -849,8 +902,55 @@ export default function TTT_1Day({
         </div>
       </section>
 
-      {/* Media + Quote */}
+      {/* Why Choose Our Program */}
       <section className="py-16 sm:py-20 lg:py-24 bg-[#0a0a0a] border-y border-[#D4AF37]/10">
+        <div className="mx-auto max-w-6xl px-4 sm:px-6">
+          <motion.div {...fadeUp} className="text-center max-w-2xl mx-auto mb-10 sm:mb-14">
+            <SectionLabel>The difference</SectionLabel>
+            <h2
+              className="text-3xl sm:text-4xl font-bold"
+              style={{ fontFamily: "var(--font-display)" }}
+            >
+              Why choose{" "}
+              <span className="text-gradient-gold">our program</span>
+            </h2>
+            <p className="mt-4 text-sm sm:text-base text-[#F5F0E8]/50 leading-relaxed">
+              A focused one-day experience built to make you a stronger, higher-earning trainer.
+            </p>
+          </motion.div>
+
+          <div className="grid sm:grid-cols-2 gap-5 sm:gap-6">
+            {WHY_CHOOSE.map((item, i) => (
+              <motion.div
+                key={item.title}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: i * 0.07, duration: 0.55 }}
+                className="flex gap-4 rounded-2xl border border-[#D4AF37]/12 bg-[#050505]/60 p-5 sm:p-6 hover:border-[#D4AF37]/30 transition-colors"
+              >
+                <span className="mt-0.5 flex h-11 w-11 shrink-0 items-center justify-center rounded-xl border border-[#D4AF37]/25 bg-[#D4AF37]/8">
+                  <item.icon className="w-5 h-5 text-[#D4AF37]" strokeWidth={1.6} />
+                </span>
+                <div>
+                  <h3
+                    className="text-base sm:text-lg font-semibold text-[#F5F0E8] mb-1.5"
+                    style={{ fontFamily: "var(--font-display)" }}
+                  >
+                    {item.title}
+                  </h3>
+                  <p className="text-sm text-[#F5F0E8]/50 leading-relaxed">
+                    {item.desc}
+                  </p>
+                </div>
+              </motion.div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Media + Quote */}
+      <section className="py-16 sm:py-20 lg:py-24">
         <div className="mx-auto max-w-6xl px-4 sm:px-6">
           <div className="grid sm:grid-cols-2 gap-5 sm:gap-6 mb-14 sm:mb-16">
             {EVENT_VIDEOS.map((video, i) => (
@@ -950,6 +1050,51 @@ export default function TTT_1Day({
                   </div>
                 </div>
               </motion.article>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Who Should Attend */}
+      <section className="py-16 sm:py-20 lg:py-24 bg-[#0a0a0a] border-y border-[#D4AF37]/10">
+        <div className="mx-auto max-w-6xl px-4 sm:px-6">
+          <motion.div {...fadeUp} className="text-center max-w-2xl mx-auto mb-10 sm:mb-14">
+            <SectionLabel>Ideal for</SectionLabel>
+            <h2
+              className="text-3xl sm:text-4xl font-bold"
+              style={{ fontFamily: "var(--font-display)" }}
+            >
+              Who should{" "}
+              <span className="text-gradient-gold">attend?</span>
+            </h2>
+            <p className="mt-4 text-sm sm:text-base text-[#F5F0E8]/50 leading-relaxed">
+              This day is for professionals serious about becoming a high-impact trainer and speaker.
+            </p>
+          </motion.div>
+
+          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-5 sm:gap-6">
+            {WHO_SHOULD_ATTEND.map((item, i) => (
+              <motion.div
+                key={item.title}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: i * 0.07, duration: 0.55 }}
+                className="rounded-2xl border border-[#D4AF37]/12 bg-[#050505]/60 p-5 sm:p-6 text-center hover:border-[#D4AF37]/30 transition-colors"
+              >
+                <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-xl border border-[#D4AF37]/25 bg-[#D4AF37]/8">
+                  <item.icon className="w-5 h-5 text-[#D4AF37]" strokeWidth={1.6} />
+                </div>
+                <h3
+                  className="text-base font-semibold text-[#F5F0E8] mb-2"
+                  style={{ fontFamily: "var(--font-display)" }}
+                >
+                  {item.title}
+                </h3>
+                <p className="text-sm text-[#F5F0E8]/45 leading-relaxed">
+                  {item.desc}
+                </p>
+              </motion.div>
             ))}
           </div>
         </div>
