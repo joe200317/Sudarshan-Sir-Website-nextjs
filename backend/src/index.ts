@@ -21,7 +21,7 @@ const MONGODB_URI =
 const FRONTEND_URL = process.env.FRONTEND_URL || "http://localhost:3000";
 
 async function main() {
-  await connectDb(MONGODB_URI);
+  await connectDb();
 
   const app = express();
 
