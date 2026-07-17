@@ -17,7 +17,7 @@ export default function ContactPage() {
   const inView = useInView(heroRef, { once: true });
 
   return (
-    <main className="bg-[#050505] text-[#F5F0E8] overflow-x-hidden">
+    <main className="bg-[#050505] text-[#F5F0E8]">
       <section
         ref={heroRef}
         className="relative min-h-[50svh] sm:min-h-[58svh] flex items-end overflow-hidden"

@@ -94,7 +94,7 @@ export default function AboutPage() {
   const step = journey[active];
 
   return (
-    <main className="bg-[#050505] text-[#F5F0E8] overflow-x-hidden">
+    <main className="bg-[#050505] text-[#F5F0E8]">
       {/* Hero */}
       <section className="relative pt-24 pb-14 sm:pt-28 sm:pb-16 lg:pt-40 lg:pb-32 overflow-hidden">
         <div className="absolute top-1/3 -left-20 w-96 h-96 bg-[#D4AF37]/10 rounded-full blur-[130px]" />

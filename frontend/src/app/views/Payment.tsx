@@ -25,7 +25,7 @@ export default function PaymentPage() {
   const cardInView = useInView(cardRef, { once: true, margin: "-40px" });
 
   return (
-    <main className="bg-[#050505] text-[#F5F0E8] overflow-x-hidden min-h-screen">
+    <main className="bg-[#050505] text-[#F5F0E8] min-h-screen">
       {/* Atmosphere */}
       <section
         ref={heroRef}

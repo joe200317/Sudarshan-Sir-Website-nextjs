@@ -72,7 +72,7 @@ export default function ProgramDetail({ program }: { program: Program }) {
       : null;
 
   return (
-    <main className="bg-[#050505] text-[#F5F0E8] overflow-x-hidden">
+    <main className="bg-[#050505] text-[#F5F0E8]">
       {/* ═══ HERO — stage / spotlight ═══ */}
       <section
         ref={heroRef}

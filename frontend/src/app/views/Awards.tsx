@@ -66,7 +66,7 @@ const press = [
 
 export default function AwardsPage() {
   return (
-    <main className="bg-[#050505] text-[#F5F0E8] overflow-x-hidden">
+    <main className="bg-[#050505] text-[#F5F0E8]">
       {/* Hero */}
       <section className="relative pt-24 pb-12 sm:pt-28 sm:pb-14 lg:pt-44 lg:pb-24 overflow-hidden">
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_20%_0%,_rgba(212,175,55,0.14),_transparent_50%)]" />

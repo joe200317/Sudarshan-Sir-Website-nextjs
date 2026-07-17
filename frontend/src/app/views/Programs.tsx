@@ -22,7 +22,7 @@ export default function ProgramsPage() {
   const gridInView = useInView(gridRef, { once: true, margin: "-40px" });
 
   return (
-    <main className="bg-[#050505] text-[#F5F0E8] overflow-x-hidden">
+    <main className="bg-[#050505] text-[#F5F0E8]">
       {/* Hero */}
       <section
         ref={heroRef}

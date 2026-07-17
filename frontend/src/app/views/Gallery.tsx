@@ -64,7 +64,7 @@ export default function GalleryPage() {
   );
 
   return (
-    <main className="bg-[#050505] text-[#F5F0E8] overflow-x-hidden">
+    <main className="bg-[#050505] text-[#F5F0E8]">
       <section className="relative pt-24 pb-10 sm:pt-28 sm:pb-12 lg:pt-40 lg:pb-16 overflow-hidden">
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_80%_0%,_rgba(212,175,55,0.12),_transparent_50%)]" />
         <div className="container relative z-10 max-w-3xl">

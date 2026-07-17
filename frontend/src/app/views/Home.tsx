@@ -12,7 +12,7 @@ import SectionDivider from "@/components/home/SectionDivider";
 
 export default function HomePage() {
   return (
-    <main className="relative bg-[#050505] text-[#F5F0E8] overflow-x-hidden">
+    <main className="relative bg-[#050505] text-[#F5F0E8]">
       <HomeAmbient />
       <div className="relative z-10">
         <Hero />

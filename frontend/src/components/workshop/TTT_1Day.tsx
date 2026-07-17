@@ -450,7 +450,7 @@ export default function TTT_1Day({
   ];
 
   return (
-    <main className="min-h-screen bg-[#050505] text-[#F5F0E8] overflow-x-hidden">
+    <main className="min-h-screen bg-[#050505] text-[#F5F0E8]">
       {/* Nav */}
       <header className="absolute top-0 inset-x-0 z-30">
         <div className="mx-auto max-w-6xl px-4 sm:px-6 py-4 sm:py-5 flex items-center justify-between">

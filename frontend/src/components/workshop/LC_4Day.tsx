@@ -213,7 +213,7 @@ export default function LC_4Day({
   ];
 
   return (
-    <main className="min-h-screen bg-[#070708] text-[#F5F0E8] overflow-x-hidden">
+    <main className="min-h-screen bg-[#070708] text-[#F5F0E8]">
       {/* Soft ambient glow — cooler than TTT */}
       <div className="pointer-events-none fixed inset-0 overflow-hidden">
         <div className="absolute -top-20 right-0 w-[50vw] h-[50vh] bg-[#00BFFF]/6 rounded-full blur-[140px]" />

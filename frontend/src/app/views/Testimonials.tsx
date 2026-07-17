@@ -4,7 +4,7 @@ import CTA from "@/components/CTA";
 
 export default function TestimonialsPage() {
   return (
-    <main className="bg-[#050505] text-[#F5F0E8] overflow-x-hidden">
+    <main className="bg-[#050505] text-[#F5F0E8]">
      
       <Testimonials />
       <CTA />
