@@ -1,4 +1,4 @@
-name: Deploy to GoDaddy VPS (cPanel)
+name: Deploy to GoDaddy VPS
 
 on:
   push:
@@ -18,23 +18,21 @@ jobs:
           port: ${{ secrets.VPS_SSH_PORT }}
           script: |
             set -e
+            export PATH="/opt/cpanel/ea-nodejs20/bin:$PATH"
+
             cd "${{ secrets.VPS_REPO_PATH }}"
             git fetch origin main
             git reset --hard origin/main
 
             # --- Backend ---
-            source "${{ secrets.VPS_BACKEND_VENV }}/bin/activate"
             cd backend
             npm ci
             npm run build
-            deactivate
-            mkdir -p tmp && touch tmp/restart.txt
+            pm2 restart sudarshan-backend
             cd ..
 
             # --- Frontend ---
-            source "${{ secrets.VPS_FRONTEND_VENV }}/bin/activate"
             cd frontend
             npm ci
             npm run build
-            deactivate
-            mkdir -p tmp && touch tmp/restart.txt
+            pm2 restart sudarshan-frontend
