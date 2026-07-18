@@ -8,10 +8,10 @@ import { ArrowRight } from "lucide-react";
 const GOLD = "#D4AF37";
 
 const credentials = [
-  "NLP Master Practitioner",
-  "Certified Meditation Guide",
-  "Cognitive Performance Expert",
-  "Mindfulness Neuroscience",
+  "Mind Power Trainer",
+  "Career Transformation Coach",
+  "Mind Reprogramming Expert",
+  "Professional & Personal Guidance",
 ];
 
 export default function About() {
@@ -38,7 +38,7 @@ export default function About() {
             <div className="relative rounded-lg overflow-hidden">
               <Image
                 src="/images/meditation.png"
-                alt="Meditation and mental training"
+                alt="Sudarshan Sabat mind training session"
                 width={800}
                 height={1000}
                 className="w-full h-[320px] sm:h-[400px] lg:h-[600px] object-cover"
@@ -58,7 +58,7 @@ export default function About() {
               >
                 15+
               </div>
-              <div className="text-[#F5F0E8]/50 text-sm">Years of Mastery</div>
+              <div className="text-[#F5F0E8]/50 text-sm">Years of Experience</div>
             </motion.div>
           </motion.div>
 
@@ -78,30 +78,32 @@ export default function About() {
                 style={{ fontFamily: "var(--font-accent)" }}
                 className="text-white text-xs tracking-[0.3em] uppercase"
               >
-                About Me
+                Who We Are
               </span>
             </div>
 
             <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-4 sm:mb-6 leading-tight">
-              <span className="text-[#F5F0E8]">Forging </span>
-              <span className="text-gradient-gold">Minds</span>
-              <span className="text-[#F5F0E8]"> of </span>
-              <span className="text-gradient-gold">Unstoppable</span>
-              <span className="text-[#F5F0E8]"> Power</span>
+              <span className="text-[#F5F0E8]">Be the </span>
+              <span className="text-gradient-gold">Master</span>
+              <span className="text-[#F5F0E8]"> of Your Own </span>
+              <span className="text-gradient-gold">Mind</span>
             </h2>
 
             <p className="text-[#F5F0E8]/60 text-lg leading-relaxed mb-6">
-              I am a certified Mind Trainer and Mental Performance Coach
-              dedicated to unlocking the extraordinary potential within every
-              individual. My methodology combines ancient mindfulness techniques
-              with cutting-edge neuroscience to create lasting transformation.
+              Mr. Sudarshan Sabat is renowned as a brilliant mind power trainer
+              who has helped many people achieve great success in their
+              career. Known for his passion for learning and making the most
+              of opportunities in life, he has learned through experience
+              &ldquo;Never give up in life.&rdquo; He bolsters and directs
+              clients on a range of professional and personal issues.
             </p>
 
             <p className="text-[#F5F0E8]/60 text-lg leading-relaxed mb-8">
-              Through years of dedicated practice and research, I have developed
-              a proprietary framework that has helped thousands of clients —
-              from Fortune 500 executives to Olympic athletes — achieve
-              breakthrough performance levels they never thought possible.
+              Mind Training is distinct from giving advice, consulting,
+              counseling, mentoring and administering therapy. He will
+              reprogram you through our mind transformation training to
+              create a turnaround. He&apos;ll make sure you get what you look
+              for because he has absolute expertise.
             </p>
 
             <div className="grid grid-cols-2 gap-4 mb-8">
@@ -116,14 +118,14 @@ export default function About() {
               ))}
             </div>
 
-            <a href="#services">
+            <a href="/about">
               <button
                 className="inline-flex items-center justify-center rounded-md text-[#0a0a0a] font-semibold group h-10 px-6"
                 style={{
                   background: `linear-gradient(to right, ${GOLD}, #B8960C)`,
                 }}
               >
-                Explore My Methods
+                Know More
                 <ArrowRight className="ml-2 w-4 h-4 group-hover:translate-x-1 transition-transform" />
               </button>
             </a>

@@ -97,21 +97,21 @@ export default function Hero() {
                 style={{ fontFamily: "var(--font-accent)" }}
                 className="text-white text-sm tracking-[0.3em] uppercase"
               >
-                Elite Mental Performance
+                India&apos;s Leading Training & Coaching Company
               </span>
               <div className="w-12 h-px bg-gradient-to-r from-transparent via-[#D4AF37] to-transparent" />
             </div>
 
             <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold leading-[0.95] mb-6 sm:mb-8">
-              <span className="text-gradient-gold block">Awaken Your</span>
-              <span className="text-gradient-gold block">Mind&apos;s Hidden</span>
-              <span className="text-[#F5F0E8] block">Power</span>
+              <span className="text-gradient-gold block">Transform Your Mind.</span>
+              <span className="text-gradient-gold block">Transform Your Business.</span>
+              <span className="text-[#F5F0E8] block">Transform Your Life.</span>
             </h1>
 
             <p className="text-[#F5F0E8]/60 text-base sm:text-lg md:text-xl max-w-xl mb-8 sm:mb-10 leading-relaxed">
-              The mind is a universe of infinite potential. I guide leaders,
-              athletes, and high achievers to unlock cognitive mastery and
-              transcend their limits.
+              India&apos;s Leading Training & Coaching Company helping
+              individuals, professionals, entrepreneurs & organizations unlock
+              their true potential.
             </p>
 
             <div className="flex flex-col sm:flex-row gap-4">
@@ -122,13 +122,8 @@ export default function Hero() {
                     background: `linear-gradient(to right, ${GOLD}, #B8960C)`,
                   }}
                 >
-                  Begin Your Transformation
+                  Register for Upcoming Workshop
                   <ArrowRight className="ml-2 w-5 h-5 group-hover:translate-x-1 transition-transform" />
-                </button>
-              </a>
-              <a href="#about">
-                <button className="inline-flex items-center justify-center rounded-md border border-[#D4AF37]/30 text-[#F5F0E8] hover:border-[#D4AF37]/60 hover:text-[#D4AF37] text-base px-8 py-6 transition-all duration-300 h-auto bg-transparent">
-                  Discover My Journey
                 </button>
               </a>
             </div>
@@ -150,7 +145,7 @@ export default function Hero() {
               <div className="relative rounded-2xl overflow-hidden glow-gold-sm animate-float-soft">
                 <Image
                   src="/images/hero.png"
-                  alt="Mind Trainer - Elite Mental Performance Coach"
+                  alt="Sudarshan Sabat - Founder, Trainer's World"
                   width={800}
                   height={1000}
                   priority

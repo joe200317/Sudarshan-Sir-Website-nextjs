@@ -85,8 +85,8 @@ export default function Awards() {
             </div>
 
             <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-6 sm:mb-10">
-              <span className="text-[#F5F0E8]">Awards & </span>
-              <span className="text-gradient-gold">Recognition</span>
+              <span className="text-[#F5F0E8]">Winner of Many </span>
+              <span className="text-gradient-gold">Prestigious Awards</span>
             </h2>
 
             <div className="space-y-4">
@@ -116,6 +116,29 @@ export default function Awards() {
                   </div>
                 </motion.div>
               ))}
+            </div>
+
+            <div className="grid grid-cols-4 gap-3 mt-8">
+              {Array.from({ length: 8 }, (_, i) => `/images/Book${i + 1}.webp`).map(
+                (src, i) => (
+                  <motion.div
+                    key={src}
+                    initial={{ opacity: 0, scale: 0.9 }}
+                    whileInView={{ opacity: 1, scale: 1 }}
+                    viewport={{ once: true }}
+                    transition={{ duration: 0.4, delay: i * 0.06 }}
+                    className="relative aspect-square rounded-lg overflow-hidden border border-[#D4AF37]/15"
+                  >
+                    <Image
+                      src={src}
+                      alt={`Award recognition photo ${i + 1}`}
+                      fill
+                      sizes="120px"
+                      className="object-cover"
+                    />
+                  </motion.div>
+                )
+              )}
             </div>
           </motion.div>
         </div>

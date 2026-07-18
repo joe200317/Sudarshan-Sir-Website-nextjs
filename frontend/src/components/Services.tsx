@@ -1,42 +1,58 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { Brain, Zap, Compass, Shield } from "lucide-react";
+import { Users, HandHeart, Radio, Users2, TrendingUp, BadgeCheck } from "lucide-react";
 
 const GOLD = "#D4AF37";
 
 const services = [
   {
     index: "01",
-    icon: Brain,
-    title: "Cognitive Enhancement",
+    icon: Users,
+    title: "Expert Trainers",
     description:
-      "Sharpen your mental acuity with advanced brain training techniques that optimize memory, focus, and problem-solving abilities.",
-    features: ["Memory Optimization", "Focus Training", "Decision Making"],
+      "Learn directly from experienced trainers, industry experts, and successful mentors with real-world expertise.",
+    features: [],
   },
   {
     index: "02",
-    icon: Zap,
-    title: "Peak Performance",
+    icon: HandHeart,
+    title: "Practical Learning",
     description:
-      "Unlock your full potential through personalized mental conditioning programs designed for elite performers and leaders.",
-    features: ["Stress Mastery", "Flow State Training", "Pressure Management"],
+      "Gain hands-on skills through interactive exercises, case studies, role plays, and practical implementation.",
+    features: [],
   },
   {
     index: "03",
-    icon: Compass,
-    title: "Mental Direction",
+    icon: Radio,
+    title: "Live Workshops",
     description:
-      "Navigate life's complexities with clarity and purpose. Find your true north through guided introspection and mental alignment.",
-    features: ["Goal Clarity", "Purpose Discovery", "Life Alignment"],
+      "Experience engaging live sessions with real-time interaction, personalized feedback, and Q&A.",
+    features: [],
   },
   {
     index: "04",
-    icon: Shield,
-    title: "Emotional Resilience",
+    icon: Users2,
+    title: "Lifetime Community",
     description:
-      "Build an unbreakable emotional foundation. Transform challenges into catalysts for growth and inner strength.",
-    features: ["Resilience Building", "Emotional Mastery", "Inner Peace"],
+      "Become part of an exclusive network of trainers, coaches, entrepreneurs, and professionals for lifelong learning and support.",
+    features: [],
+  },
+  {
+    index: "05",
+    icon: TrendingUp,
+    title: "Business Growth Strategies",
+    description:
+      "Discover proven frameworks to build your personal brand, attract more clients, increase revenue, and scale your business.",
+    features: [],
+  },
+  {
+    index: "06",
+    icon: BadgeCheck,
+    title: "Certificate Programs",
+    description:
+      "Receive a professional certificate upon completion to enhance your credibility and career opportunities.",
+    features: [],
   },
 ];
 
@@ -62,13 +78,13 @@ export default function Services() {
               style={{ fontFamily: "var(--font-accent)" }}
               className="text-[#D4AF37] text-xs tracking-[0.3em] uppercase"
             >
-              What I Offer
+              Why Choose Us
             </span>
           </div>
 
           <h2 className="text-[clamp(1.35rem,4.8vw,3.75rem)] font-bold leading-tight lg:whitespace-nowrap">
-            <span className="text-[#F5F0E8]">Master Your </span>
-            <span className="text-gradient-gold">Mental Craft</span>
+            <span className="text-[#F5F0E8]">Why Choose </span>
+            <span className="text-gradient-gold">Trainer&apos;s World?</span>
           </h2>
         </motion.div>
 

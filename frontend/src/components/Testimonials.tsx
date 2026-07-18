@@ -115,6 +115,9 @@ export default function Testimonials() {
           >
             Success Stories
           </h2>
+          <p className="text-[#D4AF37] text-xs tracking-[0.3em] uppercase mb-3">
+            Video Testimonials
+          </p>
           <p className="text-[#F5F0E8]/55 max-w-2xl mx-auto text-base md:text-lg leading-relaxed">
             The following people had the Power of Mind and the will to create
             Bold Results.
