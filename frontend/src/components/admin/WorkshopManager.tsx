@@ -52,7 +52,7 @@ function toInputDateTime(iso: string) {
 }
 
 export default function WorkshopManager({
-  title = "Workshops",
+  title = "Events",
   canCreate = true,
 }: {
   title?: string;
@@ -194,8 +194,8 @@ export default function WorkshopManager({
           </h1>
           <p className="text-sm text-[#F5F0E8]/45 mt-1">
             {canCreate
-              ? "Add workshops — pick Train The Trainer or Life Counselling"
-              : "All workshops created by users (view only — users add workshops)"}
+              ? "Add events — pick Train The Trainer or Life Counselling"
+              : "All events created by users (view only — users add events)"}
           </p>
         </div>
         {canCreate && (
@@ -208,7 +208,7 @@ export default function WorkshopManager({
             }}
           >
             <Plus className="w-4 h-4" />
-            Add Workshop
+            Add Event
           </button>
         )}
       </div>
@@ -239,8 +239,8 @@ export default function WorkshopManager({
                 <tr>
                   <td colSpan={8} className="px-4 py-10 text-center text-[#F5F0E8]/40">
                     {canCreate
-                      ? "No workshops yet. Click Add Workshop."
-                      : "No workshops yet."}
+                      ? "No events yet. Click Add Event."
+                      : "No events yet."}
                   </td>
                 </tr>
               ) : (
@@ -329,7 +329,7 @@ export default function WorkshopManager({
                 className="text-lg font-semibold text-[#D4AF37]"
                 style={{ fontFamily: "var(--font-display)" }}
               >
-                {editingId ? "Edit Workshop" : "Add Workshop"}
+                {editingId ? "Edit Event" : "Add Event"}
               </h2>
               <button type="button" onClick={() => setOpen(false)}>
                 <X className="w-5 h-5 text-[#F5F0E8]/50" />
