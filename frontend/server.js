@@ -74,11 +74,35 @@ function bufferChunk(chunk, encoding) {
   return Buffer.from(chunk, typeof encoding === "string" ? encoding : undefined);
 }
 
-/** Buffers the response body and injects the pixel script before </head>. */
+/**
+ * Buffers the response body and injects the pixel script before </head>.
+ *
+ * Headers (and any Transfer-Encoding: chunked) must not reach the client
+ * until we know the final, post-injection Content-Length — Next's App
+ * Router streams the shell and calls res.writeHead() as soon as the first
+ * bytes are ready, well before res.end(). If we let that writeHead go out
+ * as-is and only patch headers inside our res.end override, the client has
+ * already committed to chunked framing while we send back a single raw
+ * buffer, producing a malformed response the browser aborts mid-stream.
+ * So we intercept writeHead/setHeader too and hold everything back until end().
+ */
 function withHeadInjection(res, pixelId) {
   const chunks = [];
   const originalWrite = res.write.bind(res);
   const originalEnd = res.end.bind(res);
+  const originalWriteHead = res.writeHead.bind(res);
+
+  let pendingStatusCode = null;
+  let pendingHeaders = null;
+
+  res.writeHead = (statusCode, statusMessageOrHeaders, maybeHeaders) => {
+    pendingStatusCode = statusCode;
+    pendingHeaders =
+      typeof statusMessageOrHeaders === "object" && statusMessageOrHeaders
+        ? statusMessageOrHeaders
+        : maybeHeaders || null;
+    return res;
+  };
 
   res.write = (chunk, encoding, callback) => {
     if (chunk) chunks.push(bufferChunk(chunk, encoding));
@@ -93,14 +117,32 @@ function withHeadInjection(res, pixelId) {
     }
 
     let body = Buffer.concat(chunks);
-    const contentType = String(res.getHeader("content-type") || "");
+    const contentType = String(
+      (pendingHeaders && (pendingHeaders["content-type"] || pendingHeaders["Content-Type"])) ||
+        res.getHeader("content-type") ||
+        "",
+    );
 
     if (contentType.includes("text/html") && body.includes("</head>")) {
       const html = body.toString("utf-8");
       const injected = html.replace("</head>", `${metaPixelScriptTag(pixelId)}</head>`);
       body = Buffer.from(injected, "utf-8");
-      res.setHeader("content-length", Buffer.byteLength(body));
-      res.removeHeader("transfer-encoding");
+    }
+
+    res.removeHeader("transfer-encoding");
+    res.setHeader("content-length", Buffer.byteLength(body));
+
+    if (pendingHeaders) {
+      for (const key of Object.keys(pendingHeaders)) {
+        if (key.toLowerCase() === "transfer-encoding" || key.toLowerCase() === "content-length") {
+          delete pendingHeaders[key];
+        }
+      }
+      pendingHeaders["content-length"] = Buffer.byteLength(body);
+    }
+
+    if (pendingStatusCode !== null) {
+      originalWriteHead(pendingStatusCode, pendingHeaders || undefined);
     }
 
     if (body.length) originalWrite(body);
