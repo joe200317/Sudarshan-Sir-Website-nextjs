@@ -1,6 +1,5 @@
 import { notFound } from "next/navigation";
 import ThankYou from "@/components/workshop/ThankYou";
-import MetaPixel from "@/components/workshop/MetaPixel";
 import MetaPixelClient from "@/components/workshop/MetaPixelClient";
 import { TTT_1DAY } from "@/components/workshop/TTT_1Day";
 import { LC_4DAY } from "@/components/workshop/LC_4Day";
@@ -78,12 +77,7 @@ export default async function WorkshopThankYouPage({
 
   return (
     <>
-      {pixelCode ? (
-        <>
-          <MetaPixel code={pixelCode} />
-          <MetaPixelClient code={pixelCode} />
-        </>
-      ) : null}
+      {pixelCode ? <MetaPixelClient code={pixelCode} /> : null}
       <ThankYou
         programTitle={programTitle}
         programSlug={workshop.programSlug}

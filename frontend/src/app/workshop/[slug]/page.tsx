@@ -1,7 +1,6 @@
 import { notFound } from "next/navigation";
 import TTT_1Day, { TTT_1DAY } from "@/components/workshop/TTT_1Day";
 import LC_4Day, { LC_4DAY } from "@/components/workshop/LC_4Day";
-import MetaPixel from "@/components/workshop/MetaPixel";
 import MetaPixelClient from "@/components/workshop/MetaPixelClient";
 import { API_BASE } from "@/lib/api";
 import { isWorkshopProgramSlug } from "@/data/workshop-programs";
@@ -100,12 +99,7 @@ export default async function WorkshopSlugPage({
 
   return (
     <>
-      {pixelCode ? (
-        <>
-          <MetaPixel code={pixelCode} />
-          <MetaPixelClient code={pixelCode} />
-        </>
-      ) : null}
+      {pixelCode ? <MetaPixelClient code={pixelCode} /> : null}
       {landing}
     </>
   );
