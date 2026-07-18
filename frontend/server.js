@@ -52,6 +52,10 @@ fbq('track', 'PageView');
 </script>`;
 }
 
+function metaPixelNoscriptTag(pixelId) {
+  return `<noscript><img height="1" width="1" style="display:none" src="https://www.facebook.com/tr?id=${pixelId}&ev=PageView&noscript=1" /></noscript>`;
+}
+
 async function getWorkshopPixelId(pathname) {
   const match = pathname.match(/^\/workshop\/([^/?]+)/);
   if (!match) return null;
@@ -124,9 +128,10 @@ function withHeadInjection(res, pixelId) {
     );
 
     if (contentType.includes("text/html") && body.includes("</head>")) {
-      const html = body.toString("utf-8");
-      const injected = html.replace("</head>", `${metaPixelScriptTag(pixelId)}</head>`);
-      body = Buffer.from(injected, "utf-8");
+      let html = body.toString("utf-8");
+      html = html.replace("</head>", `${metaPixelScriptTag(pixelId)}</head>`);
+      html = html.replace(/(<body[^>]*>)/, `$1${metaPixelNoscriptTag(pixelId)}`);
+      body = Buffer.from(html, "utf-8");
     }
 
     res.removeHeader("transfer-encoding");
