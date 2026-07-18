@@ -103,9 +103,9 @@ export default function Hero() {
             </div>
 
             <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold leading-[0.95] mb-6 sm:mb-8">
-              <span className="text-gradient-gold block">Transform Your Mind.</span>
-              <span className="text-gradient-gold block">Transform Your Business.</span>
-              <span className="text-[#F5F0E8] block">Transform Your Life.</span>
+              <span className="text-[#F5F0E8] block">Transform Your</span>
+              <span className="text-gradient-gold block">Mind, Business</span>
+              <span className="text-gradient-gold block">& Life.</span>
             </h1>
 
             <p className="text-[#F5F0E8]/60 text-base sm:text-lg md:text-xl max-w-xl mb-8 sm:mb-10 leading-relaxed">
