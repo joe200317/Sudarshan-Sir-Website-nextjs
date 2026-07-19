@@ -24,6 +24,7 @@ type Workshop = {
   location: string;
   notificationEmail: string;
   metaPixelCode: string;
+  gtmCode: string;
   includePayment: boolean;
   imageUrl: string;
   program: Program;
@@ -68,7 +69,9 @@ export default function WorkshopManager({
   const [uploading, setUploading] = useState(false);
   const [reportWorkshop, setReportWorkshop] = useState<Workshop | null>(null);
   const [pixelWorkshop, setPixelWorkshop] = useState<Workshop | null>(null);
+  const [pixelTab, setPixelTab] = useState<"meta" | "gtm">("meta");
   const [pixelCode, setPixelCode] = useState("");
+  const [gtmCode, setGtmCode] = useState("");
   const [pixelSaving, setPixelSaving] = useState(false);
   const [pixelError, setPixelError] = useState("");
   const { user } = useAuth();
@@ -184,7 +187,9 @@ export default function WorkshopManager({
 
   function openPixelEditor(w: Workshop) {
     setPixelWorkshop(w);
+    setPixelTab("meta");
     setPixelCode(w.metaPixelCode || "");
+    setGtmCode(w.gtmCode || "");
     setPixelError("");
   }
 
@@ -197,7 +202,7 @@ export default function WorkshopManager({
       const res = await apiFetch(`/api/workshops/${pixelWorkshop.id}`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ metaPixelCode: pixelCode }),
+        body: JSON.stringify({ metaPixelCode: pixelCode, gtmCode }),
       });
       const data = await res.json();
       if (!res.ok) {
@@ -578,7 +583,7 @@ export default function WorkshopManager({
                 className="text-lg font-semibold text-[#D4AF37]"
                 style={{ fontFamily: "var(--font-display)" }}
               >
-                Meta Pixel script — {pixelWorkshop.slug}
+                Tracking scripts — {pixelWorkshop.slug}
               </h2>
               <button type="button" onClick={() => setPixelWorkshop(null)}>
                 <X className="w-5 h-5 text-[#F5F0E8]/50" />
@@ -586,23 +591,72 @@ export default function WorkshopManager({
             </div>
 
             <form onSubmit={onSavePixel} className="p-5 space-y-4">
-              <p className="text-[11px] text-[#F5F0E8]/40">
-                Paste the bare Pixel ID, or the full{" "}
-                <span className="font-mono">&lt;script&gt;...&lt;/script&gt;</span>{" "}
-                (+ <span className="font-mono">&lt;noscript&gt;</span>) block from
-                Meta. A full pasted block is spliced into this page exactly as
-                typed — nothing is rewritten. Saved only for{" "}
-                <span className="font-mono">/workshop/{pixelWorkshop.slug}</span>.
-              </p>
-              <textarea
-                value={pixelCode}
-                onChange={(e) => setPixelCode(e.target.value)}
-                rows={8}
-                autoFocus
-                className="w-full rounded-lg border border-[#D4AF37]/20 bg-black/40 px-4 py-3 text-sm font-mono outline-none focus:border-[#D4AF37]/50 text-[#F5F0E8]"
-                placeholder="e.g. 28359733993614251, or paste the full Meta Pixel snippet"
-                autoComplete="off"
-              />
+              <div className="flex gap-2 rounded-lg border border-[#D4AF37]/15 p-1">
+                <button
+                  type="button"
+                  onClick={() => setPixelTab("meta")}
+                  className={`flex-1 rounded-md px-3 py-2 text-sm font-medium transition-colors ${
+                    pixelTab === "meta"
+                      ? "bg-[#D4AF37] text-[#0a0a0a]"
+                      : "text-[#F5F0E8]/60 hover:bg-white/[0.03]"
+                  }`}
+                >
+                  Meta Pixel
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setPixelTab("gtm")}
+                  className={`flex-1 rounded-md px-3 py-2 text-sm font-medium transition-colors ${
+                    pixelTab === "gtm"
+                      ? "bg-[#D4AF37] text-[#0a0a0a]"
+                      : "text-[#F5F0E8]/60 hover:bg-white/[0.03]"
+                  }`}
+                >
+                  Google Tag Manager
+                </button>
+              </div>
+
+              {pixelTab === "meta" ? (
+                <>
+                  <p className="text-[11px] text-[#F5F0E8]/40">
+                    Paste the bare Pixel ID, or the full{" "}
+                    <span className="font-mono">&lt;script&gt;...&lt;/script&gt;</span>{" "}
+                    (+ <span className="font-mono">&lt;noscript&gt;</span>) block from
+                    Meta. A full pasted block is spliced into this page exactly as
+                    typed — nothing is rewritten. Saved only for{" "}
+                    <span className="font-mono">/workshop/{pixelWorkshop.slug}</span>.
+                  </p>
+                  <textarea
+                    value={pixelCode}
+                    onChange={(e) => setPixelCode(e.target.value)}
+                    rows={8}
+                    autoFocus
+                    className="w-full rounded-lg border border-[#D4AF37]/20 bg-black/40 px-4 py-3 text-sm font-mono outline-none focus:border-[#D4AF37]/50 text-[#F5F0E8]"
+                    placeholder="e.g. 28359733993614251, or paste the full Meta Pixel snippet"
+                    autoComplete="off"
+                  />
+                </>
+              ) : (
+                <>
+                  <p className="text-[11px] text-[#F5F0E8]/40">
+                    Paste the full Google Tag Manager{" "}
+                    <span className="font-mono">&lt;script&gt;...&lt;/script&gt;</span>{" "}
+                    (+ <span className="font-mono">&lt;noscript&gt;</span>) block —
+                    used exactly as typed. Both this and the Meta Pixel tab can be
+                    filled in together; saved only for{" "}
+                    <span className="font-mono">/workshop/{pixelWorkshop.slug}</span>.
+                  </p>
+                  <textarea
+                    value={gtmCode}
+                    onChange={(e) => setGtmCode(e.target.value)}
+                    rows={8}
+                    autoFocus
+                    className="w-full rounded-lg border border-[#D4AF37]/20 bg-black/40 px-4 py-3 text-sm font-mono outline-none focus:border-[#D4AF37]/50 text-[#F5F0E8]"
+                    placeholder="Paste the full Google Tag Manager snippet"
+                    autoComplete="off"
+                  />
+                </>
+              )}
 
               {pixelError && (
                 <p className="text-sm text-red-400 bg-red-500/10 border border-red-500/20 rounded-lg px-3 py-2">

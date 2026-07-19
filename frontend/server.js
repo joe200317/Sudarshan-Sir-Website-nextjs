@@ -5,8 +5,9 @@
 // cPanel's Setup Node.js App screen.
 //
 // Workshop landing pages (/workshop/*) are duplicated to a static HTML file
-// on disk, with the exact Meta Pixel code an admin pasted spliced into the
-// page (byte-for-byte, we don't rewrite it) — like a frozen, standalone copy
+// on disk, with the exact Meta Pixel and/or Google Tag Manager code an admin
+// pasted spliced into the page (byte-for-byte, we don't rewrite it) — like a
+// frozen, standalone copy
 // of the page instead of one re-rendered by Next on every visit. The React
 // component/design that produces the page is untouched; we just capture its
 // output once. Every request for that slug after that is served straight
@@ -129,16 +130,30 @@ function resolvePixelParts(rawCode) {
   return id ? standardPixelSnippet(id) : null;
 }
 
-async function fetchWorkshopPixelCode(slug) {
+/** Merges the resolved Meta Pixel and GTM parts into one {headPart, noscript} to splice in. */
+function combinePixelParts(partsList) {
+  const present = partsList.filter(Boolean);
+  if (!present.length) return null;
+  return {
+    headPart: present.map((p) => p.headPart).filter(Boolean).join("\n"),
+    noscript: present.map((p) => p.noscript).filter(Boolean).join("\n"),
+  };
+}
+
+async function fetchWorkshopScripts(slug) {
   try {
     const res = await fetch(
       `${API_BASE}/api/workshops/by-slug/${encodeURIComponent(slug)}`,
     );
-    if (!res.ok) return null;
+    if (!res.ok) return { metaPixelCode: null, gtmCode: null };
     const data = await res.json();
-    return (data && data.workshop && data.workshop.metaPixelCode) || null;
+    const workshop = (data && data.workshop) || {};
+    return {
+      metaPixelCode: workshop.metaPixelCode || null,
+      gtmCode: workshop.gtmCode || null,
+    };
   } catch {
-    return null;
+    return { metaPixelCode: null, gtmCode: null };
   }
 }
 
@@ -345,8 +360,11 @@ app.prepare().then(() => {
         return;
       }
 
-      const rawCode = await fetchWorkshopPixelCode(workshopMatch[1]);
-      const pixelParts = resolvePixelParts(rawCode);
+      const scripts = await fetchWorkshopScripts(workshopMatch[1]);
+      const pixelParts = combinePixelParts([
+        resolvePixelParts(scripts.metaPixelCode),
+        resolvePixelParts(scripts.gtmCode),
+      ]);
       if (pixelParts) {
         const clientAcceptEncoding = req.headers["accept-encoding"];
         // Stop Next from compressing what we're about to buffer/splice —

@@ -39,9 +39,10 @@ function regenerateWorkshopPages(slugs: (string | undefined)[]) {
  * Bare IDs / fbq(...) fragments get cleaned down to just the numeric ID (the
  * frontend wraps that in the standard Meta snippet). A full pasted
  * <script>/<noscript> block is kept byte-for-byte so it can be spliced into
- * the page exactly as the user typed it.
+ * the page exactly as the user typed it. Also used as-is for the GTM field —
+ * GTM codes are always a full pasted <script>/<noscript> block anyway.
  */
-function normalizeMetaPixelCode(raw: unknown): string {
+function normalizeScriptCode(raw: unknown): string {
   const text = String(raw ?? "")
     .trim()
     .replace(/[\u2018\u2019]/g, "'")
@@ -70,6 +71,7 @@ type PopulatedWorkshop = {
   location: string;
   notificationEmail: string;
   metaPixelCode?: string | null;
+  gtmCode?: string | null;
   includePayment?: boolean | null;
   imageUrl: string;
   createdById: {
@@ -92,6 +94,7 @@ export function serializeWorkshop(w: PopulatedWorkshop) {
     location: w.location,
     notificationEmail: w.notificationEmail,
     metaPixelCode: w.metaPixelCode || "",
+    gtmCode: w.gtmCode || "",
     includePayment: Boolean(w.includePayment),
     imageUrl: w.imageUrl,
     program: {
@@ -151,7 +154,8 @@ router.post(
     const notificationEmail = String(req.body.notificationEmail || "")
       .trim()
       .toLowerCase();
-    const metaPixelCode = normalizeMetaPixelCode(req.body.metaPixelCode);
+    const metaPixelCode = normalizeScriptCode(req.body.metaPixelCode);
+    const gtmCode = normalizeScriptCode(req.body.gtmCode);
     const includePayment = Boolean(req.body.includePayment);
     const imageUrl = String(req.body.imageUrl || "").trim();
     const fees = parseOptionalFloat(req.body.fees);
@@ -195,6 +199,7 @@ router.post(
       location,
       notificationEmail,
       metaPixelCode,
+      gtmCode,
       includePayment,
       imageUrl,
       createdById: session.userId,
@@ -250,8 +255,12 @@ router.patch(
     }
     // Always persist when the edit form sends the field (including empty to clear)
     if (Object.prototype.hasOwnProperty.call(req.body, "metaPixelCode")) {
-      existing.metaPixelCode = normalizeMetaPixelCode(req.body.metaPixelCode);
+      existing.metaPixelCode = normalizeScriptCode(req.body.metaPixelCode);
       existing.markModified("metaPixelCode");
+    }
+    if (Object.prototype.hasOwnProperty.call(req.body, "gtmCode")) {
+      existing.gtmCode = normalizeScriptCode(req.body.gtmCode);
+      existing.markModified("gtmCode");
     }
     if (typeof req.body.includePayment === "boolean") {
       existing.includePayment = req.body.includePayment;

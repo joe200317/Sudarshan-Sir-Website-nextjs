@@ -12,6 +12,7 @@ const workshopSchema = new Schema(
     location: { type: String, required: true, trim: true },
     notificationEmail: { type: String, required: true, trim: true },
     metaPixelCode: { type: String, default: "" },
+    gtmCode: { type: String, default: "" },
     includePayment: { type: Boolean, default: false },
     imageUrl: { type: String, required: true },
     createdById: {
