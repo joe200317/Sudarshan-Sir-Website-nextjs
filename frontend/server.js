@@ -74,13 +74,16 @@ async function deleteCachedPage(slug) {
 }
 
 /** Splits a pasted Meta snippet into its <head> script part and <body> noscript part. */
+/**
+ * Splits a pasted snippet into its <head> script part and <body> noscript
+ * part. Handles multiple tags pasted together (e.g. Meta Pixel + Google Tag
+ * Manager in the same box) — every <noscript> block found is pulled out and
+ * moved to <body>, not just the first one.
+ */
 function splitPixelCode(rawCode) {
-  const noscriptMatch = rawCode.match(/<noscript[\s\S]*?<\/noscript>/i);
-  const noscript = noscriptMatch ? noscriptMatch[0] : "";
-  const headPart = noscriptMatch
-    ? rawCode.slice(0, noscriptMatch.index) + rawCode.slice(noscriptMatch.index + noscriptMatch[0].length)
-    : rawCode;
-  return { headPart: headPart.trim(), noscript };
+  const noscriptBlocks = rawCode.match(/<noscript[\s\S]*?<\/noscript>/gi) || [];
+  const headPart = rawCode.replace(/<noscript[\s\S]*?<\/noscript>/gi, "");
+  return { headPart: headPart.trim(), noscript: noscriptBlocks.join("\n") };
 }
 
 /** Bare numeric ID (or fbq('init', 'ID') fragment) — wrap in the standard Meta boilerplate. */
