@@ -11,13 +11,43 @@ import { asyncHandler } from "../middleware/error.js";
 
 const router = Router();
 
-/** Prefer a clean Pixel ID; keep trimmed paste if ID cannot be parsed. */
+const FRONTEND_URL = process.env.FRONTEND_URL || "http://localhost:3000";
+const WORKSHOP_CACHE_SECRET = process.env.WORKSHOP_CACHE_SECRET || "";
+
+/**
+ * Fire-and-forget: tell the frontend to immediately rebuild its duplicated
+ * static landing page for these slugs (dropping the stale copy and
+ * re-rendering right away, rather than waiting for the next visitor).
+ */
+function regenerateWorkshopPages(slugs: (string | undefined)[]) {
+  const unique = [...new Set(slugs.filter((s): s is string => Boolean(s)))];
+  if (!unique.length || !WORKSHOP_CACHE_SECRET) return;
+
+  fetch(`${FRONTEND_URL}/__internal/regenerate-workshop`, {
+    method: "POST",
+    headers: {
+      "content-type": "application/json",
+      "x-invalidate-secret": WORKSHOP_CACHE_SECRET,
+    },
+    body: JSON.stringify({ slugs: unique }),
+  }).catch((err) => {
+    console.error("Failed to regenerate workshop page", unique, err);
+  });
+}
+
+/**
+ * Bare IDs / fbq(...) fragments get cleaned down to just the numeric ID (the
+ * frontend wraps that in the standard Meta snippet). A full pasted
+ * <script>/<noscript> block is kept byte-for-byte so it can be spliced into
+ * the page exactly as the user typed it.
+ */
 function normalizeMetaPixelCode(raw: unknown): string {
   const text = String(raw ?? "")
     .trim()
     .replace(/[\u2018\u2019]/g, "'")
     .replace(/[\u201C\u201D]/g, '"');
   if (!text) return "";
+  if (/<script|<noscript/i.test(text)) return text;
   if (/^\d{5,20}$/.test(text)) return text;
   const initMatch = text.match(
     /fbq\s*\(\s*['"]init['"]\s*,\s*['"](\d{5,20})['"]\s*\)/i,
@@ -171,6 +201,7 @@ router.post(
     });
 
     const workshop = await loadWorkshop(created._id.toString());
+    regenerateWorkshopPages([slug]);
     res.json({ workshop: workshop ? serializeWorkshop(workshop) : null });
   }),
 );
@@ -188,6 +219,8 @@ router.patch(
     ) {
       throw new AuthError("Forbidden", 403);
     }
+
+    const previousSlug = existing.slug;
 
     if (req.body.programSlug !== undefined) {
       const programSlug = String(req.body.programSlug).trim();
@@ -242,6 +275,7 @@ router.patch(
 
     await existing.save();
     const workshop = await loadWorkshop(existing._id.toString());
+    regenerateWorkshopPages([previousSlug, existing.slug]);
     res.json({ workshop: workshop ? serializeWorkshop(workshop) : null });
   }),
 );
@@ -261,6 +295,7 @@ router.delete(
     }
 
     await existing.deleteOne();
+    regenerateWorkshopPages([existing.slug]);
     res.json({ ok: true });
   }),
 );

@@ -437,27 +437,32 @@ export default function WorkshopManager({
               </p>
               <div>
                 <label className="block text-xs tracking-wider uppercase text-[#F5F0E8]/40 mb-2">
-                  Meta Pixel ID
+                  Meta Pixel Code
                 </label>
-                <input
-                  type="text"
+                <textarea
                   value={form.metaPixelCode}
                   onChange={(e) =>
                     setForm((f) => ({ ...f, metaPixelCode: e.target.value }))
                   }
                   onBlur={() => {
+                    // Only auto-clean bare IDs / fbq(...) fragments. A full pasted
+                    // <script>...</script> / <noscript>...</noscript> block is kept
+                    // byte-for-byte — it gets spliced into the page exactly as typed.
+                    if (/<script|<noscript/i.test(form.metaPixelCode || "")) return;
                     const id = extractMetaPixelId(form.metaPixelCode || "");
                     if (id && id !== form.metaPixelCode.trim()) {
                       setForm((f) => ({ ...f, metaPixelCode: id }));
                     }
                   }}
+                  rows={4}
                   className="w-full rounded-lg border border-[#D4AF37]/20 bg-black/40 px-4 py-3 text-sm font-mono outline-none focus:border-[#D4AF37]/50 text-[#F5F0E8]"
-                  placeholder="e.g. 28359733993614251 (or paste full snippet)"
+                  placeholder="e.g. 28359733993614251, or paste the full <script>...</script> (+ <noscript>) block from Meta"
                   autoComplete="off"
                 />
                 <p className="mt-1.5 text-[11px] text-[#F5F0E8]/35">
-                  Saved per workshop slug. Only loads on{" "}
-                  <span className="font-mono">/workshop/{form.slug || "slug"}</span>.
+                  A bare ID gets wrapped in the standard Meta snippet. A full pasted
+                  snippet is used exactly as-is. Saved per workshop slug — only loads
+                  on <span className="font-mono">/workshop/{form.slug || "slug"}</span>.
                 </p>
               </div>
 

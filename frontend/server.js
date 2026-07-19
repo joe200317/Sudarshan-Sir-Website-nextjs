@@ -4,12 +4,20 @@
 // http server here. Set this file as the "Application startup file" in
 // cPanel's Setup Node.js App screen.
 //
-// It also splices the Meta Pixel bootstrap script directly before </head>
-// for /workshop/* routes, since Next.js's App Router has no supported way to
-// place a custom script literally inside <head> (next/script's
-// "beforeInteractive" strategy queues it at the top of <body> instead, not
-// physically in <head>, as of this Next.js version).
+// Workshop landing pages (/workshop/*) are duplicated to a static HTML file
+// on disk, with the exact Meta Pixel code an admin pasted spliced into the
+// page (byte-for-byte, we don't rewrite it) — like a frozen, standalone copy
+// of the page instead of one re-rendered by Next on every visit. The React
+// component/design that produces the page is untouched; we just capture its
+// output once. Every request for that slug after that is served straight
+// from disk (plain Content-Length, no Next.js involved).
+//
+// The backend calls POST /__internal/regenerate-workshop right after a
+// workshop is created/edited/deleted, so the duplicate is rebuilt
+// immediately — not lazily on whatever visitor happens by next.
 const { createServer } = require("http");
+const { promises: fs } = require("fs");
+const path = require("path");
 const next = require("next");
 
 const port = process.env.PORT || 3000;
@@ -19,6 +27,47 @@ const handle = app.getRequestHandler();
 const API_BASE =
   (process.env.NEXT_PUBLIC_API_URL || "http://localhost:4000").replace(/\/$/, "");
 
+const REGENERATE_SECRET = process.env.WORKSHOP_CACHE_SECRET || "";
+
+const CACHE_DIR = path.join(__dirname, ".workshop-cache");
+
+function cachePathForSlug(slug) {
+  const safe = String(slug).replace(/[^a-zA-Z0-9_-]/g, "");
+  return path.join(CACHE_DIR, `${safe}.html`);
+}
+
+async function readCachedPage(slug) {
+  try {
+    return await fs.readFile(cachePathForSlug(slug));
+  } catch {
+    return null;
+  }
+}
+
+async function writeCachedPage(slug, body) {
+  await fs.mkdir(CACHE_DIR, { recursive: true });
+  await fs.writeFile(cachePathForSlug(slug), body);
+}
+
+async function deleteCachedPage(slug) {
+  try {
+    await fs.unlink(cachePathForSlug(slug));
+  } catch {
+    // no cached file yet — nothing to do
+  }
+}
+
+/** Splits a pasted Meta snippet into its <head> script part and <body> noscript part. */
+function splitPixelCode(rawCode) {
+  const noscriptMatch = rawCode.match(/<noscript[\s\S]*?<\/noscript>/i);
+  const noscript = noscriptMatch ? noscriptMatch[0] : "";
+  const headPart = noscriptMatch
+    ? rawCode.slice(0, noscriptMatch.index) + rawCode.slice(noscriptMatch.index + noscriptMatch[0].length)
+    : rawCode;
+  return { headPart: headPart.trim(), noscript };
+}
+
+/** Bare numeric ID (or fbq('init', 'ID') fragment) — wrap in the standard Meta boilerplate. */
 function extractMetaPixelId(input) {
   const raw = input
     .trim()
@@ -30,15 +79,13 @@ function extractMetaPixelId(input) {
   const initMatch = raw.match(/fbq\s*\(\s*['"]init['"]\s*,\s*['"](\d{5,20})['"]\s*\)/i);
   if (initMatch && initMatch[1]) return initMatch[1];
 
-  const queryMatch = raw.match(/[?&]id=(\d{5,20})/i);
-  if (queryMatch && queryMatch[1]) return queryMatch[1];
-
   const loose = raw.match(/\b(\d{10,20})\b/);
   return loose ? loose[1] : null;
 }
 
-function metaPixelScriptTag(pixelId) {
-  return `<script id="meta-pixel-${pixelId}">
+function standardPixelSnippet(pixelId) {
+  return {
+    headPart: `<script id="meta-pixel-${pixelId}">
 !function(f,b,e,v,n,t,s)
 {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
 n.callMethod.apply(n,arguments):n.queue.push(arguments)};
@@ -49,25 +96,28 @@ s.parentNode.insertBefore(t,s)}(window, document,'script',
 'https://connect.facebook.net/en_US/fbevents.js');
 fbq('init', '${pixelId}');
 fbq('track', 'PageView');
-</script>`;
+</script>`,
+    noscript: `<noscript><img height="1" width="1" style="display:none" src="https://www.facebook.com/tr?id=${pixelId}&ev=PageView&noscript=1" /></noscript>`,
+  };
 }
 
-function metaPixelNoscriptTag(pixelId) {
-  return `<noscript><img height="1" width="1" style="display:none" src="https://www.facebook.com/tr?id=${pixelId}&ev=PageView&noscript=1" /></noscript>`;
+/** Resolves a pasted metaPixelCode value into {headPart, noscript} to splice into the page. */
+function resolvePixelParts(rawCode) {
+  const text = String(rawCode || "").trim();
+  if (!text) return null;
+  if (/<script|<noscript/i.test(text)) return splitPixelCode(text);
+  const id = extractMetaPixelId(text);
+  return id ? standardPixelSnippet(id) : null;
 }
 
-async function getWorkshopPixelId(pathname) {
-  const match = pathname.match(/^\/workshop\/([^/?]+)/);
-  if (!match) return null;
-
+async function fetchWorkshopPixelCode(slug) {
   try {
     const res = await fetch(
-      `${API_BASE}/api/workshops/by-slug/${encodeURIComponent(match[1])}`,
+      `${API_BASE}/api/workshops/by-slug/${encodeURIComponent(slug)}`,
     );
     if (!res.ok) return null;
     const data = await res.json();
-    const code = data && data.workshop && data.workshop.metaPixelCode;
-    return code ? extractMetaPixelId(code) : null;
+    return (data && data.workshop && data.workshop.metaPixelCode) || null;
   } catch {
     return null;
   }
@@ -79,7 +129,9 @@ function bufferChunk(chunk, encoding) {
 }
 
 /**
- * Buffers the response body and injects the pixel script before </head>.
+ * Buffers a full Next.js response, splices in the pixel code exactly as
+ * pasted, and hands the final buffer to `onBody` (used to cache it to disk)
+ * before flushing it to the client.
  *
  * Headers (and any Transfer-Encoding: chunked) must not reach the client
  * until we know the final, post-injection Content-Length — Next's App
@@ -90,7 +142,7 @@ function bufferChunk(chunk, encoding) {
  * buffer, producing a malformed response the browser aborts mid-stream.
  * So we intercept writeHead/setHeader too and hold everything back until end().
  */
-function withHeadInjection(res, pixelId) {
+function withHeadInjection(res, pixelParts, onBody) {
   const chunks = [];
   const originalWrite = res.write.bind(res);
   const originalEnd = res.end.bind(res);
@@ -126,11 +178,14 @@ function withHeadInjection(res, pixelId) {
         res.getHeader("content-type") ||
         "",
     );
+    const isHtml = contentType.includes("text/html");
 
-    if (contentType.includes("text/html") && body.includes("</head>")) {
+    if (isHtml && body.includes("</head>")) {
       let html = body.toString("utf-8");
-      html = html.replace("</head>", `${metaPixelScriptTag(pixelId)}</head>`);
-      html = html.replace(/(<body[^>]*>)/, `$1${metaPixelNoscriptTag(pixelId)}`);
+      html = html.replace("</head>", `${pixelParts.headPart}</head>`);
+      if (pixelParts.noscript) {
+        html = html.replace(/(<body[^>]*>)/, `$1${pixelParts.noscript}`);
+      }
       body = Buffer.from(html, "utf-8");
     }
 
@@ -153,17 +208,93 @@ function withHeadInjection(res, pixelId) {
     if (body.length) originalWrite(body);
     originalEnd();
 
+    if (isHtml && pendingStatusCode === 200 && onBody) onBody(body);
+
     const cb = typeof encoding === "function" ? encoding : callback;
     if (typeof cb === "function") cb();
   };
 }
 
+function serveCachedHtml(res, body) {
+  res.statusCode = 200;
+  res.setHeader("content-type", "text/html; charset=utf-8");
+  res.setHeader("content-length", Buffer.byteLength(body));
+  res.setHeader("x-workshop-cache", "hit");
+  res.end(body);
+}
+
+/**
+ * Regenerates a workshop's cached page by dropping the stale file and making
+ * a real loopback HTTP request to our own /workshop/<slug> route — that
+ * request goes through the exact same render + splice + cache path a real
+ * visitor's would, so there's no separate rendering code path to keep in
+ * sync.
+ */
+async function generateWorkshopPage(slug) {
+  await deleteCachedPage(slug);
+  await fetch(`http://127.0.0.1:${port}/workshop/${encodeURIComponent(slug)}`, {
+    headers: { host: "127.0.0.1" },
+  });
+}
+
+async function handleRegenerate(req, res) {
+  const chunks = [];
+  for await (const chunk of req) chunks.push(chunk);
+  let payload = {};
+  try {
+    payload = JSON.parse(Buffer.concat(chunks).toString("utf-8") || "{}");
+  } catch {
+    // ignore malformed body
+  }
+
+  const providedSecret = req.headers["x-invalidate-secret"] || payload.secret;
+  if (!REGENERATE_SECRET || providedSecret !== REGENERATE_SECRET) {
+    res.statusCode = 401;
+    res.end("unauthorized");
+    return;
+  }
+
+  const slugs = Array.isArray(payload.slugs)
+    ? payload.slugs
+    : payload.slug
+      ? [payload.slug]
+      : [];
+  const unique = [...new Set(slugs.filter(Boolean))];
+
+  await Promise.all(
+    unique.map((slug) => generateWorkshopPage(slug).catch(() => deleteCachedPage(slug))),
+  );
+
+  res.statusCode = 200;
+  res.setHeader("content-type", "application/json");
+  res.end(JSON.stringify({ ok: true, regenerated: unique }));
+}
+
 app.prepare().then(() => {
   createServer(async (req, res) => {
     const url = new URL(req.url, `http://${req.headers.host}`);
-    const pixelId = await getWorkshopPixelId(url.pathname);
 
-    if (pixelId) withHeadInjection(res, pixelId);
+    if (url.pathname === "/__internal/regenerate-workshop" && req.method === "POST") {
+      await handleRegenerate(req, res);
+      return;
+    }
+
+    const workshopMatch = url.pathname.match(/^\/workshop\/([^/?]+)\/?$/);
+    if (workshopMatch) {
+      const cached = await readCachedPage(workshopMatch[1]);
+      if (cached) {
+        serveCachedHtml(res, cached);
+        return;
+      }
+
+      const rawCode = await fetchWorkshopPixelCode(workshopMatch[1]);
+      const pixelParts = resolvePixelParts(rawCode);
+      if (pixelParts) {
+        withHeadInjection(res, pixelParts, (body) => {
+          void writeCachedPage(workshopMatch[1], body);
+        });
+      }
+    }
 
     handle(req, res);
   }).listen(port, () => {

@@ -17,6 +17,9 @@
 /.next/
 /out/
 
+# cached static workshop landing pages (regenerated on demand)
+/.workshop-cache/
+
 # production
 /build
 
