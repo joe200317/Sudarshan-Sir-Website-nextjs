@@ -18,6 +18,7 @@
 const { createServer } = require("http");
 const { promises: fs } = require("fs");
 const path = require("path");
+const zlib = require("zlib");
 const next = require("next");
 
 const port = process.env.PORT || 3000;
@@ -141,8 +142,15 @@ function bufferChunk(chunk, encoding) {
  * already committed to chunked framing while we send back a single raw
  * buffer, producing a malformed response the browser aborts mid-stream.
  * So we intercept writeHead/setHeader too and hold everything back until end().
+ *
+ * The caller strips the real request's Accept-Encoding before invoking Next
+ * (see the request handler below) so what we buffer here is always plain
+ * text — otherwise an already-gzipped chunk wouldn't contain a literal
+ * "</head>" to splice into, and a raw gzip buffer would get cached to disk
+ * as if it were HTML. `clientAcceptEncoding` is the real value, used to
+ * gzip the *final* response ourselves before it reaches the browser.
  */
-function withHeadInjection(res, pixelParts, onBody) {
+function withHeadInjection(res, pixelParts, onBody, clientAcceptEncoding) {
   const chunks = [];
   const originalWrite = res.write.bind(res);
   const originalEnd = res.end.bind(res);
@@ -189,38 +197,67 @@ function withHeadInjection(res, pixelParts, onBody) {
       body = Buffer.from(html, "utf-8");
     }
 
+    // Cache the plain (uncompressed) body — compression below is only for
+    // what actually goes out on this specific response.
+    if (isHtml && pendingStatusCode === 200 && onBody) onBody(body);
+
+    let outBody = body;
+    const wantsGzip = isHtml && /\bgzip\b/.test(String(clientAcceptEncoding || ""));
+    if (wantsGzip) outBody = zlib.gzipSync(body);
+
     res.removeHeader("transfer-encoding");
-    res.setHeader("content-length", Buffer.byteLength(body));
+    res.setHeader("content-length", Buffer.byteLength(outBody));
+    if (wantsGzip) res.setHeader("content-encoding", "gzip");
+    else res.removeHeader("content-encoding");
 
     if (pendingHeaders) {
       for (const key of Object.keys(pendingHeaders)) {
-        if (key.toLowerCase() === "transfer-encoding" || key.toLowerCase() === "content-length") {
+        const lower = key.toLowerCase();
+        if (lower === "transfer-encoding" || lower === "content-length" || lower === "content-encoding") {
           delete pendingHeaders[key];
         }
       }
-      pendingHeaders["content-length"] = Buffer.byteLength(body);
+      pendingHeaders["content-length"] = Buffer.byteLength(outBody);
+      if (wantsGzip) pendingHeaders["content-encoding"] = "gzip";
     }
 
     if (pendingStatusCode !== null) {
       originalWriteHead(pendingStatusCode, pendingHeaders || undefined);
     }
 
-    if (body.length) originalWrite(body);
+    if (outBody.length) originalWrite(outBody);
     originalEnd();
-
-    if (isHtml && pendingStatusCode === 200 && onBody) onBody(body);
 
     const cb = typeof encoding === "function" ? encoding : callback;
     if (typeof cb === "function") cb();
   };
 }
 
-function serveCachedHtml(res, body) {
+/**
+ * Serves the cached HTML with an encoding that matches whatever we declare.
+ * Some layer in front of this app (nginx/cPanel) has been observed adding a
+ * "Content-Encoding: gzip" response header whenever the client sends
+ * "Accept-Encoding: gzip" without actually compressing the body — the
+ * browser then tries to gunzip plain text and shows garbage. Compressing it
+ * ourselves and setting the header explicitly keeps the bytes and the
+ * header truthful regardless of what that front layer does (it won't
+ * re-encode a response that already declares Content-Encoding).
+ */
+function serveCachedHtml(req, res, body) {
+  const acceptEncoding = String(req.headers["accept-encoding"] || "");
   res.statusCode = 200;
   res.setHeader("content-type", "text/html; charset=utf-8");
-  res.setHeader("content-length", Buffer.byteLength(body));
   res.setHeader("x-workshop-cache", "hit");
-  res.end(body);
+
+  if (/\bgzip\b/.test(acceptEncoding)) {
+    const compressed = zlib.gzipSync(body);
+    res.setHeader("content-encoding", "gzip");
+    res.setHeader("content-length", compressed.length);
+    res.end(compressed);
+  } else {
+    res.setHeader("content-length", Buffer.byteLength(body));
+    res.end(body);
+  }
 }
 
 /**
@@ -232,8 +269,11 @@ function serveCachedHtml(res, body) {
  */
 async function generateWorkshopPage(slug) {
   await deleteCachedPage(slug);
+  // accept-encoding: identity ensures Next renders/returns plain HTML here,
+  // so what we cache to disk is always uncompressed — compression for real
+  // visitors happens separately in serveCachedHtml, where we control it.
   await fetch(`http://127.0.0.1:${port}/workshop/${encodeURIComponent(slug)}`, {
-    headers: { host: "127.0.0.1" },
+    headers: { host: "127.0.0.1", "accept-encoding": "identity" },
   });
 }
 
@@ -283,16 +323,25 @@ app.prepare().then(() => {
     if (workshopMatch) {
       const cached = await readCachedPage(workshopMatch[1]);
       if (cached) {
-        serveCachedHtml(res, cached);
+        serveCachedHtml(req, res, cached);
         return;
       }
 
       const rawCode = await fetchWorkshopPixelCode(workshopMatch[1]);
       const pixelParts = resolvePixelParts(rawCode);
       if (pixelParts) {
-        withHeadInjection(res, pixelParts, (body) => {
-          void writeCachedPage(workshopMatch[1], body);
-        });
+        const clientAcceptEncoding = req.headers["accept-encoding"];
+        // Stop Next from compressing what we're about to buffer/splice —
+        // see the withHeadInjection doc comment for why.
+        req.headers["accept-encoding"] = "identity";
+        withHeadInjection(
+          res,
+          pixelParts,
+          (body) => {
+            void writeCachedPage(workshopMatch[1], body);
+          },
+          clientAcceptEncoding,
+        );
       }
     }
 
