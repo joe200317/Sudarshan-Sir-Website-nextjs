@@ -35,4 +35,11 @@ jobs:
             cd frontend
             npm ci
             npm run build
+            # Cached workshop pages hardcode this build's hashed CSS/JS chunk
+            # filenames. Those filenames change on every build, and
+            # .workshop-cache/ isn't tracked by git so `reset --hard` doesn't
+            # touch it — stale cached pages would keep pointing at chunks
+            # this build just deleted, breaking their styling/JS. Clear it so
+            # every workshop page regenerates fresh against the new build.
+            rm -rf .workshop-cache
             pm2 restart sudarshan-frontend
