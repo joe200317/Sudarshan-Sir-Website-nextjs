@@ -37,9 +37,24 @@ function cachePathForSlug(slug) {
   return path.join(CACHE_DIR, `${safe}.html`);
 }
 
+const GZIP_MAGIC = Buffer.from([0x1f, 0x8b]);
+
+/**
+ * Reads the cached file for a slug. If it's already gzip-compressed (from a
+ * cache written before compression was handled centrally in this file — a
+ * real leftover we hit in production), it's corrupt for our purposes: we'd
+ * double-compress it on top when serving to a gzip-accepting client, which
+ * browsers can't decode. Self-heal by discarding it so the caller treats
+ * this as a cache miss and regenerates a clean, plain-HTML copy.
+ */
 async function readCachedPage(slug) {
   try {
-    return await fs.readFile(cachePathForSlug(slug));
+    const body = await fs.readFile(cachePathForSlug(slug));
+    if (body.length >= 2 && body.subarray(0, 2).equals(GZIP_MAGIC)) {
+      await deleteCachedPage(slug);
+      return null;
+    }
+    return body;
   } catch {
     return null;
   }
