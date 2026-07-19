@@ -6,7 +6,7 @@ import { extractMetaPixelId } from "@/lib/meta-pixel";
 import { WORKSHOP_PROGRAMS } from "@/data/workshop-programs";
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import { Plus, Pencil, Trash2, X, Upload, Check, ExternalLink } from "lucide-react";
+import { Plus, Pencil, Trash2, X, Upload, Check, ExternalLink, Code2 } from "lucide-react";
 import WorkshopRegistrationsReport, {
   ViewRegistrationsButton,
 } from "@/components/admin/WorkshopRegistrationsReport";
@@ -39,7 +39,6 @@ const emptyForm = {
   fees: "",
   location: "",
   notificationEmail: "",
-  metaPixelCode: "",
   includePayment: false,
   imageUrl: "",
 };
@@ -68,6 +67,10 @@ export default function WorkshopManager({
   const [saving, setSaving] = useState(false);
   const [uploading, setUploading] = useState(false);
   const [reportWorkshop, setReportWorkshop] = useState<Workshop | null>(null);
+  const [pixelWorkshop, setPixelWorkshop] = useState<Workshop | null>(null);
+  const [pixelCode, setPixelCode] = useState("");
+  const [pixelSaving, setPixelSaving] = useState(false);
+  const [pixelError, setPixelError] = useState("");
   const { user } = useAuth();
 
   async function load() {
@@ -107,7 +110,6 @@ export default function WorkshopManager({
       fees: w.fees != null ? String(w.fees) : "",
       location: w.location,
       notificationEmail: w.notificationEmail,
-      metaPixelCode: w.metaPixelCode || "",
       includePayment: w.includePayment,
       imageUrl: w.imageUrl,
     });
@@ -140,8 +142,6 @@ export default function WorkshopManager({
     setSaving(true);
     setError("");
     try {
-      const pixelRaw = form.metaPixelCode || "";
-      const pixelId = extractMetaPixelId(pixelRaw);
       const fees =
         form.fees === "" ? null : Number(form.fees);
       if (form.includePayment && (fees == null || Number.isNaN(fees) || fees <= 0)) {
@@ -149,11 +149,7 @@ export default function WorkshopManager({
         setSaving(false);
         return;
       }
-      const payload = {
-        ...form,
-        metaPixelCode: pixelId || pixelRaw.trim(),
-        fees,
-      };
+      const payload = { ...form, fees };
       const url = editingId
         ? `/api/workshops/${editingId}`
         : "/api/workshops";
@@ -169,6 +165,10 @@ export default function WorkshopManager({
       }
       setOpen(false);
       await load();
+      // Fresh workshop with no pixel yet — go straight to pasting its script.
+      if (!editingId && data.workshop) {
+        openPixelEditor(data.workshop as Workshop);
+      }
     } catch {
       setError("Network error");
     } finally {
@@ -180,6 +180,37 @@ export default function WorkshopManager({
     if (!confirm("Delete this workshop?")) return;
     const res = await apiFetch(`/api/workshops/${id}`, { method: "DELETE" });
     if (res.ok) await load();
+  }
+
+  function openPixelEditor(w: Workshop) {
+    setPixelWorkshop(w);
+    setPixelCode(w.metaPixelCode || "");
+    setPixelError("");
+  }
+
+  async function onSavePixel(e: React.FormEvent) {
+    e.preventDefault();
+    if (!pixelWorkshop) return;
+    setPixelSaving(true);
+    setPixelError("");
+    try {
+      const res = await apiFetch(`/api/workshops/${pixelWorkshop.id}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ metaPixelCode: pixelCode }),
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        setPixelError(data.error || "Save failed");
+        return;
+      }
+      setPixelWorkshop(null);
+      await load();
+    } catch {
+      setPixelError("Network error");
+    } finally {
+      setPixelSaving(false);
+    }
   }
 
   return (
@@ -292,6 +323,16 @@ export default function WorkshopManager({
                         <ViewRegistrationsButton
                           onClick={() => setReportWorkshop(w)}
                         />
+                        {canCreate && (
+                          <button
+                            type="button"
+                            onClick={() => openPixelEditor(w)}
+                            className="p-2 rounded-lg border border-[#D4AF37]/20 text-[#D4AF37] hover:bg-[#D4AF37]/10"
+                            title="Meta Pixel script"
+                          >
+                            <Code2 className="w-3.5 h-3.5" />
+                          </button>
+                        )}
                         {canCreate && (
                           <button
                             type="button"
@@ -435,36 +476,10 @@ export default function WorkshopManager({
                 , this email gets that lead (name, phone, etc.). Use the account
                 email of the user who owns this landing page.
               </p>
-              <div>
-                <label className="block text-xs tracking-wider uppercase text-[#F5F0E8]/40 mb-2">
-                  Meta Pixel Code
-                </label>
-                <textarea
-                  value={form.metaPixelCode}
-                  onChange={(e) =>
-                    setForm((f) => ({ ...f, metaPixelCode: e.target.value }))
-                  }
-                  onBlur={() => {
-                    // Only auto-clean bare IDs / fbq(...) fragments. A full pasted
-                    // <script>...</script> / <noscript>...</noscript> block is kept
-                    // byte-for-byte — it gets spliced into the page exactly as typed.
-                    if (/<script|<noscript/i.test(form.metaPixelCode || "")) return;
-                    const id = extractMetaPixelId(form.metaPixelCode || "");
-                    if (id && id !== form.metaPixelCode.trim()) {
-                      setForm((f) => ({ ...f, metaPixelCode: id }));
-                    }
-                  }}
-                  rows={4}
-                  className="w-full rounded-lg border border-[#D4AF37]/20 bg-black/40 px-4 py-3 text-sm font-mono outline-none focus:border-[#D4AF37]/50 text-[#F5F0E8]"
-                  placeholder="e.g. 28359733993614251, or paste the full <script>...</script> (+ <noscript>) block from Meta"
-                  autoComplete="off"
-                />
-                <p className="mt-1.5 text-[11px] text-[#F5F0E8]/35">
-                  A bare ID gets wrapped in the standard Meta snippet. A full pasted
-                  snippet is used exactly as-is. Saved per workshop slug — only loads
-                  on <span className="font-mono">/workshop/{form.slug || "slug"}</span>.
-                </p>
-              </div>
+              <p className="text-[11px] text-[#F5F0E8]/35 rounded-lg border border-[#D4AF37]/12 bg-black/20 px-3 py-2.5">
+                Meta Pixel script is added on the next step, right after you
+                save this event.
+              </p>
 
               <label className="flex items-center gap-3 rounded-lg border border-[#D4AF37]/15 px-4 py-3 cursor-pointer hover:bg-white/[0.02]">
                 <input
@@ -547,7 +562,71 @@ export default function WorkshopManager({
                     background: "linear-gradient(135deg, #D4AF37, #B8960C)",
                   }}
                 >
-                  {saving ? "Saving…" : "Save workshop"}
+                  {saving ? "Saving…" : "Save & continue"}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {pixelWorkshop && (
+        <div className="fixed inset-0 z-[60] flex items-start justify-center overflow-y-auto bg-black/70 p-4 py-10">
+          <div className="w-full max-w-2xl rounded-2xl border border-[#D4AF37]/20 bg-[#0a0a0a] shadow-2xl">
+            <div className="flex items-center justify-between border-b border-[#D4AF37]/12 px-5 py-4">
+              <h2
+                className="text-lg font-semibold text-[#D4AF37]"
+                style={{ fontFamily: "var(--font-display)" }}
+              >
+                Meta Pixel script — {pixelWorkshop.slug}
+              </h2>
+              <button type="button" onClick={() => setPixelWorkshop(null)}>
+                <X className="w-5 h-5 text-[#F5F0E8]/50" />
+              </button>
+            </div>
+
+            <form onSubmit={onSavePixel} className="p-5 space-y-4">
+              <p className="text-[11px] text-[#F5F0E8]/40">
+                Paste the bare Pixel ID, or the full{" "}
+                <span className="font-mono">&lt;script&gt;...&lt;/script&gt;</span>{" "}
+                (+ <span className="font-mono">&lt;noscript&gt;</span>) block from
+                Meta. A full pasted block is spliced into this page exactly as
+                typed — nothing is rewritten. Saved only for{" "}
+                <span className="font-mono">/workshop/{pixelWorkshop.slug}</span>.
+              </p>
+              <textarea
+                value={pixelCode}
+                onChange={(e) => setPixelCode(e.target.value)}
+                rows={8}
+                autoFocus
+                className="w-full rounded-lg border border-[#D4AF37]/20 bg-black/40 px-4 py-3 text-sm font-mono outline-none focus:border-[#D4AF37]/50 text-[#F5F0E8]"
+                placeholder="e.g. 28359733993614251, or paste the full Meta Pixel snippet"
+                autoComplete="off"
+              />
+
+              {pixelError && (
+                <p className="text-sm text-red-400 bg-red-500/10 border border-red-500/20 rounded-lg px-3 py-2">
+                  {pixelError}
+                </p>
+              )}
+
+              <div className="flex justify-end gap-3 pt-2">
+                <button
+                  type="button"
+                  onClick={() => setPixelWorkshop(null)}
+                  className="px-4 py-2.5 text-sm rounded-lg border border-[#F5F0E8]/15"
+                >
+                  Skip for now
+                </button>
+                <button
+                  type="submit"
+                  disabled={pixelSaving}
+                  className="px-5 py-2.5 text-sm font-semibold rounded-lg text-[#0a0a0a] disabled:opacity-50"
+                  style={{
+                    background: "linear-gradient(135deg, #D4AF37, #B8960C)",
+                  }}
+                >
+                  {pixelSaving ? "Saving…" : "Save & deploy page"}
                 </button>
               </div>
             </form>
