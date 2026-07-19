@@ -29,7 +29,12 @@ const handle = app.getRequestHandler();
 const API_BASE =
   (process.env.NEXT_PUBLIC_API_URL || "http://localhost:4000").replace(/\/$/, "");
 
-const REGENERATE_SECRET = process.env.WORKSHOP_CACHE_SECRET || "";
+// Falls back to a built-in default so cache regeneration works without any
+// server-side setup. Override WORKSHOP_CACHE_SECRET (same value on both the
+// frontend and backend apps) once you have env-var access, for a private
+// value only your own backend knows.
+const REGENERATE_SECRET =
+  process.env.WORKSHOP_CACHE_SECRET || "sudarshan-workshop-cache-default";
 
 const CACHE_DIR = path.join(__dirname, ".workshop-cache");
 

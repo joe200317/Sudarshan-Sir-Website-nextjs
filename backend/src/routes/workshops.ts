@@ -12,7 +12,12 @@ import { asyncHandler } from "../middleware/error.js";
 const router = Router();
 
 const FRONTEND_URL = process.env.FRONTEND_URL || "http://localhost:3000";
-const WORKSHOP_CACHE_SECRET = process.env.WORKSHOP_CACHE_SECRET || "";
+// Falls back to a built-in default so cache regeneration works without any
+// server-side setup. Override WORKSHOP_CACHE_SECRET (same value on both the
+// frontend and backend apps) once you have env-var access, for a private
+// value only your own backend knows.
+const WORKSHOP_CACHE_SECRET =
+  process.env.WORKSHOP_CACHE_SECRET || "sudarshan-workshop-cache-default";
 
 /**
  * Fire-and-forget: tell the frontend to immediately rebuild its duplicated
@@ -21,7 +26,7 @@ const WORKSHOP_CACHE_SECRET = process.env.WORKSHOP_CACHE_SECRET || "";
  */
 function regenerateWorkshopPages(slugs: (string | undefined)[]) {
   const unique = [...new Set(slugs.filter((s): s is string => Boolean(s)))];
-  if (!unique.length || !WORKSHOP_CACHE_SECRET) return;
+  if (!unique.length) return;
 
   fetch(`${FRONTEND_URL}/__internal/regenerate-workshop`, {
     method: "POST",
