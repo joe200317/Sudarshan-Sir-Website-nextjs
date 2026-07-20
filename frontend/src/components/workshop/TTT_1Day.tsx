@@ -10,18 +10,20 @@ import {
   Brain,
   Briefcase,
   Check,
-  DollarSign,
-  Gem,
+  Compass,
   GraduationCap,
+  HeartHandshake,
   Lightbulb,
   MapPin,
   Mic2,
   Phone,
   Play,
+  Shield,
+  Smile,
+  Sparkles,
   Star,
   Target,
   TrendingUp,
-  Trophy,
   Users,
 } from "lucide-react";
 import ReserveSpotModal from "@/components/workshop/ReserveSpotModal";
@@ -40,32 +42,47 @@ const YOUTUBE_VIDEO_ID = "qZrc-Dq4JYU";
 
 const LEARNINGS = [
   {
-    icon: Gem,
-    title: "Wealth Building Mindset",
-    desc: "Rebuild the inner operating system that multiplies income.",
+    icon: Target,
+    title: "Make Better Decisions with Confidence",
+    desc: "Develop clarity of thought and learn practical techniques to make balanced, confident decisions even in challenging situations.",
   },
   {
-    icon: DollarSign,
-    title: "High-Paying Opportunities",
-    desc: "Attract premium clients, stages, and coaching retainers.",
+    icon: Shield,
+    title: "Manage Stress Effectively",
+    desc: "Stay calm under pressure, reduce stress and maintain inner peace for improved performance and well-being.",
   },
   {
-    icon: TrendingUp,
-    title: "Scale Coaching & Speaking",
-    desc: "Systems to grow reach without burning out your brand.",
+    icon: Sparkles,
+    title: "Build a Positive Mindset",
+    desc: "Cultivate a positive attitude that helps you overcome challenges, stay motivated and inspire those around you.",
   },
   {
-    icon: Trophy,
-    title: "Industry Leadership",
-    desc: "Position yourself as the authority others follow.",
+    icon: Compass,
+    title: "Strengthen Your Problem-Solving Skills",
+    desc: "Approach problems with confidence and discover effective, solution-oriented thinking.",
+  },
+  {
+    icon: Brain,
+    title: "Boost Self-Confidence & Focus",
+    desc: "Enhance your self-belief, improve concentration and perform with greater confidence in every area of life.",
+  },
+  {
+    icon: HeartHandshake,
+    title: "Build Stronger Relationships",
+    desc: "Develop empathy, respect and better communication skills to create meaningful and lasting relationships.",
+  },
+  {
+    icon: Smile,
+    title: "Master Your Emotions",
+    desc: "Learn to manage emotions like anger and fear, improve emotional balance and respond thoughtfully instead of reacting impulsively.",
   },
 ] as const;
 
 const BENEFITS = [
-  { highlight: "Financial Freedom", text: "Build a trainer career that pays for the lifestyle you want." },
-  { highlight: "₹5 lakhs / month", text: "Learn proven methods used by top-earning coaches and speakers." },
-  { highlight: "Become a Role Model", text: "Inspire and motivate people with knowledge that creates change." },
-  { highlight: "Wisdom Into Words", text: "Turn experience into content, curriculum, and paid delivery." },
+  { highlight: "Confident Decisions", text: "Make clear, balanced decisions with confidence — even under pressure." },
+  { highlight: "Calm Under Pressure", text: "Stay composed, manage stress and think clearly in challenging situations." },
+  { highlight: "Emotional Balance", text: "Manage emotions like anger and fear, and respond thoughtfully instead of reacting." },
+  { highlight: "Stronger Relationships", text: "Communicate with empathy and build lasting personal and professional bonds." },
 ] as const;
 
 const BOOKS = [
@@ -90,47 +107,62 @@ const AWARDS = [
 
 const WHY_CHOOSE = [
   {
-    icon: Award,
-    title: "Learn from India's #1 Mind Trainer",
-    desc: "Direct training from Sudarshan Sabat — not a recorded course or junior facilitator.",
+    icon: Target,
+    title: "Clear Decision-Making Skills",
+    desc: "Learn practical methods to make confident, balanced decisions without confusion or self-doubt.",
   },
   {
-    icon: Target,
-    title: "Practical, not theoretical",
-    desc: "Walk away with usable scripts, frameworks, and delivery methods you can apply the next day.",
+    icon: Award,
+    title: "Practical Trainer Skills",
+    desc: "Learn techniques to engage participants, communicate effectively and deliver impactful sessions with confidence.",
+  },
+  {
+    icon: Smile,
+    title: "Emotional Intelligence",
+    desc: "Understand how to manage emotions like anger, fear, frustration and anxiety while maintaining emotional balance.",
   },
   {
     icon: TrendingUp,
-    title: "Built for income growth",
-    desc: "Positioning, packaging, and persuasion systems designed to raise your coaching fees.",
-  },
-  {
-    icon: Users,
-    title: "Live interactive format",
-    desc: "One high-impact day with live demos, practice, and feedback — not a passive webinar.",
+    title: "Lifetime Learning Experience",
+    desc: "Gain practical insights and easy-to-apply tools that support your personal growth long after the workshop ends.",
   },
 ] as const;
 
 const WHO_SHOULD_ATTEND = [
   {
     icon: Mic2,
-    title: "Aspiring coaches & speakers",
-    desc: "Ready to turn knowledge into paid stages, workshops, and client work.",
+    title: "Trainers & Facilitators",
+    desc: "Sharpen delivery and inspire real change in every session you run.",
   },
   {
     icon: Briefcase,
-    title: "Corporate trainers",
-    desc: "Want sharper delivery, stronger presence, and premium program design.",
+    title: "Team Leaders & Managers",
+    desc: "Lead with clarity, confidence and stronger communication.",
   },
   {
     icon: GraduationCap,
-    title: "Teachers & educators",
-    desc: "Looking to expand beyond classrooms into consulting and paid training.",
+    title: "Teachers & Educators",
+    desc: "Make every classroom or session more engaging and impactful.",
+  },
+  {
+    icon: Users,
+    title: "HR Professionals",
+    desc: "Build confident, capable and emotionally balanced teams.",
+  },
+  {
+    icon: Target,
+    title: "Coaches & Mentors",
+    desc: "Deepen your impact with proven mindset and decision-making tools.",
   },
   {
     icon: Lightbulb,
-    title: "Entrepreneurs & consultants",
-    desc: "Need authority, clarity, and a signature method that sells.",
+    title: "Students & Working Professionals",
+    desc: "Build the confidence and clarity to grow faster in life and career.",
+  },
+  {
+    icon: Star,
+    title: "Anyone Ready to Lead",
+    desc: "For anyone who wants to become a confident communicator and an inspiring leader.",
   },
 ] as const;
 
@@ -541,14 +573,17 @@ export default function TTT_1Day({
                 className="text-4xl sm:text-5xl lg:text-6xl font-bold leading-[1.05] tracking-tight mb-5"
                 style={{ fontFamily: "var(--font-display)" }}
               >
-                <span className="text-[#F5F0E8]">Unlock wealth, fame</span>
+                <span className="text-[#F5F0E8]">Transform Yourself</span>
                 <br />
-                <span className="text-gradient-gold">&amp; high income</span>
+                <span className="text-gradient-gold">&amp; Inspire Others</span>
               </h1>
 
               <p className="text-[#F5F0E8]/65 text-base sm:text-lg leading-relaxed mb-8 max-w-lg">
-                Powerful concepts and proven methods to become a top 1%
-                coach &amp; speaker — live with Sudarshan Sabat in Pune.
+                Great trainers don&apos;t just deliver information — they
+                inspire change. This intensive one-day program helps you
+                strengthen your mindset, improve decision-making and build
+                the confidence to influence others positively — live with
+                Sudarshan Sabat in Pune.
               </p>
 
               <div className="flex flex-col sm:flex-row gap-3 sm:items-center mb-10">
@@ -625,8 +660,8 @@ export default function TTT_1Day({
               className="text-3xl sm:text-4xl font-bold leading-tight"
               style={{ fontFamily: "var(--font-display)" }}
             >
-              What you will{" "}
-              <span className="text-gradient-gold">master</span>
+              What will you{" "}
+              <span className="text-gradient-gold">gain?</span>
             </h2>
           </motion.div>
 
@@ -706,12 +741,14 @@ export default function TTT_1Day({
                 className="text-3xl sm:text-4xl font-bold leading-tight mb-4"
                 style={{ fontFamily: "var(--font-display)" }}
               >
-                Benefits of becoming a{" "}
-                <span className="text-gradient-gold">master trainer</span>
+                Why should you{" "}
+                <span className="text-gradient-gold">join this program?</span>
               </h2>
               <p className="text-[#F5F0E8]/50 text-sm sm:text-base leading-relaxed mb-6">
-                Limited seats for a live interactive day designed for coaches,
-                speakers, and professionals ready to level up.
+                Success depends on how well you manage your thoughts,
+                emotions, decisions and relationships. This 1-Day Train The
+                Trainer Program helps you build these essential life and
+                leadership skills — and apply them immediately.
               </p>
               <div className="inline-flex items-center gap-2 rounded-full border border-[#D4AF37]/25 bg-[#D4AF37]/8 px-3.5 py-1.5">
                 <span className="h-1.5 w-1.5 rounded-full bg-[#D4AF37] animate-pulse" />
@@ -787,14 +824,17 @@ export default function TTT_1Day({
                 className="text-3xl sm:text-4xl font-bold leading-tight mb-5"
                 style={{ fontFamily: "var(--font-display)" }}
               >
-                India&apos;s leading mind expert &amp;{" "}
-                <span className="text-gradient-gold">peak performance coach</span>
+                Learn from the real-life experiences of{" "}
+                <span className="text-gradient-gold">Sudarshan Sabat Sir</span>
               </h2>
               <p className="text-[#F5F0E8]/55 text-sm sm:text-base leading-relaxed mb-6">
-                He has inspired over a million people to discover their true
-                potential. Record-holder for 148 seminars in 2018, trained under
-                16+ global mentors, authored 24+ books, founded 11 companies —
-                and continues to transform lives through mind-power mastery.
+                During this powerful 1-day workshop, Sudarshan Sabat Sir
+                shares real-life experiences, practical insights and proven
+                techniques that have helped many individuals transform their
+                mindset and approach to life — simple, easy to apply, and
+                designed for lasting impact. Don&apos;t just attend a
+                workshop, experience a journey of self-discovery, growth and
+                transformation.
               </p>
               <p className="text-[#F5F0E8]/40 text-xs tracking-[0.18em] uppercase mb-3">
                 Areas of expertise
@@ -911,11 +951,11 @@ export default function TTT_1Day({
               className="text-3xl sm:text-4xl font-bold"
               style={{ fontFamily: "var(--font-display)" }}
             >
-              Why choose{" "}
-              <span className="text-gradient-gold">our program</span>
+              What will you{" "}
+              <span className="text-gradient-gold">get?</span>
             </h2>
             <p className="mt-4 text-sm sm:text-base text-[#F5F0E8]/50 leading-relaxed">
-              A focused one-day experience built to make you a stronger, higher-earning trainer.
+              A focused one-day experience built to strengthen your mindset and sharpen your skills as a trainer.
             </p>
           </motion.div>
 
@@ -1068,7 +1108,7 @@ export default function TTT_1Day({
               <span className="text-gradient-gold">attend?</span>
             </h2>
             <p className="mt-4 text-sm sm:text-base text-[#F5F0E8]/50 leading-relaxed">
-              This day is for professionals serious about becoming a high-impact trainer and speaker.
+              Whether you&apos;re a trainer, team leader, educator, coach or aspiring facilitator, this workshop gives you tools you can apply immediately.
             </p>
           </motion.div>
 
