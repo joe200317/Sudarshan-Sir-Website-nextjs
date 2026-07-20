@@ -3,13 +3,14 @@
 import { useEffect, useMemo, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { motion } from "framer-motion";
+import { AnimatePresence, motion } from "framer-motion";
 import {
   ArrowRight,
   Award,
   Brain,
   Briefcase,
   Check,
+  CheckCircle2,
   Compass,
   GraduationCap,
   HeartHandshake,
@@ -214,6 +215,94 @@ const EXPERTISE = [
   "Marketing",
   "Branding",
 ] as const;
+
+const RECENT_ACTIVITY = [
+  { name: "Rahul", city: "Mumbai" },
+  { name: "Priya", city: "Pune" },
+  { name: "Amit", city: "Delhi" },
+  { name: "Sneha", city: "Bangalore" },
+  { name: "Vikram", city: "Ahmedabad" },
+  { name: "Neha", city: "Surat" },
+  { name: "Rohit", city: "Nagpur" },
+  { name: "Anjali", city: "Nashik" },
+  { name: "Karan", city: "Thane" },
+  { name: "Pooja", city: "Indore" },
+  { name: "Suresh", city: "Hyderabad" },
+  { name: "Divya", city: "Chennai" },
+  { name: "Manish", city: "Kolkata" },
+  { name: "Kavita", city: "Jaipur" },
+  { name: "Arjun", city: "Vadodara" },
+  { name: "Ritu", city: "Bhopal" },
+  { name: "Sandeep", city: "Nagpur" },
+  { name: "Meera", city: "Pune" },
+  { name: "Deepak", city: "Mumbai" },
+  { name: "Swati", city: "Kolhapur" },
+  { name: "Vivek", city: "Aurangabad" },
+  { name: "Nisha", city: "Rajkot" },
+  { name: "Ganesh", city: "Solapur" },
+  { name: "Pallavi", city: "Nagpur" },
+  { name: "Yogesh", city: "Pune" },
+  { name: "Shreya", city: "Mumbai" },
+  { name: "Abhishek", city: "Lucknow" },
+  { name: "Komal", city: "Nagpur" },
+  { name: "Nikhil", city: "Ratnagiri" },
+  { name: "Tanvi", city: "Satara" },
+] as const;
+
+function RecentActivityToast() {
+  const [entry, setEntry] = useState<(typeof RECENT_ACTIVITY)[number] | null>(
+    null,
+  );
+
+  useEffect(() => {
+    let timeoutId: number;
+    let visible = false;
+
+    const tick = () => {
+      visible = !visible;
+      if (visible) {
+        const pick =
+          RECENT_ACTIVITY[Math.floor(Math.random() * RECENT_ACTIVITY.length)];
+        setEntry(pick);
+      } else {
+        setEntry(null);
+      }
+      timeoutId = window.setTimeout(tick, visible ? 2000 : 1000);
+    };
+
+    timeoutId = window.setTimeout(tick, 1000);
+    return () => window.clearTimeout(timeoutId);
+  }, []);
+
+  return (
+    <div className="fixed bottom-24 left-3 sm:bottom-6 sm:left-6 z-30 max-w-[calc(100vw-1.5rem)]">
+      <AnimatePresence>
+        {entry && (
+          <motion.div
+            initial={{ opacity: 0, y: 16, scale: 0.96 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, y: 16, scale: 0.96 }}
+            transition={{ duration: 0.3 }}
+            className="flex items-center gap-3 rounded-xl border border-[#D4AF37]/25 bg-[#0a0a0a]/95 backdrop-blur-sm px-4 py-3 shadow-[0_8px_30px_rgba(0,0,0,0.4)]"
+          >
+            <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-[#D4AF37]/15 border border-[#D4AF37]/25 text-[#D4AF37] text-sm font-semibold">
+              {entry.name.charAt(0)}
+            </span>
+            <div className="min-w-0">
+              <p className="text-sm font-semibold text-[#F5F0E8] truncate">
+                {entry.name} from {entry.city}
+              </p>
+              <p className="text-xs text-[#F5F0E8]/50 flex items-center gap-1">
+                <CheckCircle2 className="w-3 h-3 text-emerald-400 shrink-0" />
+                just booked a seat
+              </p>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </div>
+  );
+}
 
 type TimeLeft = {
   days: number;
@@ -448,12 +537,20 @@ export default function TTT_1Day({
   });
   const [masterVideoPlaying, setMasterVideoPlaying] = useState(false);
   const [reserveOpen, setReserveOpen] = useState(false);
+  const [showStickyBar, setShowStickyBar] = useState(false);
 
   useEffect(() => {
     setTimeLeft(getTimeLeft(eventAt));
     const id = window.setInterval(() => setTimeLeft(getTimeLeft(eventAt)), 1000);
     return () => window.clearInterval(id);
   }, [eventAt]);
+
+  useEffect(() => {
+    const onScroll = () => setShowStickyBar(window.scrollY > window.innerHeight * 0.6);
+    onScroll();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
 
   const openReserve = () => {
     if (!workshop) return;
@@ -1194,17 +1291,37 @@ export default function TTT_1Day({
         </motion.div>
       </section>
 
-      {/* Mobile sticky CTA */}
-      <div className="fixed bottom-0 inset-x-0 z-40 p-3 sm:hidden bg-gradient-to-t from-[#050505] via-[#050505]/95 to-transparent pt-8">
-        <GoldButton
-          {...(workshop ? { onClick: openReserve } : { href: "/payment" })}
-          disabled={!isActive}
-          className="w-full"
-        >
-          {ctaLabel}
-        </GoldButton>
-      </div>
-      <div className="h-20 sm:hidden" aria-hidden />
+      {/* Scroll-triggered sticky CTA — desktop + mobile */}
+      <AnimatePresence>
+        {showStickyBar && (
+          <motion.div
+            initial={{ opacity: 0, y: 40 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: 40 }}
+            transition={{ duration: 0.3 }}
+            className="fixed bottom-0 inset-x-0 z-40 p-3 sm:p-4 bg-gradient-to-t from-[#050505] via-[#050505]/95 to-transparent pt-8"
+          >
+            <div className="mx-auto max-w-6xl sm:px-6 flex flex-col sm:flex-row items-center gap-3 sm:justify-between">
+              <p className="hidden sm:block text-sm text-[#F5F0E8]/70">
+                <span className="text-[#D4AF37] font-semibold">
+                  {TTT_1DAY.programName}
+                </span>{" "}
+                — {eventInfo.datePart} · {venue}
+              </p>
+              <GoldButton
+                {...(workshop ? { onClick: openReserve } : { href: "/payment" })}
+                disabled={!isActive}
+                className="w-full sm:w-auto"
+              >
+                {ctaLabel}
+              </GoldButton>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+      <div className="h-20" aria-hidden />
+
+      <RecentActivityToast />
 
       {workshop && (
         <ReserveSpotModal
