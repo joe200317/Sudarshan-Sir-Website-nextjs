@@ -5,6 +5,7 @@ export const metadata: Metadata = {
   title: `${LC_4DAY.programName} | Sudarshan Sabat`,
   description:
     "A 4-day intensive Life Counselling program for self-discovery, emotional clarity, and life mastery. Mumbai · 15–16 July 2026 · Fees ₹500.",
+  robots: { index: false, follow: false },
 };
 
 export default function FourDaysPage() {

@@ -62,13 +62,14 @@ export async function generateMetadata({
   const { slug } = await params;
   const workshop = await getWorkshop(slug);
   const programSlug = workshop?.programSlug;
+  const robots = { index: false, follow: false };
   if (programSlug === TTT_1DAY.slug) {
-    return { title: `${TTT_1DAY.programName} | Sudarshan Sabat` };
+    return { title: `${TTT_1DAY.programName} | Sudarshan Sabat`, robots };
   }
   if (programSlug === LC_4DAY.slug) {
-    return { title: `${LC_4DAY.programName} | Sudarshan Sabat` };
+    return { title: `${LC_4DAY.programName} | Sudarshan Sabat`, robots };
   }
-  return { title: "Workshop" };
+  return { title: "Workshop", robots };
 }
 
 export default async function WorkshopSlugPage({

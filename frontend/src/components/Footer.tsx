@@ -1,8 +1,8 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Brain } from "lucide-react";
 
 const GOLD = "#D4AF37";
 
@@ -34,24 +34,26 @@ export default function Footer() {
         <div className="grid md:grid-cols-3 gap-10 md:gap-8 mb-8 md:mb-12">
           <div>
             <Link href="/" className="inline-flex items-center gap-3 mb-4">
-              <div
-                className="w-9 h-9 rounded-md flex items-center justify-center"
-                style={{
-                  background: `linear-gradient(135deg, ${GOLD}, #B8960C)`,
-                }}
-              >
-                <Brain className="w-4 h-4 text-[#0a0a0a]" />
-              </div>
+              <span className="relative w-9 h-9 shrink-0">
+                <Image
+                  src="/images/logo-mark.png"
+                  alt="Trainer's World"
+                  fill
+                  className="object-contain"
+                  sizes="36px"
+                />
+              </span>
               <span
                 className="text-[#F5F0E8] text-lg font-semibold tracking-wider"
                 style={{ fontFamily: "var(--font-display)" }}
               >
-                MIND TRAINER
+                TRAINER&apos;S WORLD
               </span>
             </Link>
             <p className="text-[#F5F0E8]/45 text-sm leading-relaxed max-w-xs">
-              Elite mental performance coaching for those who refuse to accept
-              ordinary limits.
+              India&apos;s leading training &amp; coaching company — helping
+              individuals, professionals and organizations unlock their true
+              potential.
             </p>
           </div>
 

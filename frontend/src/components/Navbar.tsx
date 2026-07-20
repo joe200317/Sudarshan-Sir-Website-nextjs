@@ -1,10 +1,11 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
-import { Brain, ChevronDown, ArrowUpRight } from "lucide-react";
+import { ChevronDown, ArrowUpRight } from "lucide-react";
 import { programs } from "@/data/programs";
 
 const GOLD = "#D4AF37";
@@ -73,19 +74,21 @@ export default function Navbar() {
     >
       <div className="container flex items-center justify-between">
         <Link href="/" className="flex items-center gap-2 sm:gap-3 min-w-0">
-          <div
-            className="w-9 h-9 sm:w-10 sm:h-10 rounded-lg flex items-center justify-center shrink-0"
-            style={{
-              background: `linear-gradient(135deg, ${GOLD}, #B8960C)`,
-            }}
-          >
-            <Brain className="w-5 h-5 text-[#0a0a0a]" />
-          </div>
+          <span className="relative w-9 h-9 sm:w-10 sm:h-10 shrink-0">
+            <Image
+              src="/images/logo-mark.png"
+              alt="Trainer's World"
+              fill
+              className="object-contain"
+              sizes="40px"
+              priority
+            />
+          </span>
           <span
             className="text-gradient-gold text-base sm:text-xl font-bold tracking-wider truncate"
             style={{ fontFamily: "var(--font-display)" }}
           >
-            MIND TRAINER
+            TRAINER&apos;S WORLD
           </span>
         </Link>
 

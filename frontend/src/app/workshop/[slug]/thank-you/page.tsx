@@ -43,7 +43,7 @@ export async function generateMetadata({
       : workshop?.programSlug === LC_4DAY.slug
         ? LC_4DAY.programName
         : "Workshop");
-  return { title: `Thank you | ${title}` };
+  return { title: `Thank you | ${title}`, robots: { index: false, follow: false } };
 }
 
 export default async function WorkshopThankYouPage({
