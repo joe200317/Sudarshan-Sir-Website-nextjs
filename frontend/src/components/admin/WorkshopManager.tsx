@@ -6,7 +6,7 @@ import { extractMetaPixelId } from "@/lib/meta-pixel";
 import { WORKSHOP_PROGRAMS } from "@/data/workshop-programs";
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import { Plus, Pencil, Trash2, X, Upload, Check, ExternalLink, Code2 } from "lucide-react";
+import { Plus, Pencil, X, Upload, Check, ExternalLink, Code2 } from "lucide-react";
 import WorkshopRegistrationsReport, {
   ViewRegistrationsButton,
 } from "@/components/admin/WorkshopRegistrationsReport";
@@ -174,12 +174,6 @@ export default function WorkshopManager({
     } finally {
       setSaving(false);
     }
-  }
-
-  async function onDelete(id: string) {
-    if (!confirm("Delete this workshop?")) return;
-    const res = await apiFetch(`/api/workshops/${id}`, { method: "DELETE" });
-    if (res.ok) await load();
   }
 
   function openPixelEditor(w: Workshop) {
@@ -358,14 +352,6 @@ export default function WorkshopManager({
                             <Pencil className="w-3.5 h-3.5" />
                           </button>
                         )}
-                        <button
-                          type="button"
-                          onClick={() => void onDelete(w.id)}
-                          className="p-2 rounded-lg border border-red-500/20 text-red-400 hover:bg-red-500/10"
-                          title="Delete"
-                        >
-                          <Trash2 className="w-3.5 h-3.5" />
-                        </button>
                       </div>
                     </td>
                   </tr>

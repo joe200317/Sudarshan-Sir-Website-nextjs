@@ -2,7 +2,7 @@
 
 import { apiFetch } from "@/lib/api";
 import { useEffect, useState } from "react";
-import { Plus, Trash2, X } from "lucide-react";
+import { Plus, X } from "lucide-react";
 
 type Program = {
   id: string;
@@ -56,17 +56,6 @@ export default function ProgramsManager() {
     } finally {
       setSaving(false);
     }
-  }
-
-  async function onDelete(id: string) {
-    if (!confirm("Delete this program?")) return;
-    const res = await apiFetch(`/api/programs/${id}`, { method: "DELETE" });
-    const data = await res.json();
-    if (!res.ok) {
-      alert(data.error || "Could not delete");
-      return;
-    }
-    await load();
   }
 
   return (
@@ -136,15 +125,7 @@ export default function ProgramsManager() {
                       </span>
                     </td>
                     <td className="px-4 py-3">
-                      <div className="flex justify-end">
-                        <button
-                          type="button"
-                          onClick={() => void onDelete(p.id)}
-                          className="p-2 rounded-lg border border-red-500/20 text-red-400"
-                        >
-                          <Trash2 className="w-3.5 h-3.5" />
-                        </button>
-                      </div>
+                      <div className="flex justify-end"></div>
                     </td>
                   </tr>
                 ))

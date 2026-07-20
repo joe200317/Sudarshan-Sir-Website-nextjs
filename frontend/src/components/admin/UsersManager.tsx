@@ -2,7 +2,7 @@
 
 import { apiFetch } from "@/lib/api";
 import { useEffect, useState } from "react";
-import { Plus, Shield, Trash2, X } from "lucide-react";
+import { Plus, Shield, X } from "lucide-react";
 
 type Perm = { key: string; label: string; description?: string; allowed: boolean };
 type UserRow = {
@@ -89,12 +89,6 @@ export default function UsersManager() {
     await load();
   }
 
-  async function deleteUser(id: string) {
-    if (!confirm("Delete this user?")) return;
-    await apiFetch(`/api/users/${id}`, { method: "DELETE" });
-    await load();
-  }
-
   return (
     <div className="space-y-6 max-w-5xl">
       <div className="flex flex-wrap items-center justify-between gap-3">
@@ -174,13 +168,6 @@ export default function UsersManager() {
                         >
                           <Shield className="w-3.5 h-3.5" />
                           Roles
-                        </button>
-                        <button
-                          type="button"
-                          onClick={() => void deleteUser(u.id)}
-                          className="p-2 rounded-lg border border-red-500/20 text-red-400"
-                        >
-                          <Trash2 className="w-3.5 h-3.5" />
                         </button>
                       </div>
                     </td>

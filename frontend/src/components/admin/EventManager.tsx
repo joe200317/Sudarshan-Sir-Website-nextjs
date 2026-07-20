@@ -6,7 +6,6 @@ import { useEffect, useState } from "react";
 import {
   Plus,
   Pencil,
-  Trash2,
   X,
   Upload,
   Check,
@@ -138,16 +137,6 @@ export default function EventManager({
     }
   }
 
-  async function onDelete(id: string) {
-    if (!confirm("Delete this event?")) return;
-    try {
-      const res = await apiFetch(`/api/events/${id}`, { method: "DELETE" });
-      if (res.ok) await load();
-    } catch {
-      alert("Cannot reach API");
-    }
-  }
-
   return (
     <div className="space-y-6 max-w-5xl">
       <div className="flex flex-wrap items-center justify-between gap-3">
@@ -259,14 +248,6 @@ export default function EventManager({
                           title="Edit"
                         >
                           <Pencil className="w-3.5 h-3.5" />
-                        </button>
-                        <button
-                          type="button"
-                          onClick={() => void onDelete(ev.id)}
-                          className="p-2 rounded-lg border border-red-500/20 text-red-400 hover:bg-red-500/10"
-                          title="Delete"
-                        >
-                          <Trash2 className="w-3.5 h-3.5" />
                         </button>
                       </div>
                     </td>
