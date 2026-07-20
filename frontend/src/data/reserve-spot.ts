@@ -18,8 +18,8 @@ export type WorkshopBookingInfo = {
   slug: string;
   programSlug: string;
   programTitle: string;
-  startDate?: string;
-  endDate?: string;
+  eventDate?: string;
+  isActive?: boolean;
   location?: string;
   fees: number | null;
   includePayment: boolean;

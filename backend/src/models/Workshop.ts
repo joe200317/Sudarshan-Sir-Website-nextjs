@@ -5,9 +5,8 @@ const workshopSchema = new Schema(
     /** Static: train-the-trainer-1-day | life-counselling-4-day */
     programSlug: { type: String, required: true, trim: true },
     slug: { type: String, required: true, unique: true, trim: true },
-    startDate: { type: Date, required: true },
-    endDate: { type: Date, required: true },
     eventDate: { type: Date, required: true },
+    isActive: { type: Boolean, default: true },
     fees: { type: Number, default: null },
     location: { type: String, required: true, trim: true },
     notificationEmail: { type: String, required: true, trim: true },

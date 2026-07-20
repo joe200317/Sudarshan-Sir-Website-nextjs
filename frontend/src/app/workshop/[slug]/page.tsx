@@ -9,8 +9,8 @@ import type { WorkshopBookingInfo } from "@/data/reserve-spot";
 type WorkshopPayload = {
   slug: string;
   programSlug: string;
-  startDate?: string;
-  endDate?: string;
+  eventDate?: string;
+  isActive?: boolean;
   location?: string;
   fees: number | null;
   includePayment: boolean;
@@ -44,8 +44,8 @@ function toBookingInfo(w: WorkshopPayload): WorkshopBookingInfo {
         : w.programSlug === LC_4DAY.slug
           ? LC_4DAY.programName
           : w.programSlug),
-    startDate: w.startDate || "",
-    endDate: w.endDate || "",
+    eventDate: w.eventDate || "",
+    isActive: w.isActive !== false,
     location: w.location || "",
     fees: w.fees,
     includePayment: Boolean(w.includePayment),

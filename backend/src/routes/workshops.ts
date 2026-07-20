@@ -69,9 +69,8 @@ type PopulatedWorkshop = {
   _id: mongoose.Types.ObjectId;
   programSlug: string;
   slug: string;
-  startDate: Date;
-  endDate: Date;
   eventDate: Date;
+  isActive?: boolean | null;
   fees?: number | null;
   location: string;
   notificationEmail: string;
@@ -92,9 +91,8 @@ export function serializeWorkshop(w: PopulatedWorkshop) {
     id: w._id.toString(),
     programSlug: w.programSlug,
     slug: w.slug,
-    startDate: w.startDate,
-    endDate: w.endDate,
     eventDate: w.eventDate,
+    isActive: w.isActive !== false,
     fees: w.fees ?? null,
     location: w.location,
     notificationEmail: w.notificationEmail,
@@ -164,9 +162,9 @@ router.post(
     const includePayment = Boolean(req.body.includePayment);
     const imageUrl = String(req.body.imageUrl || "").trim();
     const fees = parseOptionalFloat(req.body.fees);
-    const startDate = toDate(req.body.startDate);
-    const endDate = toDate(req.body.endDate);
-    const eventDate = toDate(req.body.eventDate) || startDate;
+    const eventDate = toDate(req.body.eventDate);
+    const isActive =
+      req.body.isActive === undefined ? true : Boolean(req.body.isActive);
 
     if (!isWorkshopProgramSlug(programSlug)) {
       throw new AuthError(
@@ -174,8 +172,8 @@ router.post(
         400,
       );
     }
-    if (!startDate || !endDate) {
-      throw new AuthError("Start and end dates are required", 400);
+    if (!eventDate) {
+      throw new AuthError("Event date is required", 400);
     }
     if (!location) throw new AuthError("Location is required", 400);
     if (!notificationEmail) {
@@ -197,9 +195,8 @@ router.post(
     const created = await Workshop.create({
       programSlug,
       slug,
-      startDate,
-      endDate,
-      eventDate: eventDate || startDate,
+      eventDate,
+      isActive,
       fees,
       location,
       notificationEmail,
@@ -279,13 +276,11 @@ router.patch(
     if (req.body.imageUrl !== undefined) {
       existing.imageUrl = String(req.body.imageUrl).trim();
     }
-    const startDate = req.body.startDate ? toDate(req.body.startDate) : null;
-    const endDate = req.body.endDate ? toDate(req.body.endDate) : null;
     const eventDate = req.body.eventDate ? toDate(req.body.eventDate) : null;
-    if (startDate) existing.startDate = startDate;
-    if (endDate) existing.endDate = endDate;
     if (eventDate) existing.eventDate = eventDate;
-    else if (startDate) existing.eventDate = startDate;
+    if (typeof req.body.isActive === "boolean") {
+      existing.isActive = req.body.isActive;
+    }
 
     await existing.save();
     const workshop = await loadWorkshop(existing._id.toString());

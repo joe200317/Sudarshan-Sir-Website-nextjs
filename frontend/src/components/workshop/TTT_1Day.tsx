@@ -36,8 +36,7 @@ export const TTT_1DAY = {
 } as const;
 
 const GOLD = "#D4AF37";
-const DEFAULT_EVENT_START = new Date("2026-07-16T09:00:00+05:30");
-const DEFAULT_EVENT_END = new Date("2026-07-18T18:00:00+05:30");
+const DEFAULT_EVENT_DATE = new Date("2026-07-16T09:00:00+05:30");
 const YOUTUBE_VIDEO_ID = "qZrc-Dq4JYU";
 
 const LEARNINGS = [
@@ -229,26 +228,23 @@ function parseDateOrFallback(value: string | undefined, fallback: Date) {
   return Number.isNaN(parsed.getTime()) ? fallback : parsed;
 }
 
-function formatDateTimeRange(start: Date, end: Date) {
-  const datePart = start.toLocaleDateString("en-GB", {
+function formatEventDateTime(eventDate: Date) {
+  const datePart = eventDate.toLocaleDateString("en-GB", {
     day: "2-digit",
     month: "short",
     year: "numeric",
   });
-  const timeFmt: Intl.DateTimeFormatOptions = {
+  const timePart = eventDate.toLocaleTimeString("en-IN", {
     hour: "2-digit",
     minute: "2-digit",
     hour12: true,
-  };
-  const startTime = start.toLocaleTimeString("en-IN", timeFmt);
-  const endTime = end.toLocaleTimeString("en-IN", timeFmt);
-  return { datePart, timePart: `${startTime} - ${endTime}` };
+  });
+  return { datePart, timePart };
 }
 
-function getTimeLeft(startAt: Date, endAt: Date): TimeLeft {
+function getTimeLeft(eventAt: Date): TimeLeft {
   const now = Date.now();
-  const targetMs = now < startAt.getTime() ? startAt.getTime() : endAt.getTime();
-  const diff = Math.max(0, targetMs - now);
+  const diff = Math.max(0, eventAt.getTime() - now);
   const totalSeconds = Math.floor(diff / 1000);
   return {
     days: Math.floor(totalSeconds / 86400),
@@ -288,16 +284,32 @@ function GoldButton({
   onClick,
   children,
   className = "",
+  disabled = false,
 }: {
   href?: string;
   onClick?: () => void;
   children: React.ReactNode;
   className?: string;
+  disabled?: boolean;
 }) {
   const styles = {
     background: `linear-gradient(135deg, ${GOLD}, #B8960C)`,
   } as const;
-  const classes = `inline-flex w-full items-center justify-center gap-2 rounded-lg px-8 py-3.5 text-sm font-semibold tracking-wide text-[#0a0a0a] transition-shadow hover:shadow-[0_0_36px_rgba(212,175,55,0.4)] ${className}`;
+  const classes = `inline-flex w-full items-center justify-center gap-2 rounded-lg px-8 py-3.5 text-sm font-semibold tracking-wide text-[#0a0a0a] transition-shadow hover:shadow-[0_0_36px_rgba(212,175,55,0.4)] ${
+    disabled ? "opacity-50 cursor-not-allowed pointer-events-none" : ""
+  } ${className}`;
+
+  if (disabled) {
+    return (
+      <span
+        className={classes}
+        style={{ background: "rgba(212,175,55,0.25)" }}
+        aria-disabled="true"
+      >
+        {children}
+      </span>
+    );
+  }
 
   if (onClick) {
     return (
@@ -424,13 +436,9 @@ export default function TTT_1Day({
 }: {
   workshop?: WorkshopBookingInfo;
 }) {
-  const startAt = useMemo(
-    () => parseDateOrFallback(workshop?.startDate, DEFAULT_EVENT_START),
-    [workshop?.startDate],
-  );
-  const endAt = useMemo(
-    () => parseDateOrFallback(workshop?.endDate, DEFAULT_EVENT_END),
-    [workshop?.endDate],
+  const eventAt = useMemo(
+    () => parseDateOrFallback(workshop?.eventDate, DEFAULT_EVENT_DATE),
+    [workshop?.eventDate],
   );
   const [timeLeft, setTimeLeft] = useState<TimeLeft>({
     days: 0,
@@ -442,13 +450,10 @@ export default function TTT_1Day({
   const [reserveOpen, setReserveOpen] = useState(false);
 
   useEffect(() => {
-    setTimeLeft(getTimeLeft(startAt, endAt));
-    const id = window.setInterval(
-      () => setTimeLeft(getTimeLeft(startAt, endAt)),
-      1000,
-    );
+    setTimeLeft(getTimeLeft(eventAt));
+    const id = window.setInterval(() => setTimeLeft(getTimeLeft(eventAt)), 1000);
     return () => window.clearInterval(id);
-  }, [startAt, endAt]);
+  }, [eventAt]);
 
   const openReserve = () => {
     if (!workshop) return;
@@ -459,13 +464,16 @@ export default function TTT_1Day({
     setReserveOpen(true);
   };
 
-  const ctaLabel =
-    workshop?.includePayment && workshop.fees
+  const isActive = workshop ? workshop.isActive !== false : true;
+
+  const ctaLabel = !isActive
+    ? "Registrations Closed"
+    : workshop?.includePayment && workshop.fees
       ? `Book Your Seat — ₹${workshop.fees}`
       : "Book Your Seat Now";
 
   const heroImage = workshop?.imageUrl?.trim() || "/images/sir2.jpg";
-  const eventInfo = formatDateTimeRange(startAt, endAt);
+  const eventInfo = formatEventDateTime(eventAt);
   const venue = workshop?.location?.trim() || "Pune";
   const eventDetails = [
     { label: "Date", value: eventInfo.datePart },
@@ -528,31 +536,16 @@ export default function TTT_1Day({
               transition={{ duration: 0.85, ease: [0.22, 1, 0.36, 1] }}
               className="relative mx-auto w-full max-w-md lg:max-w-none order-2 lg:order-1"
             >
-              <div className="relative aspect-[3/4] sm:aspect-[4/5] overflow-hidden rounded-2xl border border-[#D4AF37]/20 shadow-[0_0_60px_rgba(212,175,55,0.12)]">
+              <div className="relative aspect-[3/4] sm:aspect-[4/5] overflow-hidden rounded-2xl border border-[#D4AF37]/20 bg-[#0a0a0a] shadow-[0_0_60px_rgba(212,175,55,0.12)]">
                 <Image
                   src={heroImage}
-                  alt="Sudarshan Sabat"
+                  alt="Sudarshan Sabat — Train The Trainer, 1 Day"
                   fill
                   priority
-                  className="object-cover object-top"
+                  className="object-contain"
                   sizes="(max-width: 1024px) 90vw, 480px"
                   unoptimized={heroImage.startsWith("http://localhost")}
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-[#050505]/80 via-transparent to-transparent" />
-                <div className="absolute bottom-0 inset-x-0 p-5 sm:p-6">
-                  <p
-                    className="text-[#D4AF37] text-[10px] tracking-[0.28em] uppercase mb-1"
-                    style={{ fontFamily: "var(--font-accent)" }}
-                  >
-                    #1 Mind Trainer India
-                  </p>
-                  <p
-                    className="text-xl sm:text-2xl font-bold text-[#F5F0E8]"
-                    style={{ fontFamily: "var(--font-display)" }}
-                  >
-                    Sudarshan Sabat
-                  </p>
-                </div>
               </div>
             </motion.div>
 
@@ -591,6 +584,7 @@ export default function TTT_1Day({
                   {...(workshop
                     ? { onClick: openReserve }
                     : { href: "/payment" })}
+                  disabled={!isActive}
                   className="w-full sm:w-auto"
                 >
                   {ctaLabel}
@@ -1177,6 +1171,7 @@ export default function TTT_1Day({
           </p>
           <GoldButton
             {...(workshop ? { onClick: openReserve } : { href: "/payment" })}
+            disabled={!isActive}
             className="w-full sm:w-auto mb-6"
           >
             {ctaLabel}
@@ -1203,6 +1198,7 @@ export default function TTT_1Day({
       <div className="fixed bottom-0 inset-x-0 z-40 p-3 sm:hidden bg-gradient-to-t from-[#050505] via-[#050505]/95 to-transparent pt-8">
         <GoldButton
           {...(workshop ? { onClick: openReserve } : { href: "/payment" })}
+          disabled={!isActive}
           className="w-full"
         >
           {ctaLabel}

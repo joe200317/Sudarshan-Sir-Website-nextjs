@@ -17,9 +17,8 @@ type Workshop = {
   id: string;
   programSlug: string;
   slug: string;
-  startDate: string;
-  endDate: string;
   eventDate: string;
+  isActive: boolean;
   fees: number | null;
   location: string;
   notificationEmail: string;
@@ -34,9 +33,8 @@ type Workshop = {
 const emptyForm = {
   programSlug: "",
   slug: "",
-  startDate: "",
-  endDate: "",
   eventDate: "",
+  isActive: true,
   fees: "",
   location: "",
   notificationEmail: "",
@@ -107,9 +105,8 @@ export default function WorkshopManager({
     setForm({
       programSlug: w.programSlug || w.program?.slug || "",
       slug: w.slug || "",
-      startDate: toInputDateTime(w.startDate),
-      endDate: toInputDateTime(w.endDate),
-      eventDate: toInputDateTime(w.eventDate || w.startDate),
+      eventDate: toInputDateTime(w.eventDate),
+      isActive: w.isActive !== false,
       fees: w.fees != null ? String(w.fees) : "",
       location: w.location,
       notificationEmail: w.notificationEmail,
@@ -256,7 +253,8 @@ export default function WorkshopManager({
               <tr className="border-b border-[#D4AF37]/12 text-[11px] uppercase tracking-wider text-[#F5F0E8]/40">
                 <th className="px-4 py-3 font-medium">Program</th>
                 <th className="px-4 py-3 font-medium">Slug</th>
-                <th className="px-4 py-3 font-medium">Start / End</th>
+                <th className="px-4 py-3 font-medium">Event Date</th>
+                <th className="px-4 py-3 font-medium">Status</th>
                 <th className="px-4 py-3 font-medium">Location</th>
                 <th className="px-4 py-3 font-medium">Fees</th>
                 <th className="px-4 py-3 font-medium">Pay</th>
@@ -267,13 +265,13 @@ export default function WorkshopManager({
             <tbody className="divide-y divide-[#F5F0E8]/6">
               {loading ? (
                 <tr>
-                  <td colSpan={8} className="px-4 py-10 text-center text-[#F5F0E8]/40">
+                  <td colSpan={9} className="px-4 py-10 text-center text-[#F5F0E8]/40">
                     Loading…
                   </td>
                 </tr>
               ) : workshops.length === 0 ? (
                 <tr>
-                  <td colSpan={8} className="px-4 py-10 text-center text-[#F5F0E8]/40">
+                  <td colSpan={9} className="px-4 py-10 text-center text-[#F5F0E8]/40">
                     {canCreate
                       ? "No events yet. Click Add Event."
                       : "No events yet."}
@@ -300,8 +298,20 @@ export default function WorkshopManager({
                       {w.slug}
                     </td>
                     <td className="px-4 py-3 text-xs text-[#F5F0E8]/70">
-                      <div>{formatDate(w.startDate)}</div>
-                      <div>{formatDate(w.endDate)}</div>
+                      {formatDate(w.eventDate)}
+                    </td>
+                    <td className="px-4 py-3">
+                      {w.isActive !== false ? (
+                        <span className="inline-flex items-center gap-1.5 text-xs text-emerald-400">
+                          <span className="h-1.5 w-1.5 rounded-full bg-emerald-400" />
+                          Active
+                        </span>
+                      ) : (
+                        <span className="inline-flex items-center gap-1.5 text-xs text-[#F5F0E8]/40">
+                          <span className="h-1.5 w-1.5 rounded-full bg-[#F5F0E8]/30" />
+                          Inactive
+                        </span>
+                      )}
                     </td>
                     <td className="px-4 py-3">{w.location}</td>
                     <td className="px-4 py-3 text-[#D4AF37]">
@@ -436,29 +446,13 @@ export default function WorkshopManager({
                 onChange={(v) => setForm((f) => ({ ...f, fees: v }))}
               />
 
-              <div className="grid sm:grid-cols-3 gap-4">
-                <Field
-                  label="Start date & time"
-                  type="datetime-local"
-                  value={form.startDate}
-                  onChange={(v) => setForm((f) => ({ ...f, startDate: v }))}
-                  required
-                />
-                <Field
-                  label="End date & time"
-                  type="datetime-local"
-                  value={form.endDate}
-                  onChange={(v) => setForm((f) => ({ ...f, endDate: v }))}
-                  required
-                />
-                <Field
-                  label="Event date & time"
-                  type="datetime-local"
-                  value={form.eventDate}
-                  onChange={(v) => setForm((f) => ({ ...f, eventDate: v }))}
-                  required
-                />
-              </div>
+              <Field
+                label="Event date & time"
+                type="datetime-local"
+                value={form.eventDate}
+                onChange={(v) => setForm((f) => ({ ...f, eventDate: v }))}
+                required
+              />
 
               <Field
                 label="Location"
@@ -485,6 +479,28 @@ export default function WorkshopManager({
                 Meta Pixel script is added on the next step, right after you
                 save this event.
               </p>
+
+              <label className="flex items-center gap-3 rounded-lg border border-[#D4AF37]/15 px-4 py-3 cursor-pointer hover:bg-white/[0.02]">
+                <input
+                  type="checkbox"
+                  checked={form.isActive}
+                  onChange={(e) =>
+                    setForm((f) => ({
+                      ...f,
+                      isActive: e.target.checked,
+                    }))
+                  }
+                  className="h-4 w-4 accent-[#D4AF37]"
+                />
+                <span className="text-sm">
+                  Active
+                  <span className="block text-[11px] text-[#F5F0E8]/40 mt-0.5 font-normal">
+                    If off, the landing page stays live but shows
+                    &ldquo;Registrations Closed&rdquo; instead of the booking
+                    button.
+                  </span>
+                </span>
+              </label>
 
               <label className="flex items-center gap-3 rounded-lg border border-[#D4AF37]/15 px-4 py-3 cursor-pointer hover:bg-white/[0.02]">
                 <input

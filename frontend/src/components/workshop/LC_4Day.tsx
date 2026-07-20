@@ -319,28 +319,16 @@ export default function LC_4Day({
               transition={{ duration: 0.8, delay: 0.1, ease: [0.22, 1, 0.36, 1] }}
               className="relative mx-auto w-full max-w-md lg:max-w-none"
             >
-              <div className="relative aspect-[4/5] overflow-hidden rounded-[1.75rem] border border-white/10">
+              <div className="relative aspect-[4/5] overflow-hidden rounded-[1.75rem] border border-white/10 bg-[#0a0a0a]">
                 <Image
                   src={heroImage}
-                  alt="Life Counselling — inner clarity"
+                  alt="Life Counselling — with Sudarshan Sabat"
                   fill
                   priority
-                  className="object-cover"
+                  className="object-contain"
                   sizes="(max-width: 1024px) 90vw, 440px"
                   unoptimized={heroImage.startsWith("http://localhost")}
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-[#070708] via-[#070708]/20 to-transparent" />
-                <div className="absolute bottom-0 inset-x-0 p-6">
-                  <p className="text-[#F5F0E8]/50 text-xs tracking-[0.2em] uppercase mb-1">
-                    With
-                  </p>
-                  <p
-                    className="text-xl font-bold text-[#F5F0E8]"
-                    style={{ fontFamily: "var(--font-display)" }}
-                  >
-                    Sudarshan Sabat
-                  </p>
-                </div>
               </div>
 
               {/* Floating fee chip */}
