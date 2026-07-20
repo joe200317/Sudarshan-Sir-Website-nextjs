@@ -249,7 +249,7 @@ const RECENT_ACTIVITY = [
   { name: "Tanvi", city: "Satara" },
 ] as const;
 
-function RecentActivityToast() {
+function RecentActivityToast({ raised }: { raised: boolean }) {
   const [entry, setEntry] = useState<(typeof RECENT_ACTIVITY)[number] | null>(
     null,
   );
@@ -275,7 +275,11 @@ function RecentActivityToast() {
   }, []);
 
   return (
-    <div className="fixed bottom-24 left-3 sm:bottom-6 sm:left-6 z-30 max-w-[calc(100vw-1.5rem)]">
+    <div
+      className={`fixed left-3 sm:left-6 z-30 max-w-[calc(100vw-1.5rem)] transition-[bottom] duration-300 ${
+        raised ? "bottom-28 sm:bottom-24" : "bottom-6 sm:bottom-6"
+      }`}
+    >
       <AnimatePresence>
         {entry && (
           <motion.div
@@ -374,19 +378,22 @@ function GoldButton({
   children,
   className = "",
   disabled = false,
+  pulse = false,
 }: {
   href?: string;
   onClick?: () => void;
   children: React.ReactNode;
   className?: string;
   disabled?: boolean;
+  /** Smooth attention-drawing glow/scale pulse — use sparingly (1–2 CTAs per page). */
+  pulse?: boolean;
 }) {
   const styles = {
     background: `linear-gradient(135deg, ${GOLD}, #B8960C)`,
   } as const;
   const classes = `inline-flex w-full items-center justify-center gap-2 rounded-lg px-8 py-3.5 text-sm font-semibold tracking-wide text-[#0a0a0a] transition-shadow hover:shadow-[0_0_36px_rgba(212,175,55,0.4)] ${
     disabled ? "opacity-50 cursor-not-allowed pointer-events-none" : ""
-  } ${className}`;
+  } ${pulse && !disabled ? "animate-cta-pulse" : ""} ${className}`;
 
   if (disabled) {
     return (
@@ -423,7 +430,9 @@ function GoldButton({
       <motion.span
         whileHover={{ scale: 1.02 }}
         whileTap={{ scale: 0.98 }}
-        className="inline-flex w-full items-center justify-center gap-2 rounded-lg px-8 py-3.5 text-sm font-semibold tracking-wide text-[#0a0a0a] transition-shadow hover:shadow-[0_0_36px_rgba(212,175,55,0.4)]"
+        className={`inline-flex w-full items-center justify-center gap-2 rounded-lg px-8 py-3.5 text-sm font-semibold tracking-wide text-[#0a0a0a] transition-shadow hover:shadow-[0_0_36px_rgba(212,175,55,0.4)] ${
+          pulse ? "animate-cta-pulse" : ""
+        }`}
         style={styles}
       >
         {children}
@@ -682,6 +691,7 @@ export default function TTT_1Day({
                     ? { onClick: openReserve }
                     : { href: "/payment" })}
                   disabled={!isActive}
+                  pulse={isActive}
                   className="w-full sm:w-auto"
                 >
                   {ctaLabel}
@@ -1311,6 +1321,7 @@ export default function TTT_1Day({
               <GoldButton
                 {...(workshop ? { onClick: openReserve } : { href: "/payment" })}
                 disabled={!isActive}
+                pulse={isActive}
                 className="w-full sm:w-auto"
               >
                 {ctaLabel}
@@ -1321,7 +1332,7 @@ export default function TTT_1Day({
       </AnimatePresence>
       <div className="h-20" aria-hidden />
 
-      <RecentActivityToast />
+      <RecentActivityToast raised={showStickyBar} />
 
       {workshop && (
         <ReserveSpotModal
