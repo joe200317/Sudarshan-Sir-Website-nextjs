@@ -506,8 +506,8 @@ export default function AboutPage() {
             ))}
           </div>
 
-          {/* Sabat Vision Studio + Team */}
-          <div className="grid lg:grid-cols-2 gap-6 lg:gap-8">
+          {/* Sabat Vision Studio */}
+          <div className="grid gap-6 lg:gap-8 mb-6 lg:mb-8">
             <motion.div
               initial={{ opacity: 0, y: 24 }}
               whileInView={{ opacity: 1, y: 0 }}
@@ -526,7 +526,10 @@ export default function AboutPage() {
                 concept to final edit.
               </p>
             </motion.div>
+          </div>
 
+          {/* Our Team */}
+          <div className="grid gap-6 lg:gap-8">
             <motion.div
               initial={{ opacity: 0, y: 24 }}
               whileInView={{ opacity: 1, y: 0 }}
@@ -536,12 +539,57 @@ export default function AboutPage() {
             >
               <Users className="w-7 h-7 mb-4" style={{ color: GOLD }} />
               <h3 className="text-xl font-bold text-[#F5F0E8] mb-3">
-                Our Team
+                Our Team: The Foundation of Our Success
               </h3>
+              <p className="text-[#F5F0E8]/55 text-sm md:text-base leading-relaxed mb-4">
+                Our team is the true backbone of our success and the driving
+                force behind our continuous growth. With a strong and
+                dedicated team of 50+ talented employees, we believe that
+                every individual plays an important role in shaping our
+                organisation&apos;s journey. Each team member brings unique
+                skills, creativity, dedication and passion that contribute to
+                our shared vision and help us to move forward with
+                confidence.
+              </p>
+              <p className="text-[#F5F0E8]/55 text-sm md:text-base leading-relaxed mb-4">
+                We believe that an organisation&apos;s real strength comes
+                from its people. Our team members are not just employees;
+                they are valuable contributors who take ownership, embrace
+                challenges and work together to achieve excellence. Every
+                individual brings different experiences, ideas and
+                perspectives, creating a powerful combination of innovation,
+                teamwork and commitment.
+              </p>
+              <p className="text-[#F5F0E8]/55 text-sm md:text-base leading-relaxed mb-4">
+                Collaboration is at the heart of our working culture. We
+                encourage open communication, mutual respect and continuous
+                learning among our team members. By sharing knowledge,
+                supporting each other and working towards common goals, we
+                create an environment where everyone has the opportunity to
+                grow personally and professionally.
+              </p>
+              <p className="text-[#F5F0E8]/55 text-sm md:text-base leading-relaxed mb-4">
+                Our success is built on the dedication and efforts of every
+                team member who works with sincerity and determination. From
+                delivering exceptional service to finding new ways to
+                improve, our team consistently strives to maintain the
+                highest standards of quality and performance. We believe that
+                when talented individuals come together with a common
+                purpose, extraordinary results are created.
+              </p>
+              <p className="text-[#F5F0E8]/55 text-sm md:text-base leading-relaxed mb-4">
+                We are committed towards building a positive, productive and
+                inspiring workplace where every person feels valued,
+                motivated and empowered. By investing in our people and
+                encouraging teamwork, we continue to strengthen our
+                foundation and create a culture of success.
+              </p>
               <p className="text-[#F5F0E8]/55 text-sm md:text-base leading-relaxed">
-                A dedicated team of 50+ people is the real backbone of the
-                work — collaborating, sharing knowledge and holding the same
-                standard of quality that built the brand in the first place.
+                Together, we are more than just a team — we are a family
+                united by a shared vision, a passion for excellence and a
+                commitment to achieving greater milestones. Our team&apos;s
+                dedication, unity and continuous pursuit of improvement
+                remain the key pillars behind our growth and success.
               </p>
             </motion.div>
           </div>

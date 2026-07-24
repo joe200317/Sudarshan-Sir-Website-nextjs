@@ -42,39 +42,44 @@ const YOUTUBE_VIDEO_ID = "qZrc-Dq4JYU";
 
 const LEARNINGS = [
   {
-    icon: Target,
-    title: "Make Better Decisions with Confidence",
-    desc: "Develop clarity of thought and learn practical techniques to make balanced, confident decisions even in challenging situations.",
+    icon: Mic2,
+    title: "Powerful Communication Skills",
+    desc: "Develop clarity and influence in the way you speak so your message lands with impact every time.",
   },
   {
     icon: Shield,
-    title: "Manage Stress Effectively",
-    desc: "Stay calm under pressure, reduce stress and maintain inner peace for improved performance and well-being.",
+    title: "Confidence & Leadership Development",
+    desc: "Build the self-belief and presence needed to lead sessions, teams and rooms with authority.",
   },
   {
     icon: Sparkles,
-    title: "Build a Positive Mindset",
-    desc: "Cultivate a positive attitude that helps you overcome challenges, stay motivated and inspire those around you.",
+    title: "Advanced Presentation & Facilitation Skills",
+    desc: "Master the techniques that turn an ordinary session into a high-impact training experience.",
   },
   {
-    icon: Compass,
-    title: "Strengthen Your Problem-Solving Skills",
-    desc: "Approach problems with confidence and discover effective, solution-oriented thinking.",
+    icon: Target,
+    title: "How to Create High-Impact Training Experiences",
+    desc: "Design and deliver sessions that create real transformation for your participants.",
+  },
+  {
+    icon: Award,
+    title: "Personal Branding for Trainers",
+    desc: "Learn how to position yourself and stand out as a trusted, sought-after trainer.",
+  },
+  {
+    icon: TrendingUp,
+    title: "Client Attraction & Business Growth Strategies",
+    desc: "Discover practical strategies to attract more participants, clients and opportunities.",
   },
   {
     icon: Brain,
-    title: "Boost Self-Confidence & Focus",
-    desc: "Enhance your self-belief, improve concentration and perform with greater confidence in every area of life.",
+    title: "Mindset Transformation for Success",
+    desc: "Shift the beliefs and patterns that hold you back and replace them with a success-oriented mindset.",
   },
   {
-    icon: HeartHandshake,
-    title: "Build Stronger Relationships",
-    desc: "Develop empathy, respect and better communication skills to create meaningful and lasting relationships.",
-  },
-  {
-    icon: Smile,
-    title: "Master Your Emotions",
-    desc: "Learn to manage emotions like anger and fear, improve emotional balance and respond thoughtfully instead of reacting impulsively.",
+    icon: Compass,
+    title: "Productivity, Goal Setting & Time Management",
+    desc: "Build the habits and systems that keep you consistent, focused and moving toward your goals.",
   },
 ] as const;
 
@@ -131,38 +136,28 @@ const WHY_CHOOSE = [
 const WHO_SHOULD_ATTEND = [
   {
     icon: Mic2,
-    title: "Trainers & Facilitators",
-    desc: "Sharpen delivery and inspire real change in every session you run.",
-  },
-  {
-    icon: Briefcase,
-    title: "Team Leaders & Managers",
-    desc: "Lead with clarity, confidence and stronger communication.",
-  },
-  {
-    icon: GraduationCap,
-    title: "Teachers & Educators",
-    desc: "Make every classroom or session more engaging and impactful.",
-  },
-  {
-    icon: Users,
-    title: "HR Professionals",
-    desc: "Build confident, capable and emotionally balanced teams.",
+    title: "Trainers",
+    desc: "Who want to increase their impact and influence.",
   },
   {
     icon: Target,
     title: "Coaches & Mentors",
-    desc: "Deepen your impact with proven mindset and decision-making tools.",
+    desc: "Who want to grow their audience.",
   },
   {
-    icon: Lightbulb,
-    title: "Students & Working Professionals",
-    desc: "Build the confidence and clarity to grow faster in life and career.",
+    icon: Briefcase,
+    title: "Professionals",
+    desc: "Who want to build a successful training career.",
   },
   {
-    icon: Star,
-    title: "Anyone Ready to Lead",
-    desc: "For anyone who wants to become a confident communicator and an inspiring leader.",
+    icon: GraduationCap,
+    title: "Speakers",
+    desc: "Who want to improve their communication and leadership skills.",
+  },
+  {
+    icon: Users,
+    title: "Established Trainers",
+    desc: "Who want more clients, opportunities and income growth.",
   },
 ] as const;
 
@@ -678,11 +673,12 @@ export default function TTT_1Day({
               </h1>
 
               <p className="text-[#F5F0E8]/65 text-base sm:text-lg leading-relaxed mb-8 max-w-lg">
-                Great trainers don&apos;t just deliver information — they
-                inspire change. This intensive one-day program helps you
-                strengthen your mindset, improve decision-making and build
-                the confidence to influence others positively — live with
-                Sudarshan Sabat in Pune.
+                Your knowledge has the power to transform lives. The world
+                needs more confident, skilled and inspiring trainers who can
+                guide others toward growth and success. This program helps
+                you strengthen your confidence, communication, leadership and
+                professional skills so you can become an influential leader —
+                live with Sudarshan Sabat in Pune.
               </p>
 
               <div className="flex flex-col sm:flex-row gap-3 sm:items-center mb-10">
@@ -846,10 +842,13 @@ export default function TTT_1Day({
                 <span className="text-gradient-gold">join this program?</span>
               </h2>
               <p className="text-[#F5F0E8]/50 text-sm sm:text-base leading-relaxed mb-6">
-                Success depends on how well you manage your thoughts,
-                emotions, decisions and relationships. This 1-Day Train The
-                Trainer Program helps you build these essential life and
-                leadership skills — and apply them immediately.
+                Are you struggling with attracting more participants and
+                clients, creating powerful and impactful training sessions,
+                building confidence and overcoming stage fear, communicating
+                your ideas with clarity, or growing your personal brand and
+                training business? This 1-Day Train The Trainer Program helps
+                you transform from a trainer into an influential leader —
+                and apply it immediately.
               </p>
               <div className="inline-flex items-center gap-2 rounded-full border border-[#D4AF37]/25 bg-[#D4AF37]/8 px-3.5 py-1.5">
                 <span className="h-1.5 w-1.5 rounded-full bg-[#D4AF37] animate-pulse" />
