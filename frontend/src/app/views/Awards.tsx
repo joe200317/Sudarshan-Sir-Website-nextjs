@@ -1,50 +1,236 @@
 "use client";
 
+import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { motion } from "framer-motion";
 import { ArrowRight, Trophy, Quote } from "lucide-react";
+import { AWARDS_BY_YEAR, groupAwardYearRows, type Award } from "@/data/awards";
 
 const GOLD = "#D4AF37";
+const AWARD_YEAR_ROWS = groupAwardYearRows(AWARDS_BY_YEAR);
 
-const awards = [
-  {
-    year: "2024",
-    title: "Global Mind Coaching Excellence Award",
-    org: "International Wellness Council",
-    image: "/images/sir3.jpg",
-  },
-  {
-    year: "2023",
-    title: "Best Mental Performance Coach",
-    org: "Neuroscience Leadership Summit",
-    image: "/images/award-gold.png",
-  },
-  {
-    year: "2022",
-    title: "Innovation in Mind Training",
-    org: "World Mental Health Organization",
-    image: "/images/sir4.jpg",
-  },
-  {
-    year: "2021",
-    title: "Platinum Mind Mastery Certificate",
-    org: "Cognitive Science Institute",
-    image: "/images/sir5.jpg",
-  },
-  {
-    year: "2020",
-    title: "Elite Coach of the Year",
-    org: "Performance Training Alliance",
-    image: "/images/sir2.jpg",
-  },
-  {
-    year: "2019",
-    title: "Outstanding Contribution to Mindfulness",
-    org: "Global Meditation Federation",
-    image: "/images/award-gold.png",
-  },
-];
+function AwardCard({
+  award,
+  featured = false,
+}: {
+  award: Award;
+  featured?: boolean;
+}) {
+  return (
+    <article className="group flex w-28 sm:w-32 md:w-36 flex-col items-center gap-2.5 shrink-0">
+      <div
+        className={`
+          flex w-full flex-col items-center gap-2.5 transition-transform duration-500
+          ${featured ? "z-10 scale-110 -translate-y-5 sm:-translate-y-6" : "z-0 opacity-80"}
+        `}
+      >
+        <div
+          className={`
+            relative aspect-square w-full overflow-hidden rounded-lg
+            border bg-[#0a0a0a] p-1.5
+            ${
+              featured
+                ? "border-[#F5E6A3]/55 shadow-[0_20px_40px_-8px_rgba(212,175,55,0.55),0_8px_16px_-4px_rgba(0,0,0,0.6)] ring-1 ring-[#F5E6A3]/45"
+                : "border-[#D4AF37]/25 shadow-[0_6px_16px_-4px_rgba(212,175,55,0.2)]"
+            }
+          `}
+        >
+          <div className="relative h-full w-full">
+            <Image
+              src={encodeURI(award.image)}
+              alt={award.alt}
+              fill
+              sizes="(max-width: 640px) 112px, (max-width: 768px) 128px, 144px"
+              className="object-contain"
+            />
+          </div>
+        </div>
+
+        <h3
+          className={`
+            w-full text-center leading-snug line-clamp-2
+            ${
+              featured
+                ? "text-xs sm:text-sm font-semibold text-[#F5F0E8]"
+                : "text-[10px] sm:text-xs text-[#F5F0E8]/55"
+            }
+          `}
+        >
+          {award.name}
+        </h3>
+      </div>
+    </article>
+  );
+}
+
+function YearAwardStrip({ awards }: { awards: Award[] }) {
+  const count = awards.length;
+
+  // 3 or fewer: static side-by-side row
+  if (count <= 3) {
+    const featuredIndex = Math.floor((count - 1) / 2);
+
+    return (
+      <div className="flex items-end justify-center gap-4 sm:gap-5 md:gap-6 py-8 sm:py-12 px-2">
+        {awards.map((award, i) => (
+          <AwardCard
+            key={award.image}
+            award={award}
+            featured={i === featuredIndex}
+          />
+        ))}
+      </div>
+    );
+  }
+
+  return <YearAwardCarousel awards={awards} />;
+}
+
+function YearAwardCarousel({ awards }: { awards: Award[] }) {
+  const viewportRef = useRef<HTMLDivElement>(null);
+  const itemRef = useRef<HTMLElement>(null);
+  const count = awards.length;
+  const looped = [...awards, ...awards, ...awards];
+  const [index, setIndex] = useState(count);
+  const [instant, setInstant] = useState(false);
+  const [metrics, setMetrics] = useState({ viewport: 0, card: 0, step: 0 });
+
+  useLayoutEffect(() => {
+    const measure = () => {
+      const viewport = viewportRef.current;
+      const item = itemRef.current;
+      if (!viewport || !item) return;
+
+      const track = viewport.querySelector<HTMLElement>("[data-award-track]");
+      const styles = track ? getComputedStyle(track) : null;
+      const gap =
+        (styles && (parseFloat(styles.gap) || parseFloat(styles.columnGap))) ||
+        20;
+      const card = item.offsetWidth;
+
+      setMetrics({
+        viewport: viewport.clientWidth,
+        card,
+        step: card + gap,
+      });
+    };
+
+    measure();
+    window.addEventListener("resize", measure);
+    return () => window.removeEventListener("resize", measure);
+  }, [awards.length]);
+
+  useEffect(() => {
+    const timer = window.setInterval(() => {
+      setIndex((prev) => prev + 1);
+    }, 3200);
+
+    return () => window.clearInterval(timer);
+  }, []);
+
+  useEffect(() => {
+    if (index < count * 2) return;
+
+    const timeout = window.setTimeout(() => {
+      setInstant(true);
+      setIndex(count + (index % count));
+    }, 1100);
+
+    return () => window.clearTimeout(timeout);
+  }, [index, count]);
+
+  useEffect(() => {
+    if (!instant) return;
+    const id = requestAnimationFrame(() => {
+      requestAnimationFrame(() => setInstant(false));
+    });
+    return () => cancelAnimationFrame(id);
+  }, [instant]);
+
+  const translateX =
+    metrics.viewport > 0 && metrics.card > 0
+      ? metrics.viewport / 2 - metrics.card / 2 - index * metrics.step
+      : 0;
+
+  return (
+    <div ref={viewportRef} className="relative overflow-hidden py-8 sm:py-12">
+      <motion.div
+        data-award-track
+        className="flex items-end gap-4 sm:gap-5 md:gap-6 will-change-transform"
+        animate={{ x: translateX }}
+        transition={
+          instant
+            ? { duration: 0 }
+            : { duration: 1.05, ease: [0.22, 0.61, 0.36, 1] }
+        }
+      >
+        {looped.map((award, i) => {
+          const isActive = i === index;
+
+          return (
+            <article
+              key={`${award.image}-${i}`}
+              ref={i === count ? itemRef : undefined}
+              className="group flex w-28 sm:w-32 md:w-36 flex-col items-center gap-2.5 shrink-0"
+            >
+              <motion.div
+                animate={{
+                  scale: isActive ? 1.12 : 1,
+                  y: isActive ? -22 : 0,
+                  opacity: isActive ? 1 : 0.72,
+                }}
+                transition={
+                  instant
+                    ? { duration: 0 }
+                    : { duration: 1.05, ease: [0.22, 0.61, 0.36, 1] }
+                }
+                className="flex w-full flex-col items-center gap-2.5"
+                style={{ zIndex: isActive ? 10 : 0 }}
+              >
+                <div
+                  className={`
+                    relative aspect-square w-full overflow-hidden rounded-lg
+                    border bg-[#0a0a0a] p-1.5
+                    transition-[box-shadow,border-color] duration-1000
+                    ${
+                      isActive
+                        ? "border-[#F5E6A3]/55 shadow-[0_20px_40px_-8px_rgba(212,175,55,0.55),0_8px_16px_-4px_rgba(0,0,0,0.6)] ring-1 ring-[#F5E6A3]/45"
+                        : "border-[#D4AF37]/25 shadow-[0_6px_16px_-4px_rgba(212,175,55,0.2)]"
+                    }
+                  `}
+                >
+                  <div className="relative h-full w-full">
+                    <Image
+                      src={encodeURI(award.image)}
+                      alt={award.alt}
+                      fill
+                      sizes="(max-width: 640px) 112px, (max-width: 768px) 128px, 144px"
+                      className="object-contain"
+                    />
+                  </div>
+                </div>
+
+                <h3
+                  className={`
+                    w-full text-center leading-snug line-clamp-2 transition-colors duration-1000
+                    ${
+                      isActive
+                        ? "text-xs sm:text-sm font-semibold text-[#F5F0E8]"
+                        : "text-[10px] sm:text-xs text-[#F5F0E8]/55"
+                    }
+                  `}
+                >
+                  {award.name}
+                </h3>
+              </motion.div>
+            </article>
+          );
+        })}
+      </motion.div>
+    </div>
+  );
+}
 
 const press = [
   {
@@ -92,8 +278,7 @@ export default function AwardsPage() {
               className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold leading-[1.1] mb-4 sm:mb-6"
               style={{ fontFamily: "var(--font-display)" }}
             >
-              Excellence{" "}
-              <span className="text-gradient-gold">recognized</span>
+              Excellence <span className="text-gradient-gold">recognized</span>
               <br className="hidden sm:block" />
               <span className="sm:hidden"> </span>
               worldwide
@@ -146,17 +331,18 @@ export default function AwardsPage() {
             <div className="absolute -bottom-5 left-5 right-5 sm:left-auto sm:right-6 sm:w-52 bg-[#0a0a0a]/95 backdrop-blur border border-[#D4AF37]/30 rounded-xl px-5 py-4">
               <Trophy className="w-5 h-5 mb-2" style={{ color: GOLD }} />
               <p className="text-sm text-[#F5F0E8]/70 leading-snug">
-                Featured with national recognition for mind-power training excellence
+                Featured with national recognition for mind-power training
+                excellence
               </p>
             </div>
           </motion.div>
         </div>
       </section>
 
-      {/* Award index — modern editorial list */}
-      <section className="py-12 sm:py-16 lg:py-28">
+      {/* Award years — each year is a segment with multiple photos */}
+      <section className="py-12 sm:py-16 lg:py-28 overflow-hidden">
         <div className="container">
-          <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4 sm:gap-6 mb-8 sm:mb-12 border-b border-[#F5F0E8]/10 pb-5 sm:pb-6">
+          <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4 sm:gap-6 mb-10 sm:mb-16 border-b border-[#F5F0E8]/10 pb-5 sm:pb-6">
             <div>
               <span
                 style={{ fontFamily: "var(--font-accent)" }}
@@ -170,52 +356,52 @@ export default function AwardsPage() {
               </h2>
             </div>
             <p className="hidden md:block text-[#F5F0E8]/40 text-sm max-w-xs text-right">
-              A growing record of excellence across mind coaching and leadership.
+              A growing record of excellence across mind coaching and
+              leadership.
             </p>
           </div>
 
-          <div className="divide-y divide-[#F5F0E8]/8">
-            {awards.map((award, i) => (
-              <motion.article
-                key={award.year}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true, margin: "-40px" }}
-                transition={{ duration: 0.45, delay: i * 0.05 }}
-                className="group grid grid-cols-1 sm:grid-cols-[88px_1fr] md:grid-cols-[110px_140px_1fr_auto] gap-3 sm:gap-4 md:gap-8 py-5 sm:py-7 items-start sm:items-center"
-              >
-                <div className="flex items-center gap-3 sm:contents">
-                  <div
-                    className="text-xl sm:text-2xl md:text-3xl font-bold text-gradient-gold tabular-nums shrink-0"
-                    style={{ fontFamily: "var(--font-accent)" }}
-                  >
-                    {award.year}
-                  </div>
+          <div className="space-y-8 sm:space-y-10 lg:space-y-14">
+            {AWARD_YEAR_ROWS.map((row, rowIndex) => {
+              const isPair = row.length > 1;
 
-                  <div className="relative w-16 h-16 sm:w-20 sm:h-20 md:w-[120px] md:h-[88px] rounded-lg overflow-hidden border border-[#D4AF37]/25 bg-[#0a0a0a] shrink-0">
-                    <Image
-                      src={award.image}
-                      alt={award.title}
-                      fill
-                      sizes="120px"
-                      className="object-cover transition-transform duration-500 group-hover:scale-105"
-                    />
-                  </div>
-                </div>
+              return (
+                <div
+                  key={row.map((s) => s.year).join("-")}
+                  className={
+                    isPair
+                      ? "grid grid-cols-1 sm:grid-cols-2 gap-8 sm:gap-6 lg:gap-10"
+                      : undefined
+                  }
+                >
+                  {row.map((segment, segmentIndex) => (
+                    <motion.div
+                      key={segment.year}
+                      initial={{ opacity: 0, y: 32 }}
+                      whileInView={{ opacity: 1, y: 0 }}
+                      viewport={{ once: true, margin: "-60px" }}
+                      transition={{
+                        duration: 0.55,
+                        delay: (rowIndex + segmentIndex) * 0.04,
+                      }}
+                      className="relative"
+                    >
+                      <div className="text-center mb-6 sm:mb-8">
+                        <div
+                          className="inline-block text-3xl sm:text-4xl md:text-5xl font-bold text-gradient-gold tabular-nums"
+                          style={{ fontFamily: "var(--font-accent)" }}
+                        >
+                          {segment.year}
+                        </div>
+                        <div className="mx-auto mt-3 w-12 h-px bg-gradient-to-r from-transparent via-[#D4AF37]/60 to-transparent" />
+                      </div>
 
-                <div className="sm:col-span-1 md:col-span-1">
-                  <h3 className="text-base sm:text-lg md:text-xl font-semibold text-[#F5F0E8] group-hover:text-[#D4AF37] transition-colors duration-300">
-                    {award.title}
-                  </h3>
-                  <p className="text-[#F5F0E8]/40 text-sm mt-1.5">{award.org}</p>
+                      <YearAwardStrip awards={segment.awards} />
+                    </motion.div>
+                  ))}
                 </div>
-
-                <div className="hidden md:flex items-center gap-2 text-[#F5F0E8]/25 group-hover:text-[#D4AF37]/70 transition-colors">
-                  <span className="text-xs tracking-widest uppercase">Award</span>
-                  <Trophy className="w-4 h-4" />
-                </div>
-              </motion.article>
-            ))}
+              );
+            })}
           </div>
         </div>
       </section>
