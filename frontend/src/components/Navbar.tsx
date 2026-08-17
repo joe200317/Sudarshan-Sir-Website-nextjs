@@ -15,6 +15,7 @@ const navLinks = [
   { label: "About", href: "/about" },
   { label: "Programs", href: "/programs", dropdown: true },
   { label: "Awards", href: "/awards" },
+  { label: "Books", href: "/books" },
   { label: "Gallery", href: "/gallery" },
   { label: "Testimonials", href: "/testimonials" },
   { label: "Contact", href: "/contact" },
@@ -92,7 +93,7 @@ export default function Navbar() {
           </span>
         </Link>
 
-        <div className="hidden lg:flex items-center gap-8">
+        <div className="hidden lg:flex items-center gap-5 xl:gap-8">
           {navLinks.map((link) => {
             if (link.dropdown) {
               return (

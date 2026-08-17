@@ -28,6 +28,7 @@ import {
   Users,
 } from "lucide-react";
 import ReserveSpotModal from "@/components/workshop/ReserveSpotModal";
+import { BOOKS_WITH_COVERS } from "@/data/books";
 import type { WorkshopBookingInfo } from "@/data/reserve-spot";
 import { trackMetaEvent } from "@/lib/meta-pixel";
 
@@ -90,20 +91,6 @@ const BENEFITS = [
   { highlight: "Stronger Relationships", text: "Communicate with empathy and build lasting personal and professional bonds." },
 ] as const;
 
-const BOOKS = [
-  { title: "Mind Winner World Winner", image: "/images/Book1.webp" },
-  { title: "Rich Mind Blueprint", image: "/images/Book2.webp" },
-  { title: "Dare Your Mind to Think Beyond", image: "/images/Book3.webp" },
-  { title: "Infinite Strength of Mind", image: "/images/Book4.webp" },
-  { title: "Achiever Mind Set", image: "/images/Book5.webp" },
-  { title: "Mind Map to Success", image: "/images/Book6.webp" },
-  { title: "Millionaire Mind Habits", image: "/images/Book7.webp" },
-  { title: "Miracle of Fearless Mind", image: "/images/Book8.webp" },
-  { title: "Master Mind Principles", image: "/images/Book9.webp" },
-  { title: "Universal Law of Mind", image: "/images/Book10.webp" },
-  { title: "Awaken Your Genius Mind", image: "/images/Book11.webp" },
-  { title: "Ultimate Happiness of Mind", image: "/images/Book12.webp" },
-] as const;
 
 const AWARDS = [
   { title: "Best Mind Trainer Award", image: "/images/sir3.jpg" },
@@ -969,7 +956,7 @@ export default function TTT_1Day({
           </motion.div>
 
           <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-5">
-            {BOOKS.map((book, i) => (
+            {BOOKS_WITH_COVERS.map((book, i) => (
               <motion.div
                 key={book.title}
                 initial={{ opacity: 0, y: 16 }}

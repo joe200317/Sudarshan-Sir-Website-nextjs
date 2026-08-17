@@ -10,6 +10,7 @@ const quickLinksLeft = [
   { label: "About", href: "/about" },
   { label: "Programs", href: "/programs" },
   { label: "Awards", href: "/awards" },
+  { label: "Books", href: "/books" },
 ];
 
 const quickLinksRight = [
