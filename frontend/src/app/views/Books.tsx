@@ -8,9 +8,11 @@ import { ArrowRight, X } from "lucide-react";
 import {
   BOOKS_WITH_COVERS,
   SERIES,
+  MAGAZINES,
   booksInSeries,
   seriesMeta,
   type Book,
+  type Magazine,
   type SeriesId,
 } from "@/data/books";
 
@@ -46,8 +48,7 @@ function BookCover({
       <div
         className={`relative overflow-hidden bg-[#111] ${className ?? ""}`}
         style={{
-          boxShadow:
-            "6px 10px 28px rgba(0,0,0,0.55), inset 10px 0 14px -8px rgba(0,0,0,0.55)",
+          boxShadow: "6px 10px 28px rgba(0,0,0,0.55)",
         }}
       >
         <Image
@@ -56,10 +57,8 @@ function BookCover({
           fill
           priority={priority}
           sizes={sizes}
-          className="object-cover"
+          className="object-contain"
         />
-        <span className="pointer-events-none absolute inset-y-0 left-0 w-[10%] bg-gradient-to-r from-black/45 to-transparent" />
-        <span className="pointer-events-none absolute inset-y-0 left-[9%] w-px bg-white/15" />
       </div>
     );
   }
@@ -204,9 +203,140 @@ function SeriesShelves({
   );
 }
 
+function MagazineCover({
+  magazine,
+  className,
+  sizes,
+}: {
+  magazine: Magazine;
+  className?: string;
+  sizes: string;
+}) {
+  if (magazine.image) {
+    return (
+      <div
+        className={`relative overflow-hidden bg-[#111] ${className ?? ""}`}
+        style={{
+          boxShadow:
+            "6px 10px 28px rgba(0,0,0,0.55), inset 10px 0 14px -8px rgba(0,0,0,0.55)",
+        }}
+      >
+        <Image
+          src={magazine.image}
+          alt={magazine.title}
+          fill
+          sizes={sizes}
+          className="object-cover"
+        />
+      </div>
+    );
+  }
+
+  return (
+    <div
+      className={`relative overflow-hidden bg-[#0c0c0c] ${className ?? ""}`}
+      style={{
+        boxShadow:
+          "6px 10px 28px rgba(0,0,0,0.55), inset 10px 0 14px -8px rgba(0,0,0,0.55)",
+      }}
+    >
+      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_30%_20%,_rgba(212,175,55,0.16),_transparent_55%)]" />
+      <div className="absolute inset-0 border border-[#D4AF37]/25" />
+      <div className="relative flex h-full flex-col items-center justify-between px-3 py-4 sm:px-4 sm:py-5">
+        <p
+          className="text-center text-[8px] sm:text-[10px] tracking-[0.28em] uppercase text-[#D4AF37]/80"
+          style={{ fontFamily: "var(--font-accent)" }}
+        >
+          Magazine
+        </p>
+        <p
+          className="text-4xl sm:text-5xl font-bold text-gradient-gold leading-none"
+          style={{ fontFamily: "var(--font-display)" }}
+        >
+          {String(magazine.issue).padStart(2, "0")}
+        </p>
+        <p className="text-center text-[10px] sm:text-xs leading-snug text-[#F5F0E8]/55 line-clamp-3">
+          {magazine.title}
+        </p>
+      </div>
+    </div>
+  );
+}
+
+function MagazinesSection({
+  onOpen,
+}: {
+  onOpen: (magazine: Magazine) => void;
+}) {
+  return (
+    <div>
+      <div className="mb-10 sm:mb-14 flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4 border-b border-[#F5F0E8]/10 pb-5">
+        <div>
+          <p
+            className="mb-2 text-[#D4AF37] text-[11px] tracking-[0.35em] uppercase"
+            style={{ fontFamily: "var(--font-accent)" }}
+          >
+            Periodicals · {MAGAZINES.length} issues
+          </p>
+          <h2
+            className="text-3xl sm:text-4xl font-bold"
+            style={{ fontFamily: "var(--font-display)" }}
+          >
+            Magazines
+          </h2>
+        </div>
+        <p className="text-[#F5F0E8]/45 text-sm max-w-sm sm:text-right">
+          Quarterly insights on mind, success, and personal growth by Sudarshan Sabat.
+        </p>
+      </div>
+
+      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-5 sm:gap-7 lg:gap-8">
+        {MAGAZINES.map((mag, i) => (
+          <motion.button
+            key={mag.issue}
+            type="button"
+            onClick={() => onOpen(mag)}
+            initial={{ opacity: 0, y: 24 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: "-40px" }}
+            transition={{ duration: 0.4, delay: (i % 4) * 0.05 }}
+            className="group text-left [perspective:900px]"
+          >
+            <span
+              className="mb-2 block text-[10px] tracking-[0.28em] uppercase text-[#D4AF37]/70"
+              style={{ fontFamily: "var(--font-accent)" }}
+            >
+              Issue {String(mag.issue).padStart(2, "0")} · {mag.year}
+            </span>
+            <div className="relative aspect-[3/4] origin-bottom [transform:rotateY(-10deg)] transition-transform duration-500 ease-out group-hover:[transform:rotateY(-2deg)_translateY(-14px)]">
+              <MagazineCover
+                magazine={mag}
+                sizes="(max-width: 640px) 45vw, (max-width: 1024px) 30vw, 22vw"
+                className="h-full w-full rounded-sm border border-[#D4AF37]/20"
+              />
+            </div>
+            <h3 className="mt-3 text-sm sm:text-[15px] font-medium leading-snug text-[#F5F0E8]/70 group-hover:text-[#D4AF37] transition-colors">
+              {mag.title}
+            </h3>
+            {mag.description && (
+              <p className="mt-1 text-xs text-[#F5F0E8]/35 line-clamp-2">
+                {mag.description}
+              </p>
+            )}
+          </motion.button>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+type ContentTab = "books" | "magazines";
+
 export default function BooksPage() {
   const [active, setActive] = useState<Book | null>(null);
+  const [activeMag, setActiveMag] = useState<Magazine | null>(null);
   const [seriesId, setSeriesId] = useState<SeriesId>("mind");
+  const [contentTab, setContentTab] = useState<ContentTab>("books");
   const featured = BOOKS_WITH_COVERS.slice(0, 5);
 
   return (
@@ -222,7 +352,7 @@ export default function BooksPage() {
             className="mb-4 text-[#D4AF37] text-[11px] tracking-[0.42em] uppercase"
             style={{ fontFamily: "var(--font-accent)" }}
           >
-            Two series · Twenty-six volumes
+            Books &amp; Magazines
           </motion.p>
 
           <motion.h1
@@ -288,9 +418,9 @@ export default function BooksPage() {
       <div className="border-y border-[#D4AF37]/20 bg-[#0a0a0a]">
         <div className="container grid grid-cols-3 divide-x divide-[#D4AF37]/15">
           {[
-            { value: "2", label: "Series" },
-            { value: "13", label: "Books each" },
-            { value: "26", label: "Total volumes" },
+            { value: "2", label: "Book Series" },
+            { value: "26", label: "Total Books" },
+            { value: String(MAGAZINES.length), label: "Magazines" },
           ].map((stat) => (
             <div key={stat.label} className="py-6 sm:py-8 text-center">
               <div
@@ -309,39 +439,79 @@ export default function BooksPage() {
 
       <section className="relative py-16 sm:py-20 lg:py-24">
         <div className="container">
-          <div className="mb-10 sm:mb-14 flex justify-center">
+          <div className="mb-8 sm:mb-10 flex justify-center">
             <div className="inline-flex rounded-full border border-[#D4AF37]/25 bg-[#0a0a0a] p-1">
-              {SERIES.map((s) => {
-                const on = seriesId === s.id;
+              {(["books", "magazines"] as const).map((tab) => {
+                const on = contentTab === tab;
                 return (
                   <button
-                    key={s.id}
+                    key={tab}
                     type="button"
-                    onClick={() => setSeriesId(s.id)}
-                    className={`rounded-full px-5 sm:px-8 py-2.5 text-xs sm:text-sm tracking-[0.18em] uppercase transition-colors ${
+                    onClick={() => setContentTab(tab)}
+                    className={`rounded-full px-6 sm:px-10 py-2.5 text-xs sm:text-sm tracking-[0.18em] uppercase transition-colors ${
                       on
                         ? "bg-[#D4AF37] text-[#0a0a0a] font-semibold"
                         : "text-[#F5F0E8]/55 hover:text-[#D4AF37]"
                     }`}
                   >
-                    {s.label}
+                    {tab}
                   </button>
                 );
               })}
             </div>
           </div>
 
-          <AnimatePresence mode="wait">
-            <motion.div
-              key={seriesId}
-              initial={{ opacity: 0, y: 16 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -12 }}
-              transition={{ duration: 0.3 }}
-            >
-              <SeriesShelves seriesId={seriesId} onOpen={setActive} />
-            </motion.div>
-          </AnimatePresence>
+          {contentTab === "books" && (
+            <>
+              <div className="mb-10 sm:mb-14 flex justify-center">
+                <div className="inline-flex rounded-full border border-[#F5F0E8]/10 bg-[#0a0a0a] p-1">
+                  {SERIES.map((s) => {
+                    const on = seriesId === s.id;
+                    return (
+                      <button
+                        key={s.id}
+                        type="button"
+                        onClick={() => setSeriesId(s.id)}
+                        className={`rounded-full px-5 sm:px-8 py-2 text-[10px] sm:text-xs tracking-[0.18em] uppercase transition-colors ${
+                          on
+                            ? "bg-[#F5F0E8]/10 text-[#D4AF37] font-semibold"
+                            : "text-[#F5F0E8]/40 hover:text-[#D4AF37]"
+                        }`}
+                      >
+                        {s.label}
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+
+              <AnimatePresence mode="wait">
+                <motion.div
+                  key={seriesId}
+                  initial={{ opacity: 0, y: 16 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -12 }}
+                  transition={{ duration: 0.3 }}
+                >
+                  <SeriesShelves seriesId={seriesId} onOpen={setActive} />
+                </motion.div>
+              </AnimatePresence>
+            </>
+          )}
+
+          {contentTab === "magazines" && (
+            <AnimatePresence mode="wait">
+              <motion.div
+                key="magazines"
+                initial={{ opacity: 0, y: 16 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -12 }}
+                transition={{ duration: 0.3 }}
+              >
+                <MagazinesSection onOpen={setActiveMag} />
+              </motion.div>
+            </AnimatePresence>
+          )}
         </div>
       </section>
 
@@ -377,6 +547,57 @@ export default function BooksPage() {
           </Link>
         </div>
       </section>
+
+      <AnimatePresence>
+        {activeMag && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-[100] flex items-center justify-center bg-black/88 backdrop-blur-sm p-5 sm:p-10"
+            onClick={() => setActiveMag(null)}
+          >
+            <button
+              type="button"
+              aria-label="Close magazine preview"
+              className="absolute top-5 right-5 flex h-10 w-10 items-center justify-center rounded-full border border-[#F5F0E8]/20 text-[#F5F0E8] hover:border-[#D4AF37] hover:text-[#D4AF37] transition-colors"
+              onClick={() => setActiveMag(null)}
+            >
+              <X className="w-5 h-5" />
+            </button>
+
+            <motion.div
+              initial={{ opacity: 0, y: 18, scale: 0.96 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              exit={{ opacity: 0, y: 18, scale: 0.96 }}
+              transition={{ duration: 0.28 }}
+              className="relative w-full max-w-sm"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <div className="relative aspect-[3/4] overflow-hidden rounded-lg border border-[#D4AF37]/30 shadow-[0_30px_80px_rgba(0,0,0,0.65)]">
+                <MagazineCover magazine={activeMag} sizes="400px" className="h-full w-full" />
+              </div>
+              <p
+                className="mt-4 text-center text-[10px] tracking-[0.28em] uppercase text-[#D4AF37]"
+                style={{ fontFamily: "var(--font-accent)" }}
+              >
+                Magazine · Issue {String(activeMag.issue).padStart(2, "0")} · {activeMag.year}
+              </p>
+              <p
+                className="mt-2 text-center text-lg font-semibold"
+                style={{ fontFamily: "var(--font-display)" }}
+              >
+                {activeMag.title}
+              </p>
+              {activeMag.description && (
+                <p className="mt-2 text-center text-sm text-[#F5F0E8]/50">
+                  {activeMag.description}
+                </p>
+              )}
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       <AnimatePresence>
         {active && (

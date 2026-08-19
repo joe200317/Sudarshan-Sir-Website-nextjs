@@ -119,7 +119,7 @@ export default function Awards() {
             </div>
 
             <div className="grid grid-cols-4 gap-3 mt-8">
-              {Array.from({ length: 8 }, (_, i) => `/images/Book${i + 1}.webp`).map(
+              {Array.from({ length: 8 }, (_, i) => `/images/${i + 1}.jpg`).map(
                 (src, i) => (
                   <motion.div
                     key={src}

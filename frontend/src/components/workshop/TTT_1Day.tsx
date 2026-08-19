@@ -970,7 +970,7 @@ export default function TTT_1Day({
                     src={book.image}
                     alt={book.title}
                     fill
-                    className="object-cover"
+                    className="object-contain"
                     sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
                   />
                 </div>
