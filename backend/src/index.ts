@@ -14,6 +14,7 @@ import uploadRoutes from "./routes/upload.js";
 import registrationsRoutes from "./routes/registrations.js";
 import newsletterRoutes from "./routes/newsletter.js";
 import contactMessagesRoutes from "./routes/contact-messages.js";
+import homeLeadsRoutes from "./routes/home-leads.js";
 
 const PORT = Number(process.env.PORT || 4000);
 const MONGODB_URI =
@@ -48,6 +49,7 @@ async function main() {
   app.use("/api/registrations", registrationsRoutes);
   app.use("/api/newsletter", newsletterRoutes);
   app.use("/api/contact-messages", contactMessagesRoutes);
+  app.use("/api/home-leads", homeLeadsRoutes);
 
   app.use(errorHandler);
 

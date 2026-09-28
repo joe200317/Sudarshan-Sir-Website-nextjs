@@ -1,11 +1,15 @@
 "use client";
 
+import { useState } from "react";
 import { motion } from "framer-motion";
 import { ArrowRight } from "lucide-react";
+import HomeLeadModal from "@/components/home/HomeLeadModal";
 
 const GOLD = "#D4AF37";
 
 export default function PromoBanner() {
+  const [modalOpen, setModalOpen] = useState(false);
+
   return (
     <section className="relative overflow-hidden bg-[#000000] py-10 md:py-12">
       <div className="pointer-events-none absolute inset-0">
@@ -31,19 +35,21 @@ export default function PromoBanner() {
               start transforming your mind, business, and life today.
             </p>
           </div>
-          <a href="#contact" className="shrink-0">
-            <button
-              className="inline-flex items-center justify-center rounded-md text-[#0a0a0a] font-semibold text-base px-8 py-3.5 hover:shadow-[0_0_30px_rgba(212,175,55,0.4)] transition-all duration-300 group"
-              style={{
-                background: `linear-gradient(to right, ${GOLD}, #B8960C)`,
-              }}
-            >
-              Register Now
-              <ArrowRight className="ml-2 w-5 h-5 group-hover:translate-x-1 transition-transform" />
-            </button>
-          </a>
+          <button
+            type="button"
+            onClick={() => setModalOpen(true)}
+            className="shrink-0 inline-flex items-center justify-center rounded-md text-[#0a0a0a] font-semibold text-base px-8 py-3.5 hover:shadow-[0_0_30px_rgba(212,175,55,0.4)] transition-all duration-300 group"
+            style={{
+              background: `linear-gradient(to right, ${GOLD}, #B8960C)`,
+            }}
+          >
+            Register Now
+            <ArrowRight className="ml-2 w-5 h-5 group-hover:translate-x-1 transition-transform" />
+          </button>
         </motion.div>
       </div>
+
+      <HomeLeadModal open={modalOpen} onClose={() => setModalOpen(false)} />
     </section>
   );
 }

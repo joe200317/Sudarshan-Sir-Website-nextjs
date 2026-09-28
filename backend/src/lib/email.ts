@@ -116,3 +116,80 @@ export async function sendRegistrationNotificationEmail(
     return false;
   }
 }
+
+export type HomeLeadNotifyPayload = {
+  fullName: string;
+  mobile: string;
+  city: string;
+  describesYou: string;
+  availability: string;
+  interestedIn708: string;
+};
+
+const HOME_LEAD_NOTIFY_EMAILS = [
+  "ajaygunde.sgoc@gmail.com",
+  "reynachandnani@gmail.com",
+];
+
+/**
+ * Email the sales team when someone submits the home page lead form.
+ */
+export async function sendHomeLeadNotificationEmail(
+  opts: HomeLeadNotifyPayload,
+): Promise<boolean> {
+  if (!smtpConfigured()) {
+    console.warn(
+      "[email] SMTP not configured (set SMTP_HOST, SMTP_USER, SMTP_PASS). Home lead notification skipped.",
+    );
+    return false;
+  }
+
+  const transporter = getTransporter();
+  if (!transporter) return false;
+
+  const from =
+    process.env.SMTP_FROM?.trim() ||
+    process.env.SMTP_USER?.trim() ||
+    "noreply@mindtrainer.local";
+
+  const subject = `New Home Page Lead · ${opts.fullName}`;
+
+  const html = `
+    <div style="font-family:Arial,sans-serif;line-height:1.5;color:#111">
+      <h2 style="margin:0 0 12px">New lead from home page</h2>
+      <hr style="border:none;border-top:1px solid #eee;margin:16px 0" />
+      <p><strong>Full Name:</strong> ${opts.fullName}</p>
+      <p><strong>Mobile Number:</strong> ${opts.mobile}</p>
+      <p><strong>City:</strong> ${opts.city}</p>
+      <p><strong>What best describes you:</strong> ${opts.describesYou}</p>
+      <p><strong>Available 9 AM – 6 PM for LIVE seminar:</strong> ${opts.availability}</p>
+      <p><strong>Interested in FREE Training at 4-Star Hotel (₹708 food charge):</strong> ${opts.interestedIn708}</p>
+      <p style="margin-top:20px;font-size:12px;color:#888">
+        This email was sent because a visitor submitted the lead form on the home page.
+      </p>
+    </div>
+  `;
+
+  const text =
+    `${subject}\n\n` +
+    `Full Name: ${opts.fullName}\n` +
+    `Mobile: ${opts.mobile}\n` +
+    `City: ${opts.city}\n` +
+    `Describes you: ${opts.describesYou}\n` +
+    `Available 9-6 for LIVE seminar: ${opts.availability}\n` +
+    `Interested in 4-Star Hotel + ₹708 food charge: ${opts.interestedIn708}\n`;
+
+  try {
+    await transporter.sendMail({
+      from,
+      to: HOME_LEAD_NOTIFY_EMAILS.join(", "),
+      subject,
+      html,
+      text,
+    });
+    return true;
+  } catch (err) {
+    console.warn("[email] home lead send failed", err);
+    return false;
+  }
+}

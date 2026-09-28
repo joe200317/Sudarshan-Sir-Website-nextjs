@@ -14,11 +14,13 @@ import FAQ from "@/components/FAQ";
 import HomeAmbient from "@/components/home/HomeAmbient";
 import SectionReveal from "@/components/home/SectionReveal";
 import SectionDivider from "@/components/home/SectionDivider";
+import HomeLeadAutoPopup from "@/components/home/HomeLeadAutoPopup";
 
 export default function HomePage() {
   return (
     <main className="relative bg-[#050505] text-[#F5F0E8]">
       <HomeAmbient />
+      <HomeLeadAutoPopup />
       <div className="relative z-10">
         <Hero />
         <SectionDivider />
