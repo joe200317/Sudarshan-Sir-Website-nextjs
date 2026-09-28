@@ -1,7 +1,10 @@
 import type { Metadata } from "next";
 import { Cinzel, DM_Sans, Orbitron } from "next/font/google";
+import { GoogleTagManager } from "@next/third-parties/google";
 import SiteShell from "@/components/SiteShell";
 import "./globals.css";
+
+const GTM_ID = "GTM-NR8P8CQN";
 
 const cinzel = Cinzel({
   variable: "--font-display",
@@ -91,8 +94,17 @@ export default function RootLayout({
       className={`${cinzel.variable} ${dmSans.variable} ${orbitron.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col bg-[#050505] text-[#F5F0E8] m-0 p-0">
+        <noscript>
+          <iframe
+            src={`https://www.googletagmanager.com/ns.html?id=${GTM_ID}`}
+            height="0"
+            width="0"
+            style={{ display: "none", visibility: "hidden" }}
+          />
+        </noscript>
         <SiteShell>{children}</SiteShell>
       </body>
+      <GoogleTagManager gtmId={GTM_ID} />
     </html>
   );
 }
