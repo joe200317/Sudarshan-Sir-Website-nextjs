@@ -3,16 +3,24 @@
 import { useEffect, useState } from "react";
 import HomeLeadModal from "@/components/home/HomeLeadModal";
 
-/** Auto-opens the lead form 5 minutes after the visitor lands on the home page. */
-const DELAY_MS = 5 * 60 * 1000;
+/** Re-open delay after the visitor closes the popup without submitting. */
+const REOPEN_DELAY_MS = 60 * 1000;
 
+/**
+ * Auto-opens the lead form as soon as the visitor lands on the home page.
+ * If they close it without submitting, it pops back up 1 minute later.
+ */
 export default function HomeLeadAutoPopup() {
   const [open, setOpen] = useState(false);
 
   useEffect(() => {
-    const timer = setTimeout(() => setOpen(true), DELAY_MS);
-    return () => clearTimeout(timer);
+    setOpen(true);
   }, []);
 
-  return <HomeLeadModal open={open} onClose={() => setOpen(false)} />;
+  function handleClose() {
+    setOpen(false);
+    setTimeout(() => setOpen(true), REOPEN_DELAY_MS);
+  }
+
+  return <HomeLeadModal open={open} onClose={handleClose} />;
 }
